@@ -1,0 +1,6 @@
+# Intentionally malformed YAML: an unclosed flow mapping and a bad indent.
+id: fixture-broken-yaml
+title: "unterminated
+tier: [1, 2
+attack_class: OTHER
+  target: example-product

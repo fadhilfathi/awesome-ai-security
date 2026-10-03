@@ -1,0 +1,1 @@
+# Intentionally empty file. load_entry() must raise ValidationError for it.

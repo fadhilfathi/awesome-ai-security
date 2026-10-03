@@ -1,0 +1,3 @@
+# Intentionally a bare YAML sequence, not a mapping.
+- fixture-bare-list
+- second-element

@@ -1,0 +1,23 @@
+id: fixture-valid-entry
+title: Synthetic fixture entry about example-product
+tier: 3
+attack_class: OTHER
+target: example-product
+date: '2001-02-03'
+summary: >-
+  A synthetic entry shipped as a test fixture. It describes no real product,
+  person, incident, or disclosure, and every identifier in it is invented.
+impact: >-
+  The impact described here is invented for the test suite and describes a
+  hypothetical outcome only.
+mitigation: Apply the mitigation described in the synthetic advisory fixture.
+sources:
+  - url: https://example.invalid/fixture-valid-entry/advisory
+    kind: primary
+    title: Example vendor advisory for the synthetic case
+  - url: https://example.invalid/fixture-valid-entry/coverage
+    kind: secondary
+    title: Example news coverage for the synthetic case
+cve:
+  - CVE-2026-00000
+last_verified: '2001-02-03'
