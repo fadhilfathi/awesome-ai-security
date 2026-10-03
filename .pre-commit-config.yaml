@@ -1,0 +1,23 @@
+# Pre-commit hooks for awesome-ai-security.
+# Install once with: uv run pre-commit install
+# (pre-commit itself is not a project dependency; install it in your own env.)
+
+default_language_version:
+  python: python3.11
+
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.16.5
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format
+
+  - repo: local
+    hooks:
+      - id: check-generated
+        name: verify generated output is not stale
+        entry: uv run python scripts/build.py --check
+        language: system
+        pass_filenames: false
+        always_run: true

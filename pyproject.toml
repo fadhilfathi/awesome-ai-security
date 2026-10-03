@@ -1,0 +1,41 @@
+[project]
+name = "awesome-ai-security"
+version = "0.1.0"
+description = "An evidence-graded catalogue of attacks on AI systems."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "PyYAML>=6.0",
+    "jsonschema>=4.21",
+]
+
+# PEP 735 dependency group. Installed with `uv sync --group dev`.
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.14",
+]
+
+# NOTE: there is intentionally no [build-system] table. This project is never
+# packaged or published to an index; it is a data catalogue plus the scripts
+# that validate and build it. Adding a build backend would pull an extra
+# dependency into the environment for no benefit.
+
+[tool.ruff]
+target-version = "py311"
+line-length = 88
+extend-exclude = [".venv"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["scripts"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+# Never built into a wheel or sdist; uv must not try to install it as one.
+[tool.uv]
+package = false
