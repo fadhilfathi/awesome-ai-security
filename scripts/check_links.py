@@ -357,7 +357,10 @@ def main(argv: list[str] | None = None) -> int:
 
     targets = collect_targets(load_all_entries())
     if not targets:
-        print("no source URLs to check.")
+        # --json must stay parseable even with nothing to check: a consumer
+        # that redirects this into a file and calls json.loads on it should
+        # get an empty result set, not a prose sentence.
+        print(render_json([], {}) if args.json else "no source URLs to check.")
         return 0
 
     state = {} if args.no_state else load_state(args.state)
