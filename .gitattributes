@@ -1,0 +1,9 @@
+# Normalise line endings in the repository. Generated output is compared
+# byte for byte against what the current data produces, so a checkout that
+# rewrites line endings would report drift that does not exist.
+* text=auto eol=lf
+
+# Lockfiles and vendored licence text are compared byte for byte too.
+uv.lock text eol=lf
+LICENSE text eol=lf
+LICENSE-CONTENT text eol=lf
