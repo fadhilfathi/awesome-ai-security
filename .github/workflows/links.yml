@@ -1,0 +1,176 @@
+name: links
+
+on:
+  schedule:
+    # Weekly, Sunday 04:23 UTC. Off the top of the hour: shared CI minutes are
+    # heavily oversubscribed on :00.
+    - cron: "23 4 * * 0"
+  workflow_dispatch:
+
+# Reads the catalogue, checks third-party URLs, uploads a report artifact, and
+# maintains one tracking issue. Nothing else.
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: links-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  check-links:
+    name: check source links
+    runs-on: ubuntu-latest
+    # Room for slow third-party servers: the retries inside check_links.py
+    # dominate, and a hung network must not eat an hour of runner time.
+    timeout-minutes: 45
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
+        with:
+          python-version: "3.11"
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@0c5e2b8115b80b4c7c5ddf6ffdd634974642d182 # v5.4.1
+
+      - name: Install dependencies
+        run: uv sync --group dev --locked
+
+      # check_links.py keeps a last-known-status file (gitignored) and marks a
+      # failure as `repeat_failure` when the URL was already failing last run.
+      # Caching it is what makes "failed twice in a row" expressible at all:
+      # without it, every run looks like the first one.
+      - name: Restore last-known link state
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .linkcheck-state.json
+          # The state file is rewritten each run, so the primary key must differ
+          # per run for the save to take effect. Bucketing by run number keeps
+          # that while producing one entry per week rather than one per run, and
+          # restore-keys pulls the most recent earlier bucket forward.
+          key: linkcheck-state-${{ github.run_number }}
+          restore-keys: |
+            linkcheck-state-
+
+      # Deliberately non-fatal. Someone else's server being down, a rate limit,
+      # or a TLS middlebox must never turn main red. main is protected by
+      # ci.yml, which does not touch the network at all. Link health is
+      # reported and escalated through the tracking issue, never by failing.
+      #
+      # --fail-on any makes the exit code carry the whole picture, including
+      # `unknown`, the status used when a failure cannot be attributed.
+      # --retries 3 gives a transient blip several chances before it is recorded
+      # at all.
+      - name: Check every source URL
+        run: |
+          set +e
+          uv run python scripts/check_links.py \
+            --json --fail-on any --jobs 16 --timeout 20 --retries 3 \
+            > linkreport.json
+          status=$?
+          set -e
+          echo "check_links exit status: ${status} (recorded, never enforced)"
+          if [ ! -s linkreport.json ]; then
+            echo "::error::check_links produced no usable report; treating as upstream failure"
+            exit 0
+          fi
+
+      # Escalation rule: a URL is escalated only when it is `broken` AND it also
+      # failed on the previous run. One failure is noise; two in a row is a dead
+      # reference. `unknown` never escalates, because by definition we do not
+      # know why it failed.
+      - name: Build tracking issue body
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = json.loads(Path("linkreport.json").read_text(encoding="utf-8"))
+          results = report.get("results", [])
+          counts = {}
+          for r in results:
+              counts[r["status"]] = counts.get(r["status"], 0) + 1
+          summary = ", ".join(f"{k}={v}" for k, v in sorted(counts.items()) if v)
+          tally = f": {summary}" if summary else ""
+          bad = sorted(
+              (r for r in results if r["status"] == "broken" and r.get("repeat_failure")),
+              key=lambda r: r["url"],
+          )
+          lines = [
+              "Automated link check. One issue, updated in place.",
+              "",
+              f"Checked {len(results)} source URL(s){tally}.",
+              "",
+          ]
+          if bad:
+              lines += [f"## Failing on two consecutive runs ({len(bad)})", ""]
+              for r in bad:
+                  final = r.get("final_url") or ""
+                  tail = f" -> {final}" if final and final != r["url"] else ""
+                  entries = ", ".join(r.get("entry_ids") or []) or "unattributed"
+                  lines.append(
+                      f"- `{r['url']}`{tail} -- entries: {entries}"
+                      f" -- {r.get('detail') or ''}"
+                  )
+              lines += [
+                  "",
+                  "Each one needs a replacement URL from the vendor, or a decision to "
+                  "drop the reference. The *Report an error* issue form is the fast "
+                  "path for supplying a replacement.",
+              ]
+          else:
+              lines.append(
+                  "No link has failed on two consecutive runs. Nothing to escalate; "
+                  "this issue closes itself."
+              )
+          Path("issue-body.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+          Path("escalation-count.txt").write_text(str(len(bad)), encoding="utf-8")
+          print(f"persistent failures: {len(bad)}")
+          PY
+          cat issue-body.md
+
+      # Exactly one tracking issue, ever: reused when it exists, closed when the
+      # catalogue is clean again. Uses the gh CLI already present on the runner
+      # instead of another third-party action.
+      - name: Update tracking issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LABEL: link-check
+        run: |
+          set +e
+          gh label create "${LABEL}" --color B60205 \
+            --description "Automated: source links failing on consecutive runs" \
+            --force >/dev/null 2>&1
+          number=$(gh issue list --state open --label "${LABEL}" --limit 1 --json number --jq '.[0].number')
+          set -e
+          count=$(tr -d '[:space:]' < escalation-count.txt)
+          if [ "${count}" -gt 0 ]; then
+            if [ -n "${number}" ]; then
+              gh issue edit "${number}" --body-file issue-body.md >/dev/null
+              echo "updated tracking issue #${number}"
+            else
+              gh issue create --title "Source links failing on consecutive runs" \
+                --label "${LABEL}" --body-file issue-body.md >/dev/null
+              echo "opened tracking issue"
+            fi
+          elif [ -n "${number}" ]; then
+            gh issue comment "${number}" --body-file issue-body.md >/dev/null
+            gh issue close "${number}" --reason completed >/dev/null
+            echo "closed tracking issue #${number}"
+          else
+            echo "no persistent failures and no open tracking issue"
+          fi
+
+      - name: Upload link report
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: linkreport
+          path: linkreport.json
+          retention-days: 30

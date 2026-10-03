@@ -1,0 +1,9 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security vulnerability in this repository
+    url: https://github.com/fadhilfathi/awesome-ai-security/security/advisories/new
+    about: >
+      Use GitHub Private Advisories for anything that could let someone attack
+      this repository or the tooling it runs. See SECURITY.md for what counts
+      as a vulnerability here and what does not. Please do not open a public
+      issue for a vulnerability.

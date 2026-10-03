@@ -1,0 +1,194 @@
+name: Add an incident
+description: Propose a documented attack on an AI system for the catalogue.
+title: "[incident] "
+labels: ["entry proposal", "needs review"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for filing. Two things decide whether an entry ships:
+
+        1. **You fetched and read the primary source.** A source you did not
+           open is a source we cannot verify, and the entry is rejected until it
+           is.
+        2. **The primary source is a primary source**  -  an advisory, vendor
+           postmortem, CVE record, or original research that states the finding.
+           News coverage and blog commentary are secondary and may be added
+           alongside a primary source, never instead of one.
+
+        The curator may reject a submission, or re-tier it **downward**, if the
+        evidence is weaker than claimed. Tier 1 (confirmed in the wild) needs
+        evidence of real exploitation or affected users; if the source only
+        demonstrates the attack, it is Tier 2. When in doubt the entry goes in
+        lower. Expect follow-up questions before merge.
+
+  - type: input
+    id: id
+    attributes:
+      label: Suggested entry id
+      description: >
+        Lowercase kebab-case, 3-64 characters, unique. This becomes the public
+        anchor of the entry and is never renamed once published, so pick it
+        carefully. Format: `^[a-z0-9]+(-[a-z0-9]+)*$`
+      placeholder: "e.g. indirect-prompt-injection-in-agent-tool"
+    validations:
+      required: true
+
+  - type: input
+    id: title
+    attributes:
+      label: Title
+      description: >
+        8-120 characters, factual, no marketing adjectives, no angle brackets
+        (< or >). Names the system and the failure, e.g. "Prompt injection in
+        <product> tool-use loop allowed remote command execution".
+      placeholder: "e.g. Poisoned package in agent dependency fetched install-time code"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: tier
+    attributes:
+      label: Tier
+      description: The evidence grade. Pick the lowest tier you can defend.
+      options:
+        - "1 - Confirmed in the wild: a primary source states real exploitation or affected real users."
+        - "2 - Demonstrated: the attack works in practice or in a lab, but no confirmed real-world victim is named."
+        - "3 - Theoretical: plausible attack described in a paper or talk; no working demonstration."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: attack_class
+    attributes:
+      label: Attack class
+      description: >
+        Exactly one. If two fit, resolve the tie with the rule in
+        `docs/TAXONOMY.md` first. Values here must match the schema enum
+        exactly.
+      options:
+        - PROMPT_INJECTION_DIRECT
+        - PROMPT_INJECTION_INDIRECT
+        - TOOL_POISONING
+        - AGENT_PRIVILEGE_ABUSE
+        - DATA_EXFILTRATION
+        - SUPPLY_CHAIN_PACKAGE
+        - SUPPLY_CHAIN_MODEL
+        - CODE_ASSISTANT_ABUSE
+        - TRAINING_DATA_POISONING
+        - MODEL_THEFT_EXTRACTION
+        - JAILBREAK
+        - INSECURE_OUTPUT_HANDLING
+        - CREDENTIAL_EXPOSURE
+        - DENIAL_OF_SERVICE
+        - OTHER
+    validations:
+      required: true
+
+  - type: input
+    id: target
+    attributes:
+      label: Target
+      description: >
+        What was affected: named product, component, or ecosystem (2-160
+        characters). "LLM applications in general" is allowed for a class-level
+        finding, but then the impact must say why it generalises.
+      placeholder: "e.g. acme-agent-sdk 2.1.0, or LLM applications with unpinned tool output"
+    validations:
+      required: true
+
+  - type: input
+    id: date
+    attributes:
+      label: Disclosure date
+      description: >
+        Exactly as the primary source states it: YYYY-MM or YYYY-MM-DD. Never
+        inferred, never rounded to a nicer date. Leave the day off if the source
+        gives only a month.
+      placeholder: "YYYY-MM-DD or YYYY-MM"
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened
+      description: >
+        2-4 sentences, 40-700 characters, in your own words: what happened and how
+        it was disclosed. Do not paraphrase the source closely enough to be a
+        substitute for reading it.
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact
+      description: >
+        30-600 characters. What the attacker gained, or could gain, stated
+        precisely. For a Tier 1 entry, this must also state that the source
+        confirms real-world exploitation or affected users, and say which source
+        says so.
+    validations:
+      required: true
+
+  - type: textarea
+    id: mitigation
+    attributes:
+      label: Mitigation
+      description: >
+        What the vendor or an operator can actually do about it. Concrete
+        controls, not "be careful".
+    validations:
+      required: true
+
+  - type: input
+    id: primary_source_url
+    attributes:
+      label: Primary source URL
+      description: >
+        https only. The advisory, postmortem, CVE record, or original research.
+        It must be reachable now and must state the finding.
+      placeholder: "https://example.com/security/advisories/..."
+    validations:
+      required: true
+
+  - type: input
+    id: primary_source_title
+    attributes:
+      label: Primary source title
+      description: The title as published, so a reader recognises it before clicking.
+    validations:
+      required: true
+
+  - type: input
+    id: secondary_source_url
+    attributes:
+      label: Secondary source URL (optional)
+      description: News coverage or commentary. Optional; never a replacement for a primary source.
+    validations:
+      required: false
+
+  - type: input
+    id: cve
+    attributes:
+      label: CVE ids (optional)
+      description: >
+        Comma-separated, only ids the source itself states, e.g.
+        CVE-2025-12345. Leave blank rather than guessing one.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: attestations
+    attributes:
+      label: Attestations
+      options:
+        - label: >
+            I fetched and read the primary source linked above. I am not
+            reporting this from memory, from a summary, or from training data.
+          required: true
+        - label: >
+            Everything I wrote above is in my own words, and no paragraph was
+            copied from the source.
+          required: true

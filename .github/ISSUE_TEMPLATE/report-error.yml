@@ -1,0 +1,70 @@
+name: Report an error
+description: An entry is wrong, mis-tiered, or its source is dead.
+title: "[error] "
+labels: ["data quality"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Data quality here depends on readers pushing back, so this form is
+        deliberately easy to fill in. Thank you for filing it.
+
+        Wrong and missing entries are both bugs in the catalogue. You do not need
+        to know the fix, the tier, or the entry format  -  just point at the
+        source that shows the problem and the curator will take it from there.
+
+  - type: input
+    id: entry_id
+    attributes:
+      label: Entry id
+      description: The id of the entry, from the URL or the entry heading.
+      placeholder: "e.g. indirect-prompt-injection-in-agent-tool"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: problem
+    attributes:
+      label: What is wrong
+      options:
+        - Wrong tier
+        - Wrong attack class
+        - Factually incorrect
+        - Dead or moved link
+        - Missing primary source
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: evidence_url
+    attributes:
+      label: Source that shows the error (URL)
+      description: >
+        The page that contradicts the entry, or the new location of a moved
+        link. If the entry's own link is the thing that is broken, link the
+        replacement.
+      placeholder: "https://example.com/..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: What the source shows
+      description: >
+        Quote or point at the specific passage that shows the error, in a sentence
+        or two. This is what lets the curator act without re-deriving your
+        reasoning.
+    validations:
+      required: true
+
+  - type: textarea
+    id: correction
+    attributes:
+      label: Suggested correction (optional)
+      description: >
+        What it should say instead  -  the new tier, the corrected field, the
+        replacement URL. Optional, and welcome.
+    validations:
+      required: false

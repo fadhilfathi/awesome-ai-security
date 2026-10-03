@@ -1,0 +1,105 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Read-only by default. No job in this workflow writes to the repository,
+# uploads artifacts, or opens issues, so nothing beyond `contents: read` is
+# granted. A check that needs more privilege should be its own workflow.
+permissions:
+  contents: read
+
+# A new push to the same branch makes the previous run irrelevant.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  # Keep uv from writing a different lockfile than the committed one.
+  UV_FROZEN: "1"
+
+jobs:
+  validate:
+    name: validate entries
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
+        with:
+          python-version: "3.11"
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@0c5e2b8115b80b4c7c5ddf6ffdd634974642d182 # v5.4.1
+
+      - name: Install dependencies
+        # --locked fails if uv.lock does not match pyproject.toml. Requires a
+        # committed uv.lock; it is regenerated with `uv lock` when dependencies
+        # change and committed in the same PR.
+        run: uv sync --group dev --locked
+
+      - name: Validate entries against the schema
+        run: uv run python scripts/validate.py
+
+  generated-up-to-date:
+    name: generated output is current
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
+        with:
+          python-version: "3.11"
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@0c5e2b8115b80b4c7c5ddf6ffdd634974642d182 # v5.4.1
+
+      - name: Install dependencies
+        run: uv sync --group dev --locked
+
+      # --check only reads. It regenerates in memory and compares against the
+      # committed README sections and dist/entries.json, exiting non-zero on any
+      # drift. This is what makes hand edits to generated files impossible to
+      # merge: edit data/entries/, run scripts/build.py, commit both.
+      - name: Check generated output is current
+        run: uv run python scripts/build.py --check
+
+  test:
+    name: lint and test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
+        with:
+          python-version: "3.11"
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@0c5e2b8115b80b4c7c5ddf6ffdd634974642d182 # v5.4.1
+
+      - name: Install dependencies
+        run: uv sync --group dev --locked
+
+      - name: Lint
+        run: uv run ruff check .
+
+      - name: Check formatting
+        run: uv run ruff format --check .
+
+      - name: Test
+        run: uv run pytest -q

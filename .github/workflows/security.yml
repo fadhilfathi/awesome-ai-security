@@ -1,0 +1,117 @@
+name: security
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    # Weekly, Monday 03:17 UTC. Catches advisories published after the last
+    # push to main.
+    - cron: "17 3 * * 1"
+  pull_request:
+
+# Least privilege. `security-events: write` is granted only on the job that
+# uploads CodeQL results, so a compromised test job cannot forge alerts.
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  codeql:
+    name: CodeQL (python)
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@1190a975f95ce23525efb6a3fc21ea29567c1b52 # v3.38.2
+        with:
+          languages: python
+          queries: security-and-quality
+
+      - name: Analyze
+        uses: github/codeql-action/analyze@1190a975f95ce23525efb6a3fc21ea29567c1b52 # v3.38.2
+        with:
+          category: "/language:python"
+
+  dependency-review:
+    name: Dependency review
+    runs-on: ubuntu-latest
+    # Only meaningful on pull requests: it diffs the proposed dependency changes
+    # against the base branch and fails on known-vulnerable additions.
+    if: github.event_name == 'pull_request'
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Dependency review
+        uses: github/codeql-action/dependency-review@1190a975f95ce23525efb6a3fc21ea29567c1b52 # v3.38.2
+
+  gitleaks:
+    name: secret scan (full history)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out full history
+        # fetch-depth 0 is the point of this job: a secret committed a year ago
+        # is still a live credential, so the diff of the current PR is not a
+        # sufficient scan.
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+
+      # The MIT-licensed gitleaks CLI, pinned by version AND by the SHA-256 of
+      # the release asset. Not gitleaks/gitleaks-action: that action requires a
+      # GITLEAKS_LICENSE for organisation-owned repositories, and it adds a
+      # Node action plus a licence-key phone-home to a job whose whole job is to
+      # be dependency-light. No third-party action, no spend.
+      - name: Install gitleaks
+        env:
+          VERSION: 8.30.1
+          ARCHIVE: gitleaks_8.30.1_linux_x64.tar.gz
+          DIGEST: 551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb
+        run: |
+          set -euo pipefail
+          curl -fsSL -o "${ARCHIVE}" \
+            "https://github.com/gitleaks/gitleaks/releases/download/v${VERSION}/${ARCHIVE}"
+          echo "${DIGEST}  ${ARCHIVE}" | sha256sum --check --strict
+          tar -xzf "${ARCHIVE}" gitleaks
+          sudo install -m 0755 gitleaks /usr/local/bin/gitleaks
+          gitleaks version
+
+      - name: Scan every commit for secrets
+        # `git log --all` is every commit on every ref, so a secret introduced
+        # and later removed is still reported: a leaked key stays leaked. The
+        # `git` subcommand is used rather than the hidden, deprecated `detect`
+        # alias. --redact keeps the matched value out of both the log and the
+        # uploaded report, so the scanner does not republish the secret it found.
+        run: |
+          set -euo pipefail
+          gitleaks git . \
+            --log-opts="--all" \
+            --redact=100 \
+            --report-format json \
+            --report-path gitleaks-report.json \
+            --exit-code 1
+
+      # `always()` so the report is uploaded even when the scan found leaks and
+      # failed the job. `warn` (not the default `error`) so that an empty report
+      # file - the clean-tree case - is a note, not a second failure.
+      - name: Upload gitleaks report
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: gitleaks-report
+          path: gitleaks-report.json
+          if-no-files-found: warn
+          retention-days: 30

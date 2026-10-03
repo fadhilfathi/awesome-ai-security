@@ -1,0 +1,24 @@
+version: 2
+
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    # Action versions are pinned to commit SHAs in the workflows, so Dependabot
+    # rewrites the SHA and the version comment together.
+    commit-message:
+      prefix: ci
+    labels:
+      - dependencies
+      - github-actions
+
+  - package-ecosystem: uv
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: deps
+    labels:
+      - dependencies
+      - python
