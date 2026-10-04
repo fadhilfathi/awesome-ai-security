@@ -128,6 +128,12 @@ placeholder-matrix-block
 placeholder-catalogue-block
 <!-- END:GENERATED:catalogue -->
 
+## Entry pages
+
+<!-- BEGIN:GENERATED:entry-index -->
+placeholder-entry-index-block
+<!-- END:GENERATED:entry-index -->
+
 ## How to read this list
 
 <!-- BEGIN:GENERATED:footer -->
@@ -171,6 +177,23 @@ class Sandbox:
 
     def bytes_of(self, path: Path) -> bytes | None:
         return path.read_bytes() if path.exists() else None
+
+    @property
+    def pages_dir(self) -> Path:
+        """The generated detail-page directory inside the sandbox."""
+        return self.root / "docs" / "entries"
+
+    @property
+    def docs_dir(self) -> Path:
+        """The docs directory inside the sandbox (pages live under it)."""
+        return self.root / "docs"
+
+    @property
+    def svg_path(self) -> Path:
+        return self.root / "docs" / "attack-matrix.svg"
+
+    def page(self, entry_id: str) -> str:
+        return self.read(self.pages_dir / f"{entry_id}.md")
 
 
 @dataclass(frozen=True)
@@ -281,6 +304,12 @@ def tmp_catalogue(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Sandbox:
         dist_path=root / "dist" / "entries.json",
     )
     sandbox.write_readme(README_SKELETON)
+    # The docs a generated page links back to must exist in the sandbox, or
+    # a test that checks those links resolve would fail for a reason that has
+    # nothing to do with the code under test.
+    sandbox.docs_dir.mkdir(parents=True, exist_ok=True)
+    for doc in ("TIERS.md", "METHODOLOGY.md", "TAXONOMY.md"):
+        (sandbox.docs_dir / doc).write_text(f"# {doc}\n", encoding="utf-8")
 
     for module in (entries_module, LEGACY_ENTRIES_MODULE):
         monkeypatch.setattr(module, "ENTRY_DIR", entries_dir)
@@ -290,6 +319,9 @@ def tmp_catalogue(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Sandbox:
     monkeypatch.setattr(stats_module, "ENTRY_DIR", entries_dir)
     monkeypatch.setattr(build_module, "README_PATH", sandbox.readme_path)
     monkeypatch.setattr(build_module, "DIST_PATH", sandbox.dist_path)
+    # The page and SVG paths derive from build.REPO_ROOT at call time, so
+    # redirecting it is what keeps generated pages out of the real docs/.
+    monkeypatch.setattr(build_module, "REPO_ROOT", root)
     return sandbox
 
 

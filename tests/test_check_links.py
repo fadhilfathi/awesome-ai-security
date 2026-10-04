@@ -16,11 +16,14 @@ from __future__ import annotations
 import json
 
 import pytest
+from conftest import Sandbox
 
 from scripts.check_links import main, render_json
 
 
-def test_json_output_parses_when_there_is_nothing_to_check(capsys):
+def test_json_output_parses_when_there_is_nothing_to_check(
+    tmp_catalogue: Sandbox, capsys
+):
     """--json must stay valid JSON even with zero URLs.
 
     Regression: the empty-catalogue branch used to print
@@ -34,7 +37,7 @@ def test_json_output_parses_when_there_is_nothing_to_check(capsys):
     assert payload == {"results": []}
 
 
-def test_text_output_stays_human_readable_when_empty(capsys):
+def test_text_output_stays_human_readable_when_empty(tmp_catalogue: Sandbox, capsys):
     """The non-JSON path keeps its plain sentence; the two modes differ."""
     assert main(["--no-state"]) == 0
 
@@ -44,7 +47,7 @@ def test_text_output_stays_human_readable_when_empty(capsys):
         json.loads(out)
 
 
-def test_json_mode_output_is_never_empty(capsys):
+def test_json_mode_output_is_never_empty(tmp_catalogue: Sandbox, capsys):
     """An empty stdout would make the consumer's size check misreport it.
 
     The workflow treats a zero-byte report as an upstream failure, so a

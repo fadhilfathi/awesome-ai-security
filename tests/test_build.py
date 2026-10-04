@@ -28,7 +28,15 @@ from scripts.entries import today
 Factory = Callable[..., Path]
 Build = Callable[..., tuple[int, str]]
 
-BLOCK_NAMES = ("count", "tier-legend", "tier1", "matrix", "catalogue", "footer")
+BLOCK_NAMES = (
+    "count",
+    "tier-legend",
+    "tier1",
+    "matrix",
+    "catalogue",
+    "entry-index",
+    "footer",
+)
 
 
 def block_of(text: str, name: str) -> str:
@@ -449,7 +457,7 @@ def test_tier1_block_orders_newest_disclosure_first(
     assert run_build()[0] == 0
 
     rows = table_rows(block_of(tmp_catalogue.readme(), "tier1"))
-    assert rows[0] == ["Tier", "Entry", "Date", "Target", "Source"]
+    assert rows[0] == ["Tier", "Entry", "Date", "Target", "Primary source"]
     assert [row[2] for row in rows[1:]] == ["2021-11-30", "2020-06-15", "2019-01-05"]
     assert "newest-entry" in rows[1][1]
     assert "oldest-entry" in rows[3][1]
@@ -487,10 +495,14 @@ def test_month_only_dates_sort_against_full_dates(
     assert [row[2] for row in rows[1:]] == ["2020-03-15", "2020-03"]
 
 
-def test_tier1_row_links_to_the_primary_source(
+def test_tier1_row_links_entry_to_page_and_source_to_primary(
     tmp_catalogue: Sandbox, entry_factory: Factory, run_build: Build
 ) -> None:
-    """primary_url() picks the primary source, not merely the first one."""
+    """Title points at the detail page; the source column picks primary_url.
+
+    Both columns used to carry the same link, which made the source column
+    redundant and left the entry's own page unreachable from the table.
+    """
     entry_factory(
         "beta-entry",
         tier=1,
@@ -507,13 +519,16 @@ def test_tier1_row_links_to_the_primary_source(
     assert run_build()[0] == 0
     rows = table_rows(block_of(tmp_catalogue.readme(), "tier1"))[1:]
     assert len(rows) == 2
+    # Entry column -> the generated detail page for that id.
     assert rows[0][1] == (
-        "[Synthetic test entry about example-product]"
-        "(https://example.invalid/beta-entry/advisory)"
+        "[Synthetic test entry about example-product](docs/entries/beta-entry.md)"
     )
-    assert rows[0][4] == "example.invalid"
+    # Primary source column -> the primary URL, not the secondary listed first.
+    assert rows[0][4] == (
+        "[example.invalid](https://example.invalid/beta-entry/advisory)"
+    )
     assert "gamma-entry" in rows[1][1]
-    assert rows[1][4] == "example.invalid"
+    assert rows[1][4].startswith("[example.invalid](")
 
 
 # --------------------------------------------------------------------------
@@ -529,7 +544,7 @@ def test_dist_entries_are_sorted_and_carry_a_permalink(
     assert run_build()[0] == 0
     payload = tmp_catalogue.dist_json()
     assert [e["id"] for e in payload["entries"]] == ["alpha-entry", "zulu-entry"]
-    assert payload["entries"][0]["_permalink"] == "data/entries/alpha-entry.yml"
+    assert payload["entries"][0]["_permalink"] == "docs/entries/alpha-entry.md"
     assert payload["count"] == 2
 
 

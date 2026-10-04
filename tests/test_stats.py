@@ -13,7 +13,7 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
-from conftest import ATTACK_CLASSES, EVIDENCE_IMPACT
+from conftest import ATTACK_CLASSES, EVIDENCE_IMPACT, Sandbox
 
 from scripts.build import ATTACK_CLASS_LABELS
 from scripts.stats import DEFAULT_MAX_AGE_DAYS, TIERS, attack_classes
@@ -55,7 +55,9 @@ def source(url: str, kind: str = "primary", title: str = "Synthetic source") -> 
 # --------------------------------------------------------------------------
 
 
-def test_empty_catalogue_produces_zeros_not_a_crash(run_stats: StatsRun) -> None:
+def test_empty_catalogue_produces_zeros_not_a_crash(
+    tmp_catalogue: Sandbox, run_stats: StatsRun
+) -> None:
     code, stats = run_stats()
     assert code == 0
     assert set(stats) == REPORT_KEYS
@@ -73,7 +75,7 @@ def test_empty_catalogue_produces_zeros_not_a_crash(run_stats: StatsRun) -> None
 
 
 def test_empty_catalogue_date_fields_are_none_not_zero(
-    run_stats: StatsRun,
+    tmp_catalogue: Sandbox, run_stats: StatsRun
 ) -> None:
     """A zero would be a wrong type for a date field, not merely a wrong value."""
     _, stats = run_stats()
@@ -198,7 +200,7 @@ def test_matrix_counts_match_the_hand_computed_fixture(
 
 
 def test_every_attack_class_appears_with_zero_when_absent(
-    run_stats: StatsRun,
+    tmp_catalogue: Sandbox, run_stats: StatsRun
 ) -> None:
     _, stats = run_stats()
     assert stats["by_attack_class"] == {name: 0 for name in ATTACK_CLASSES}
@@ -512,4 +514,11 @@ def test_the_real_catalogue_reports_consistently(real_entries: list[Any]) -> Non
     assert stats["total_entries"] == len(real_entries)
     assert sum(stats["by_tier"].values()) == stats["total_entries"]
     assert sum(stats["by_attack_class"].values()) == stats["total_entries"]
-    assert stats["by_tier"] == {"1": 0, "2": 0, "3": 0}
+    # The tier keys are fixed by the schema, not by whatever happens to be
+    # filed, so every tier is represented even when it holds zero entries.
+    assert set(stats["by_tier"]) == {"1", "2", "3"}
+    # Invariants that must hold for any catalogue, however small or large.
+    assert stats["entries_with_cve"] <= stats["total_entries"]
+    assert stats["distinct_cve_ids"] >= 0
+    if stats["total_entries"] == 0:
+        assert stats["oldest_date"] is None
