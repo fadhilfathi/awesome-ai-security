@@ -1,6 +1,111 @@
 {
   "generated_from": "data/entries",
   "schema_version": 1,
-  "count": 0,
-  "entries": []
+  "count": 3,
+  "entries": [
+    {
+      "id": "litellm-mcp-auth-bypass-oauth2-passthrough",
+      "title": "LiteLLM MCP endpoint authentication bypass via OAuth2 passthrough fallback",
+      "tier": 1,
+      "attack_class": "CREDENTIAL_EXPOSURE",
+      "target": "BerriAI LiteLLM, versions before 1.84.0 (pip package litellm)",
+      "date": "2026-06-30",
+      "summary": "LiteLLM is a proxy that fronts several model providers behind one OpenAI-compatible interface, and it also brokers Model Context Protocol servers for its users. Its MCP auth handler supported an OAuth2 passthrough mode, and the fallback branch of that handler substituted an empty authentication object when key validation failed instead of rejecting the request. A caller presenting a fabricated Authorization header was therefore treated as authenticated and could enumerate and invoke the MCP tools the proxy was configured to reach. A fix shipped in 1.84.0.",
+      "impact": "An unauthenticated attacker could list and call every configured MCP tool behind the proxy, and reach whatever those tools are wired to: internal services, developer infrastructure, or any credential the integration holds. CISA lists this CVE in the Known Exploited Vulnerabilities catalog with an exploitation status of active, and the CISA enrichment carried in the CVE record states that exploitation is active, so this is recorded as an attack with confirmed real-world use rather than a research result. The sources do not state how many victims were affected.",
+      "mitigation": "Upgrade to LiteLLM 1.84.0 or later. Where an upgrade cannot happen immediately, disable the MCP routes or block the /mcp/ paths at the reverse proxy or API gateway, so an unvalidated Authorization header cannot reach the MCP tooling at all.",
+      "sources": [
+        {
+          "url": "https://github.com/BerriAI/litellm/security/advisories/GHSA-7488-6r32-c95q",
+          "kind": "primary",
+          "title": "MCP Authentication Bypass via OAuth2 Passthrough Fallback (GHSA-7488-6r32-c95q)"
+        },
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2026-59822",
+          "kind": "primary",
+          "title": "CVE-2026-59822 CVE record, including the CISA exploitation enrichment"
+        },
+        {
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2026-59822",
+          "kind": "primary",
+          "title": "CISA Known Exploited Vulnerabilities catalog entry for CVE-2026-59822"
+        },
+        {
+          "url": "https://www.wiz.io/blog/ai-infrastructure-honeypot",
+          "kind": "secondary",
+          "title": "AI infrastructure honeypot report cited by the CISA enrichment"
+        }
+      ],
+      "cve": [
+        "CVE-2026-59822"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/litellm-mcp-auth-bypass-oauth2-passthrough.md"
+    },
+    {
+      "id": "litellm-mcp-stdio-test-endpoint-command-injection",
+      "title": "LiteLLM command execution through MCP stdio test endpoints",
+      "tier": 1,
+      "attack_class": "TOOL_POISONING",
+      "target": "BerriAI LiteLLM 1.74.2 to before 1.83.7 (pip package litellm)",
+      "date": "2026-05-08",
+      "summary": "LiteLLM exposes endpoints that let an operator preview an MCP server configuration before saving it. Those endpoints accepted a full server definition in the request body, including the command, arguments, and environment used by the stdio transport, and attempting to connect to the previewed server spawned that command as a subprocess on the proxy host. The endpoints were reachable with any valid proxy API key and performed no role check, so a holder of a low-privilege internal key could run arbitrary commands with the privileges of the proxy process. The project shipped a fix in 1.83.7.",
+      "impact": "An authenticated user with a low-privilege internal key obtained arbitrary command execution on the proxy host, inheriting whatever that process could reach: configuration and credentials for every tenant the proxy fronts, and any network access available to the host. CISA lists this CVE in the Known Exploited Vulnerabilities catalog, added 2026-06-08, and the enrichment in the CVE record states exploitation is active, so it is filed here as an attack with confirmed real-world use. The sources do not state how many victims were affected.",
+      "mitigation": "Upgrade to LiteLLM 1.83.7 or later. Restrict the MCP preview endpoints to administrative roles so an ordinary internal key cannot reach them, and treat any host running an affected proxy as potentially compromised until its credentials are rotated.",
+      "sources": [
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2026-42271",
+          "kind": "primary",
+          "title": "CVE-2026-42271 CVE record, including the CISA exploitation enrichment"
+        },
+        {
+          "url": "https://github.com/BerriAI/litellm/security/advisories/GHSA-v4p8-mg3p-g94g",
+          "kind": "primary",
+          "title": "LiteLLM: authenticated command execution via MCP stdio test endpoints (GHSA-v4p8-mg3p-g94g)"
+        },
+        {
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2026-42271",
+          "kind": "primary",
+          "title": "CISA Known Exploited Vulnerabilities catalog entry for CVE-2026-42271"
+        }
+      ],
+      "cve": [
+        "CVE-2026-42271"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/litellm-mcp-stdio-test-endpoint-command-injection.md"
+    },
+    {
+      "id": "litellm-proxy-api-key-sql-injection",
+      "title": "LiteLLM unauthenticated SQL injection in proxy API key verification",
+      "tier": 1,
+      "attack_class": "CREDENTIAL_EXPOSURE",
+      "target": "BerriAI LiteLLM 1.81.16 to before 1.83.7 (pip package litellm)",
+      "date": "2026-05-08",
+      "summary": "LiteLLM validates the API keys presented to its proxy routes against a database. In the affected releases the lookup query interpolated the caller-supplied key value into the query text instead of binding it as a separate parameter. An attacker could therefore send a crafted Authorization header to any proxied model route and reach the vulnerable query through the proxy's error-handling path. The project shipped a fix in 1.83.7.",
+      "impact": "The flaw was reachable without authentication, and the advisory states an attacker could read from the proxy's database and may also be able to modify it, which exposes the API keys the proxy manages for its tenants. CISA lists this CVE in the Known Exploited Vulnerabilities catalog, added 2026-05-08, and the enrichment in the CVE record states exploitation is active, so it is filed here as an attack with confirmed real-world use. The sources do not state how many victims were affected.",
+      "mitigation": "Upgrade to LiteLLM 1.83.7 or later, and rotate any API keys the affected proxy held, since an attacker able to read the key database may have taken them. Where an upgrade is not immediate, the advisory gives one workaround: set disable_error_logs to true under general_settings, which removes the error-handling path through which unauthenticated input reaches the vulnerable query.",
+      "sources": [
+        {
+          "url": "https://github.com/BerriAI/litellm/security/advisories/GHSA-r75f-5x8p-qvmc",
+          "kind": "primary",
+          "title": "SQL injection in Proxy API key verification (GHSA-r75f-5x8p-qvmc)"
+        },
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2026-42208",
+          "kind": "primary",
+          "title": "CVE-2026-42208 CVE record, including the CISA exploitation enrichment"
+        },
+        {
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2026-42208",
+          "kind": "primary",
+          "title": "CISA Known Exploited Vulnerabilities catalog entry for CVE-2026-42208"
+        }
+      ],
+      "cve": [
+        "CVE-2026-42208"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/litellm-proxy-api-key-sql-injection.md"
+    }
+  ]
 }
