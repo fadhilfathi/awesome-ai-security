@@ -1,0 +1,42 @@
+id: litellm-proxy-api-key-sql-injection
+title: "LiteLLM unauthenticated SQL injection in proxy API key verification"
+tier: 1
+attack_class: CREDENTIAL_EXPOSURE
+target: "BerriAI LiteLLM 1.81.16 to before 1.83.7 (pip package litellm)"
+date: "2026-05-08"
+summary: >-
+  LiteLLM validates the API keys presented to its proxy routes against a
+  database. In the affected releases the lookup query interpolated the
+  caller-supplied key value into the query text instead of binding it as a
+  separate parameter. An attacker could therefore send a crafted
+  Authorization header to any proxied model route and reach the vulnerable
+  query through the proxy's error-handling path. The project shipped a fix
+  in 1.83.7.
+impact: >-
+  The flaw was reachable without authentication, and the advisory states an
+  attacker could read from the proxy's database and may also be able to modify
+  it, which exposes the API keys the proxy manages for its tenants. CISA lists
+  this CVE in the Known Exploited Vulnerabilities catalog, added 2026-05-08,
+  and the enrichment in the CVE record states exploitation is active, so it is
+  filed here as an attack with confirmed real-world use. The sources do not
+  state how many victims were affected.
+mitigation: >-
+  Upgrade to LiteLLM 1.83.7 or later, and rotate any API keys the affected
+  proxy held, since an attacker able to read the key database may have taken
+  them. Where an upgrade is not immediate, the advisory gives one workaround:
+  set disable_error_logs to true under general_settings, which removes the
+  error-handling path through which unauthenticated input reaches the
+  vulnerable query.
+sources:
+  - url: https://github.com/BerriAI/litellm/security/advisories/GHSA-r75f-5x8p-qvmc
+    kind: primary
+    title: "SQL injection in Proxy API key verification (GHSA-r75f-5x8p-qvmc)"
+  - url: https://cveawg.mitre.org/api/cve/CVE-2026-42208
+    kind: primary
+    title: "CVE-2026-42208 CVE record, including the CISA exploitation enrichment"
+  - url: https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2026-42208
+    kind: primary
+    title: "CISA Known Exploited Vulnerabilities catalog entry for CVE-2026-42208"
+cve:
+  - CVE-2026-42208
+last_verified: "2026-10-04"

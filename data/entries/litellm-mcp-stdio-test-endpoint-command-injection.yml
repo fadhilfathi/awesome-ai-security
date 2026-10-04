@@ -1,0 +1,43 @@
+id: litellm-mcp-stdio-test-endpoint-command-injection
+title: "LiteLLM command execution through MCP stdio test endpoints"
+tier: 1
+attack_class: TOOL_POISONING
+target: "BerriAI LiteLLM 1.74.2 to before 1.83.7 (pip package litellm)"
+date: "2026-05-08"
+summary: >-
+  LiteLLM exposes endpoints that let an operator preview an MCP server
+  configuration before saving it. Those endpoints accepted a full server
+  definition in the request body, including the command, arguments, and
+  environment used by the stdio transport, and attempting to connect to the
+  previewed server spawned that command as a subprocess on the proxy host.
+  The endpoints were reachable with any valid proxy API key and performed no
+  role check, so a holder of a low-privilege internal key could run arbitrary
+  commands with the privileges of the proxy process. The project shipped a
+  fix in 1.83.7.
+impact: >-
+  An authenticated user with a low-privilege internal key obtained arbitrary
+  command execution on the proxy host, inheriting whatever that process could
+  reach: configuration and credentials for every tenant the proxy fronts,
+  and any network access available to the host. CISA lists this CVE in the
+  Known Exploited Vulnerabilities catalog, added 2026-06-08, and the
+  enrichment in the CVE record states exploitation is active, so it is filed
+  here as an attack with confirmed real-world use. The sources do not state
+  how many victims were affected.
+mitigation: >-
+  Upgrade to LiteLLM 1.83.7 or later. Restrict the MCP preview endpoints to
+  administrative roles so an ordinary internal key cannot reach them, and
+  treat any host running an affected proxy as potentially compromised until
+  its credentials are rotated.
+sources:
+  - url: https://cveawg.mitre.org/api/cve/CVE-2026-42271
+    kind: primary
+    title: "CVE-2026-42271 CVE record, including the CISA exploitation enrichment"
+  - url: https://github.com/BerriAI/litellm/security/advisories/GHSA-v4p8-mg3p-g94g
+    kind: primary
+    title: "LiteLLM: authenticated command execution via MCP stdio test endpoints (GHSA-v4p8-mg3p-g94g)"
+  - url: https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2026-42271
+    kind: primary
+    title: "CISA Known Exploited Vulnerabilities catalog entry for CVE-2026-42271"
+cve:
+  - CVE-2026-42271
+last_verified: "2026-10-04"

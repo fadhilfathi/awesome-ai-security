@@ -1,0 +1,46 @@
+id: litellm-mcp-auth-bypass-oauth2-passthrough
+title: "LiteLLM MCP endpoint authentication bypass via OAuth2 passthrough fallback"
+tier: 1
+attack_class: CREDENTIAL_EXPOSURE
+target: "BerriAI LiteLLM, versions before 1.84.0 (pip package litellm)"
+date: "2026-06-30"
+summary: >-
+  LiteLLM is a proxy that fronts several model providers behind one
+  OpenAI-compatible interface, and it also brokers Model Context Protocol
+  servers for its users. Its MCP auth handler supported an OAuth2
+  passthrough mode, and the fallback branch of that handler substituted an
+  empty authentication object when key validation failed instead of
+  rejecting the request. A caller presenting a fabricated Authorization
+  header was therefore treated as authenticated and could enumerate and
+  invoke the MCP tools the proxy was configured to reach. A fix shipped in
+  1.84.0.
+impact: >-
+  An unauthenticated attacker could list and call every configured MCP tool
+  behind the proxy, and reach whatever those tools are wired to: internal
+  services, developer infrastructure, or any credential the integration
+  holds. CISA lists this CVE in the Known Exploited Vulnerabilities catalog
+  with an exploitation status of active, and the CISA enrichment carried in
+  the CVE record states that exploitation is active, so this is recorded as
+  an attack with confirmed real-world use rather than a research result.
+  The sources do not state how many victims were affected.
+mitigation: >-
+  Upgrade to LiteLLM 1.84.0 or later. Where an upgrade cannot happen
+  immediately, disable the MCP routes or block the /mcp/ paths at the reverse
+  proxy or API gateway, so an unvalidated Authorization header cannot reach
+  the MCP tooling at all.
+sources:
+  - url: https://github.com/BerriAI/litellm/security/advisories/GHSA-7488-6r32-c95q
+    kind: primary
+    title: "MCP Authentication Bypass via OAuth2 Passthrough Fallback (GHSA-7488-6r32-c95q)"
+  - url: https://cveawg.mitre.org/api/cve/CVE-2026-59822
+    kind: primary
+    title: "CVE-2026-59822 CVE record, including the CISA exploitation enrichment"
+  - url: https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2026-59822
+    kind: primary
+    title: "CISA Known Exploited Vulnerabilities catalog entry for CVE-2026-59822"
+  - url: https://www.wiz.io/blog/ai-infrastructure-honeypot
+    kind: secondary
+    title: "AI infrastructure honeypot report cited by the CISA enrichment"
+cve:
+  - CVE-2026-59822
+last_verified: "2026-10-04"
