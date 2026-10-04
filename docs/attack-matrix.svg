@@ -25,7 +25,8 @@
 <rect x="250" y="82" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
 <rect x="280" y="82" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
 <text class="m-label" x="14" y="122">Agent privilege abuse</text>
-<rect x="220" y="106" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
+<rect x="220" y="106" width="30" height="24" fill="#b2182b" stroke="#24292f" stroke-width="1"/>
+<text class="m-num" x="235" y="119">3</text>
 <rect x="250" y="106" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
 <rect x="280" y="106" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
 <text class="m-label" x="14" y="146">Data exfiltration</text>
@@ -33,7 +34,8 @@
 <rect x="250" y="130" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
 <rect x="280" y="130" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
 <text class="m-label" x="14" y="170">Supply chain (package)</text>
-<rect x="220" y="154" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
+<rect x="220" y="154" width="30" height="24" fill="#b2182b" stroke="#24292f" stroke-width="1"/>
+<text class="m-num" x="235" y="167">1</text>
 <rect x="250" y="154" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
 <rect x="280" y="154" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
 <text class="m-label" x="14" y="194">Supply chain (model)</text>
@@ -73,8 +75,8 @@
 <rect x="220" y="370" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
 <rect x="250" y="370" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
 <rect x="280" y="370" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
-<text class="m-note" x="14" y="411">3 entries; dashed empty cells are not yet documented.</text>
-<text class="m-head" x="235" y="411" text-anchor="middle">3</text>
+<text class="m-note" x="14" y="411">7 entries; dashed empty cells are not yet documented.</text>
+<text class="m-head" x="235" y="411" text-anchor="middle">7</text>
 <text class="m-head" x="265" y="411" text-anchor="middle">0</text>
 <text class="m-head" x="295" y="411" text-anchor="middle">0</text>
 </svg>

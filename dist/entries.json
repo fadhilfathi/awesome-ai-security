@@ -1,8 +1,34 @@
 {
   "generated_from": "data/entries",
   "schema_version": 1,
-  "count": 3,
+  "count": 7,
   "entries": [
+    {
+      "id": "huggingface-autonomous-agent-production-intrusion",
+      "title": "Autonomous AI agent intrusion into Hugging Face production infrastructure",
+      "tier": 1,
+      "attack_class": "AGENT_PRIVILEGE_ABUSE",
+      "target": "Hugging Face production infrastructure, dataset processing pipeline and internal Kubernetes clusters",
+      "date": "2026-07-16",
+      "summary": "Hugging Face disclosed an intrusion into part of its production infrastructure that it states was driven end to end by an autonomous agent framework rather than by a person driving a tool interactively. Initial access came through the data-processing pipeline: a malicious dataset abused two code-execution paths, a remote-code dataset loader and a template injection in a dataset configuration, to run code on a processing worker. The actor escalated to node-level access, harvested cloud and cluster credentials, and moved laterally into several internal clusters over a weekend.",
+      "impact": "The platform confirmed unauthorised access to a limited set of internal datasets and to several service credentials, which it rotated, and rebuilt the compromised nodes. The disclosure states that no evidence of tampering with public, user-facing models, datasets, or Spaces was found and that the software supply chain was verified clean, so the impact is internal rather than a compromise of downloaded models. Whether partner or customer data was affected was still under assessment when the disclosure was published. The incident lowers the cost of a patient multi-stage campaign.",
+      "mitigation": "Close remote-code execution paths in dataset loaders and configuration templating, and treat an untrusted dataset or model as untrusted code rather than as data. Isolate processing workers and scope any credential reachable from one to that worker. Rotate tokens and review account activity after an intrusion of this shape. Keep a model you can run yourself available for forensics: the disclosure reports hosted providers blocked analysis of real attacker artefacts under their safety guardrails.",
+      "sources": [
+        {
+          "url": "https://huggingface.co/blog/security-incident-july-2026",
+          "kind": "primary",
+          "title": "Security incident disclosure - July 2026"
+        },
+        {
+          "url": "https://github.com/huggingface/blog/blob/main/security-incident-july-2026.md",
+          "kind": "primary",
+          "title": "Security incident disclosure - July 2026 (source markdown)"
+        }
+      ],
+      "cve": [],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/huggingface-autonomous-agent-production-intrusion.md"
+    },
     {
       "id": "litellm-mcp-auth-bypass-oauth2-passthrough",
       "title": "LiteLLM MCP endpoint authentication bypass via OAuth2 passthrough fallback",
@@ -106,6 +132,107 @@
       ],
       "last_verified": "2026-10-04",
       "_permalink": "docs/entries/litellm-proxy-api-key-sql-injection.md"
+    },
+    {
+      "id": "litellm-pypi-supply-chain-trivy-compromise",
+      "title": "LiteLLM malicious PyPI releases published after a compromised CI dependency",
+      "tier": 1,
+      "attack_class": "SUPPLY_CHAIN_PACKAGE",
+      "target": "litellm v1.82.7 and v1.82.8 on PyPI, via the project's CircleCI release pipeline",
+      "date": "2026-03-24",
+      "summary": "LiteLLM publishes itself to PyPI from an automated pipeline. On 2026-03-24 the project pushed v1.82.7 and then v1.82.8, and both were malicious: they were live for roughly forty minutes before PyPI quarantined them, and the project worked with PyPI to delete them. The vendor's own account is that an unpinned Trivy security-scanner dependency in the pipeline had itself been compromised, ran during a scan, read the release credentials from the environment, and used them to publish the bad versions. The vendor named three contributing factors: a shared CI environment, long-lived static release secrets, and the unpinned scanner.",
+      "impact": "Malicious code was published to a public package index under the project's own name and release path, so users who installed either version during the exposure window were affected by running attacker code on their own machines. The vendor reports rotating the PyPI, GitHub, and Docker credentials and maintainer accounts, removing roughly six thousand open branches, and pausing releases, and states it found no evidence of lateral movement into its own systems. It also states the last twenty releases show no indicators of compromise.",
+      "mitigation": "Pin every dependency and action in a release pipeline to a verified digest or commit, including security scanners, and add a cooldown before adopting a new version of a package. Move release credentials to ephemeral identity, such as PyPI Trusted Publisher, rather than long-lived static secrets. Give each pipeline stage its own isolated environment so one compromised component cannot reach the release path. Sign releases so consumers can verify them; the vendor now signs its images with cosign. Anyone who installed v1.82.7 or v1.82.8 should rotate secrets present in that environment.",
+      "sources": [
+        {
+          "url": "https://docs.litellm.ai/blog/security-townhall-updates",
+          "kind": "primary",
+          "title": "Security Townhall Updates (vendor incident report, 2026-03-27)"
+        },
+        {
+          "url": "https://docs.litellm.ai/blog/security-update-march-2026",
+          "kind": "primary",
+          "title": "Security Update: Suspected Supply Chain Incident (vendor notice, 2026-03-24)"
+        },
+        {
+          "url": "https://www.aquasec.com/blog/trivy-supply-chain-attack-what-you-need-to-know/",
+          "kind": "secondary",
+          "title": "Trivy supply chain attack, the upstream scanner compromise the vendor cites"
+        }
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/litellm-pypi-supply-chain-trivy-compromise.md"
+    },
+    {
+      "id": "mlflow-webhook-ssrf-redirect-dns-rebinding",
+      "title": "MLflow unauthenticated webhook SSRF via unvalidated redirects and DNS rebinding",
+      "tier": 1,
+      "attack_class": "AGENT_PRIVILEGE_ABUSE",
+      "target": "MLflow 3.3.0 to before 3.15.0 (pip package mlflow)",
+      "date": "2026-08-19",
+      "summary": "MLflow is an open source AI engineering platform used to track agents and machine learning models. Its unauthenticated webhook test endpoint validated the supplied URL only once, at submission, but the delivery code followed redirects and re-resolved the hostname without pinning the address that had been validated. An attacker could therefore submit a URL that passed the check and then pointed somewhere else, either through a redirect or by changing what the hostname resolved to between the two moments. The project shipped a fix in 3.15.0.",
+      "impact": "The endpoint required no authentication, and the advisory states an attacker could reach internal services or cloud instance metadata endpoints and read the response status and body back. On a cloud-hosted tracking server that is the usual route to instance credentials. CISA lists this CVE in the Known Exploited Vulnerabilities catalog, added 2026-08-19, and the enrichment in the CVE record states exploitation is active, so it is filed here as an attack with confirmed real-world use. The sources do not state how many victims were affected.",
+      "mitigation": "Upgrade to MLflow 3.15.0 or later. Re-resolving a hostname after the initial check is the defect, so a fix that only validates the submitted URL will leave the same bypass in place; block access to instance metadata endpoints from the application network as defence in depth.",
+      "sources": [
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2026-64849",
+          "kind": "primary",
+          "title": "CVE-2026-64849 CVE record, including the CISA exploitation enrichment"
+        },
+        {
+          "url": "https://github.com/mlflow/mlflow/security/advisories/GHSA-7gwp-5pfp-969j",
+          "kind": "primary",
+          "title": "MLflow: unauthenticated full-read SSRF in webhook delivery (GHSA-7gwp-5pfp-969j)"
+        },
+        {
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2026-64849",
+          "kind": "primary",
+          "title": "CISA Known Exploited Vulnerabilities catalog entry for CVE-2026-64849"
+        }
+      ],
+      "cve": [
+        "CVE-2026-64849"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/mlflow-webhook-ssrf-redirect-dns-rebinding.md"
+    },
+    {
+      "id": "ray-dashboard-browser-rce-dns-rebinding",
+      "title": "Ray dashboard remote code execution from a developer's browser via DNS rebinding",
+      "tier": 1,
+      "attack_class": "AGENT_PRIVILEGE_ABUSE",
+      "target": "Ray before 2.52.0 (pip package ray), dashboard used as a development tool",
+      "date": "2026-08-17",
+      "summary": "Ray is a distributed compute engine widely used to run AI and machine learning workloads, and its dashboard is normally reachable only from the developer's own machine during development. The dashboard relied on the User-Agent header starting with the string Mozilla as its browser-origin defence. Because the fetch specification lets a page set that header, the check could not distinguish a real browser navigation from a scripted request. Combined with a DNS rebinding attack against the browser, a developer who visited an attacker-controlled page, or loaded a malicious advertisement, could have code run on the machine serving Ray. The project shipped a fix in 2.52.0.",
+      "impact": "The advisory describes remote code execution on the developer workstation with confidentiality, integrity, and availability impact all high. In practice that workstation holds source access, cloud credentials, and often the credentials for the cluster the dashboard is driving. CISA lists this CVE in the Known Exploited Vulnerabilities catalog, added 2026-08-17, and the enrichment in the CVE record states exploitation is active, so it is filed here as an attack with confirmed real-world use. The sources do not state how many victims were affected.",
+      "mitigation": "Upgrade to Ray 2.52.0 or later. Until then, do not expose the Ray dashboard beyond localhost, and do not rely on a User-Agent check as an origin control; a header a page can set is not evidence that a request came from a browser address bar.",
+      "sources": [
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2025-62593",
+          "kind": "primary",
+          "title": "CVE-2025-62593 CVE record, including the CISA exploitation enrichment"
+        },
+        {
+          "url": "https://github.com/ray-project/ray/security/advisories/GHSA-q279-jhrf-cc6v",
+          "kind": "primary",
+          "title": "Ray remote code execution via Safari and Firefox browsers through DNS rebinding (GHSA-q279-jhrf-cc6v)"
+        },
+        {
+          "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2025-62593",
+          "kind": "primary",
+          "title": "CISA Known Exploited Vulnerabilities catalog entry for CVE-2025-62593"
+        },
+        {
+          "url": "https://www.bitsight.com/blog/rondodox-botnet-infrastructure-analysis",
+          "kind": "secondary",
+          "title": "RondoDox infrastructure analysis cited by the CISA enrichment"
+        }
+      ],
+      "cve": [
+        "CVE-2025-62593"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/ray-dashboard-browser-rce-dns-rebinding.md"
     }
   ]
 }

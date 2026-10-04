@@ -5,7 +5,7 @@ how well the attack is established, so you can tell a documented incident from a
 researcher's proof of concept from speculation.
 
 <!-- BEGIN:GENERATED:count -->
-**3** entries; last verified **2026-10-04**.
+**7** entries; last verified **2026-10-04**.
 <!-- END:GENERATED:count -->
 
 ## Evidence tiers
@@ -21,9 +21,13 @@ researcher's proof of concept from speculation.
 <!-- BEGIN:GENERATED:tier1 -->
 | Tier | Entry | Date | Target | Primary source |
 | --- | --- | --- | --- | --- |
+| `T1 [===]` | [MLflow unauthenticated webhook SSRF via unvalidated redirects and DNS rebinding](docs/entries/mlflow-webhook-ssrf-redirect-dns-rebinding.md) | 2026-08-19 | MLflow 3.3.0 to before 3.15.0 (pip package mlflow) | [cveawg.mitre.org](https://cveawg.mitre.org/api/cve/CVE-2026-64849) |
+| `T1 [===]` | [Ray dashboard remote code execution from a developer's browser via DNS rebinding](docs/entries/ray-dashboard-browser-rce-dns-rebinding.md) | 2026-08-17 | Ray before 2.52.0 (pip package ray), dashboard used as a development tool | [cveawg.mitre.org](https://cveawg.mitre.org/api/cve/CVE-2025-62593) |
+| `T1 [===]` | [Autonomous AI agent intrusion into Hugging Face production infrastructure](docs/entries/huggingface-autonomous-agent-production-intrusion.md) | 2026-07-16 | Hugging Face production infrastructure, dataset processing pipeline and internal Kubernetes clusters | [huggingface.co](https://huggingface.co/blog/security-incident-july-2026) |
 | `T1 [===]` | [LiteLLM MCP endpoint authentication bypass via OAuth2 passthrough fallback](docs/entries/litellm-mcp-auth-bypass-oauth2-passthrough.md) | 2026-06-30 | BerriAI LiteLLM, versions before 1.84.0 (pip package litellm) | [github.com](https://github.com/BerriAI/litellm/security/advisories/GHSA-7488-6r32-c95q) |
 | `T1 [===]` | [LiteLLM command execution through MCP stdio test endpoints](docs/entries/litellm-mcp-stdio-test-endpoint-command-injection.md) | 2026-05-08 | BerriAI LiteLLM 1.74.2 to before 1.83.7 (pip package litellm) | [cveawg.mitre.org](https://cveawg.mitre.org/api/cve/CVE-2026-42271) |
 | `T1 [===]` | [LiteLLM unauthenticated SQL injection in proxy API key verification](docs/entries/litellm-proxy-api-key-sql-injection.md) | 2026-05-08 | BerriAI LiteLLM 1.81.16 to before 1.83.7 (pip package litellm) | [github.com](https://github.com/BerriAI/litellm/security/advisories/GHSA-r75f-5x8p-qvmc) |
+| `T1 [===]` | [LiteLLM malicious PyPI releases published after a compromised CI dependency](docs/entries/litellm-pypi-supply-chain-trivy-compromise.md) | 2026-03-24 | litellm v1.82.7 and v1.82.8 on PyPI, via the project's CircleCI release pipeline | [docs.litellm.ai](https://docs.litellm.ai/blog/security-townhall-updates) |
 <!-- END:GENERATED:tier1 -->
 
 ## Attack class x evidence tier
@@ -38,9 +42,9 @@ Cell colour encodes the evidence tier (darkest is Tier 1, confirmed in the wild)
 | Prompt injection (direct) | 0 | 0 | 0 | 0 |
 | Prompt injection (indirect) | 0 | 0 | 0 | 0 |
 | Tool poisoning | 1 | 0 | 0 | 1 |
-| Agent privilege abuse | 0 | 0 | 0 | 0 |
+| Agent privilege abuse | 3 | 0 | 0 | 3 |
 | Data exfiltration | 0 | 0 | 0 | 0 |
-| Supply chain (package) | 0 | 0 | 0 | 0 |
+| Supply chain (package) | 1 | 0 | 0 | 1 |
 | Supply chain (model) | 0 | 0 | 0 | 0 |
 | Code assistant abuse | 0 | 0 | 0 | 0 |
 | Training data poisoning | 0 | 0 | 0 | 0 |
@@ -50,7 +54,7 @@ Cell colour encodes the evidence tier (darkest is Tier 1, confirmed in the wild)
 | Credential exposure | 2 | 0 | 0 | 2 |
 | Denial of service | 0 | 0 | 0 | 0 |
 | Other | 0 | 0 | 0 | 0 |
-| **Total** | 3 | 0 | 0 | 3 |
+| **Total** | 7 | 0 | 0 | 7 |
 <!-- END:GENERATED:matrix -->
 
 ## Full catalogue
@@ -61,6 +65,20 @@ Cell colour encodes the evidence tier (darkest is Tier 1, confirmed in the wild)
 | Tier | Title | Date | Target |
 | --- | --- | --- | --- |
 | `T1 [===]` | LiteLLM command execution through MCP stdio test endpoints | 2026-05-08 | BerriAI LiteLLM 1.74.2 to before 1.83.7 (pip package litellm) |
+
+### Agent privilege abuse
+
+| Tier | Title | Date | Target |
+| --- | --- | --- | --- |
+| `T1 [===]` | MLflow unauthenticated webhook SSRF via unvalidated redirects and DNS rebinding | 2026-08-19 | MLflow 3.3.0 to before 3.15.0 (pip package mlflow) |
+| `T1 [===]` | Ray dashboard remote code execution from a developer's browser via DNS rebinding | 2026-08-17 | Ray before 2.52.0 (pip package ray), dashboard used as a development tool |
+| `T1 [===]` | Autonomous AI agent intrusion into Hugging Face production infrastructure | 2026-07-16 | Hugging Face production infrastructure, dataset processing pipeline and internal Kubernetes clusters |
+
+### Supply chain (package)
+
+| Tier | Title | Date | Target |
+| --- | --- | --- | --- |
+| `T1 [===]` | LiteLLM malicious PyPI releases published after a compromised CI dependency | 2026-03-24 | litellm v1.82.7 and v1.82.8 on PyPI, via the project's CircleCI release pipeline |
 
 ### Credential exposure
 
@@ -79,9 +97,13 @@ file and rebuild rather than editing a page.
 <!-- BEGIN:GENERATED:entry-index -->
 ### `T1 [===]` Tier 1 - Confirmed in the wild
 
+- [MLflow unauthenticated webhook SSRF via unvalidated redirects and DNS rebinding](docs/entries/mlflow-webhook-ssrf-redirect-dns-rebinding.md) - Agent privilege abuse - 2026-08-19
+- [Ray dashboard remote code execution from a developer's browser via DNS rebinding](docs/entries/ray-dashboard-browser-rce-dns-rebinding.md) - Agent privilege abuse - 2026-08-17
+- [Autonomous AI agent intrusion into Hugging Face production infrastructure](docs/entries/huggingface-autonomous-agent-production-intrusion.md) - Agent privilege abuse - 2026-07-16
 - [LiteLLM MCP endpoint authentication bypass via OAuth2 passthrough fallback](docs/entries/litellm-mcp-auth-bypass-oauth2-passthrough.md) - Credential exposure - 2026-06-30
 - [LiteLLM command execution through MCP stdio test endpoints](docs/entries/litellm-mcp-stdio-test-endpoint-command-injection.md) - Tool poisoning - 2026-05-08
 - [LiteLLM unauthenticated SQL injection in proxy API key verification](docs/entries/litellm-proxy-api-key-sql-injection.md) - Credential exposure - 2026-05-08
+- [LiteLLM malicious PyPI releases published after a compromised CI dependency](docs/entries/litellm-pypi-supply-chain-trivy-compromise.md) - Supply chain (package) - 2026-03-24
 <!-- END:GENERATED:entry-index -->
 
 ## How to read this list

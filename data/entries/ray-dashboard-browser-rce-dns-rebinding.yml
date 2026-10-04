@@ -1,0 +1,47 @@
+id: ray-dashboard-browser-rce-dns-rebinding
+title: "Ray dashboard remote code execution from a developer's browser via DNS rebinding"
+tier: 1
+attack_class: AGENT_PRIVILEGE_ABUSE
+target: "Ray before 2.52.0 (pip package ray), dashboard used as a development tool"
+date: "2026-08-17"
+summary: >-
+  Ray is a distributed compute engine widely used to run AI and machine
+  learning workloads, and its dashboard is normally reachable only from the
+  developer's own machine during development. The dashboard relied on the
+  User-Agent header starting with the string Mozilla as its browser-origin
+  defence. Because the fetch specification lets a page set that header, the
+  check could not distinguish a real browser navigation from a scripted
+  request. Combined with a DNS rebinding attack against the browser, a
+  developer who visited an attacker-controlled page, or loaded a malicious
+  advertisement, could have code run on the machine serving Ray. The project
+  shipped a fix in 2.52.0.
+impact: >-
+  The advisory describes remote code execution on the developer workstation
+  with confidentiality, integrity, and availability impact all high. In
+  practice that workstation holds source access, cloud credentials, and often
+  the credentials for the cluster the dashboard is driving. CISA lists this
+  CVE in the Known Exploited Vulnerabilities catalog, added 2026-08-17, and
+  the enrichment in the CVE record states exploitation is active, so it is
+  filed here as an attack with confirmed real-world use. The sources do not
+  state how many victims were affected.
+mitigation: >-
+  Upgrade to Ray 2.52.0 or later. Until then, do not expose the Ray dashboard
+  beyond localhost, and do not rely on a User-Agent check as an origin
+  control; a header a page can set is not evidence that a request came from a
+  browser address bar.
+sources:
+  - url: https://cveawg.mitre.org/api/cve/CVE-2025-62593
+    kind: primary
+    title: "CVE-2025-62593 CVE record, including the CISA exploitation enrichment"
+  - url: https://github.com/ray-project/ray/security/advisories/GHSA-q279-jhrf-cc6v
+    kind: primary
+    title: "Ray remote code execution via Safari and Firefox browsers through DNS rebinding (GHSA-q279-jhrf-cc6v)"
+  - url: https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2025-62593
+    kind: primary
+    title: "CISA Known Exploited Vulnerabilities catalog entry for CVE-2025-62593"
+  - url: https://www.bitsight.com/blog/rondodox-botnet-infrastructure-analysis
+    kind: secondary
+    title: "RondoDox infrastructure analysis cited by the CISA enrichment"
+cve:
+  - CVE-2025-62593
+last_verified: "2026-10-04"

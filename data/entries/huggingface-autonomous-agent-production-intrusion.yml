@@ -1,0 +1,42 @@
+id: huggingface-autonomous-agent-production-intrusion
+title: "Autonomous AI agent intrusion into Hugging Face production infrastructure"
+tier: 1
+attack_class: AGENT_PRIVILEGE_ABUSE
+target: "Hugging Face production infrastructure, dataset processing pipeline and internal Kubernetes clusters"
+date: "2026-07-16"
+summary: >-
+  Hugging Face disclosed an intrusion into part of its production
+  infrastructure that it states was driven end to end by an autonomous agent
+  framework rather than by a person driving a tool interactively. Initial
+  access came through the data-processing pipeline: a malicious dataset
+  abused two code-execution paths, a remote-code dataset loader and a template
+  injection in a dataset configuration, to run code on a processing worker.
+  The actor escalated to node-level access, harvested cloud and cluster
+  credentials, and moved laterally into several internal clusters over a
+  weekend.
+impact: >-
+  The platform confirmed unauthorised access to a limited set of internal
+  datasets and to several service credentials, which it rotated, and rebuilt
+  the compromised nodes. The disclosure states that no evidence of tampering
+  with public, user-facing models, datasets, or Spaces was found and that the
+  software supply chain was verified clean, so the impact is internal rather
+  than a compromise of downloaded models. Whether partner or customer data was
+  affected was still under assessment when the disclosure was published. The
+  incident lowers the cost of a patient multi-stage campaign.
+mitigation: >-
+  Close remote-code execution paths in dataset loaders and configuration
+  templating, and treat an untrusted dataset or model as untrusted code
+  rather than as data. Isolate processing workers and scope any credential
+  reachable from one to that worker. Rotate tokens and review account activity
+  after an intrusion of this shape. Keep a model you can run yourself available
+  for forensics: the disclosure reports hosted providers blocked analysis of
+  real attacker artefacts under their safety guardrails.
+sources:
+  - url: https://huggingface.co/blog/security-incident-july-2026
+    kind: primary
+    title: "Security incident disclosure - July 2026"
+  - url: https://github.com/huggingface/blog/blob/main/security-incident-july-2026.md
+    kind: primary
+    title: "Security incident disclosure - July 2026 (source markdown)"
+cve: []
+last_verified: "2026-10-04"

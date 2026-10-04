@@ -1,0 +1,42 @@
+id: mlflow-webhook-ssrf-redirect-dns-rebinding
+title: "MLflow unauthenticated webhook SSRF via unvalidated redirects and DNS rebinding"
+tier: 1
+attack_class: AGENT_PRIVILEGE_ABUSE
+target: "MLflow 3.3.0 to before 3.15.0 (pip package mlflow)"
+date: "2026-08-19"
+summary: >-
+  MLflow is an open source AI engineering platform used to track agents and
+  machine learning models. Its unauthenticated webhook test endpoint validated
+  the supplied URL only once, at submission, but the delivery code followed
+  redirects and re-resolved the hostname without pinning the address that had
+  been validated. An attacker could therefore submit a URL that passed the
+  check and then pointed somewhere else, either through a redirect or by
+  changing what the hostname resolved to between the two moments. The project
+  shipped a fix in 3.15.0.
+impact: >-
+  The endpoint required no authentication, and the advisory states an attacker
+  could reach internal services or cloud instance metadata endpoints and read
+  the response status and body back. On a cloud-hosted tracking server that is
+  the usual route to instance credentials. CISA lists this CVE in the Known
+  Exploited Vulnerabilities catalog, added 2026-08-19, and the enrichment in
+  the CVE record states exploitation is active, so it is filed here as an
+  attack with confirmed real-world use. The sources do not state how many
+  victims were affected.
+mitigation: >-
+  Upgrade to MLflow 3.15.0 or later. Re-resolving a hostname after the initial
+  check is the defect, so a fix that only validates the submitted URL will
+  leave the same bypass in place; block access to instance metadata endpoints
+  from the application network as defence in depth.
+sources:
+  - url: https://cveawg.mitre.org/api/cve/CVE-2026-64849
+    kind: primary
+    title: "CVE-2026-64849 CVE record, including the CISA exploitation enrichment"
+  - url: https://github.com/mlflow/mlflow/security/advisories/GHSA-7gwp-5pfp-969j
+    kind: primary
+    title: "MLflow: unauthenticated full-read SSRF in webhook delivery (GHSA-7gwp-5pfp-969j)"
+  - url: https://www.cisa.gov/known-exploited-vulnerabilities-catalog?field_cve=CVE-2026-64849
+    kind: primary
+    title: "CISA Known Exploited Vulnerabilities catalog entry for CVE-2026-64849"
+cve:
+  - CVE-2026-64849
+last_verified: "2026-10-04"
