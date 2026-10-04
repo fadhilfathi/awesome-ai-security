@@ -1,0 +1,35 @@
+id: ai-infra-ollama-gguf-loader-memory-leak
+title: "Ollama GGUF loader reads past the file buffer and leaks server memory to the caller"
+tier: 2
+attack_class: CREDENTIAL_EXPOSURE
+target: "Ollama before 0.17.1, the GGUF model loader behind /api/create"
+date: "2026-05-04"
+summary: >-
+  The record describes a crafted GGUF file whose declared tensor offset and size exceed the
+  file's real length. Quantizing that tensor in the GGUF loader reads past the allocated heap
+  buffer, so the bytes that follow it in memory end up inside the model artifact the server
+  produces. Because /api/create and /api/push carry no authentication in the upstream
+  distribution, the caller who uploaded the file can push the resulting artifact to a registry
+  they control and read the leaked memory out of it. The fix landed in 0.17.1.
+impact: >-
+  The record names what the overread can disclose as environment variables, API keys, system
+  prompts and other users' concurrent conversation data, so the taxonomy tie-break on the item
+  set classifies this CREDENTIAL_EXPOSURE rather than DATA_EXFILTRATION. It scores 9.1 with
+  no privileges required and no user interaction, and its enrichment states that the documented
+  OLLAMA_HOST=0.0.0.0 configuration is widely used and that large public exposure was
+  observed. No source states that any specific deployment was exploited.
+mitigation: >-
+  Upgrade to Ollama 0.17.1 or later. The record gives three interim steps: keep the server bound
+  to a trusted interface rather than 0.0.0.0, put an authenticating reverse proxy in front of
+  /api/create and /api/push, and restrict outbound egress from the host so a push cannot reach
+  an attacker-controlled registry.
+sources:
+  - url: https://cveawg.mitre.org/api/cve/CVE-2026-7482
+    kind: primary
+    title: "CVE-2026-7482 CVE record for the Ollama GGUF loader out-of-bounds read"
+  - url: https://github.com/advisories/GHSA-x8qc-fggm-mpqg
+    kind: primary
+    title: "GitHub Advisory Database entry for the Ollama GGUF loader heap overread"
+cve:
+  - CVE-2026-7482
+last_verified: "2026-10-04"

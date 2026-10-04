@@ -8,7 +8,7 @@
 | Tier | `T1 [===]` **Tier 1 - Confirmed in the wild** |
 | Attack class | Agent privilege abuse |
 | Target | MLflow 3.3.0 to before 3.15.0 (pip package mlflow) |
-| Disclosure date | 2026-08-19 |
+| Disclosure date | 2026-08-17 |
 | Last verified | 2026-10-04 |
 | CVE | CVE-2026-64849 |
 

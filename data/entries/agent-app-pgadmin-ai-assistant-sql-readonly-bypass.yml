@@ -1,0 +1,40 @@
+id: agent-app-pgadmin-ai-assistant-sql-readonly-bypass
+title: "Prompt injection bypasses the read-only guard in the pgAdmin 4 AI Assistant SQL tool"
+tier: 2
+attack_class: INSECURE_OUTPUT_HANDLING
+target: "pgAdmin 4 AI Assistant execute_sql_query tool, versions 9.13 to before 9.16"
+date: "2026-06-18"
+summary: >-
+  The PostgreSQL CNA's record for pgAdmin 4 states that the AI Assistant's
+  execute_sql_query tool wrapped model-generated SQL in a read-only
+  transaction but forwarded the statement to the driver unrestricted, so
+  a payload led by COMMIT, END, ROLLBACK or ABORT closed that wrapper and
+  ran the rest in autocommit mode. The record names prompt injection
+  through database content the assistant reads as the delivery route and
+  assigns CVE-2026-12045; the fix shipped in pgAdmin 4 9.16.
+impact: >-
+  Anyone who can write into an object the AI Assistant inspects can obtain
+  unauthorised data modification with the pgAdmin user's privileges, and
+  when that role is a superuser or holds pg_execute_server_program the
+  chain extends to code execution on the database host via COPY TO
+  PROGRAM. PROMPT_INJECTION_INDIRECT was considered and rejected: the
+  delivery is retrieved content, but the taxonomy classifies by the step
+  that yielded capability, and here the tool behaved as designed while
+  the application consumed its output without validation.
+mitigation: >-
+  Upgrade to 9.16 or later, where the fix rejects any query that parses
+  to more than one statement and requires the leading real token to be one
+  of SELECT, WITH, EXPLAIN, SHOW, VALUES or TABLE, with the read-only
+  transaction left as the runtime backstop. Do not connect the assistant
+  with a superuser role or pg_execute_server_program, and do not grant the
+  assistant's role more than the reads it needs.
+sources:
+  - url: https://cveawg.mitre.org/api/cve/CVE-2026-12045
+    kind: primary
+    title: "CVE-2026-12045 pgAdmin 4 AI Assistant read-only transaction bypass record"
+  - url: https://github.com/pgadmin-org/pgadmin4/commit/bf4792444446f0e7ab721d23cbd6bfe6afaa7a8b
+    kind: primary
+    title: "fix(llm): reject multi-statement and non-read-only AI assistant queries"
+cve:
+  - CVE-2026-12045
+last_verified: "2026-10-04"

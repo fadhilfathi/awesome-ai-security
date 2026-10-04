@@ -1,0 +1,39 @@
+id: coding-agent-roo-code-mcp-config-command-execution
+title: "Roo Code remote code execution by writing an MCP configuration into the workspace"
+tier: 2
+attack_class: TOOL_POISONING
+target: "Roo Code VS Code extension before 3.20.3 (npm package roo-cline)"
+date: "2025-06-27"
+summary: >-
+  Roo Code keeps its project-specific MCP server configuration in a workspace
+  file whose format allows arbitrary commands to be launched. The advisory
+  reports that an attacker able to submit prompts to the agent could ask it to
+  write a malicious command into that configuration, and that a user who had
+  opted in to auto-approving file writes would then have that command run.
+  The vendor fixed it in 3.20.3 by adding an extra opt-in layer for writes to
+  the agent's own configuration files. The vendor record reports no
+  exploitation.
+impact: >-
+  The attacker gains arbitrary command execution on the developer's machine
+  through an MCP server the agent itself wrote on the attacker's behalf. Class
+  choice: TOOL_POISONING, because the source names the MCP configuration file
+  the tool operator's agent consults as the defective artefact, and the
+  taxonomy tie-break assigns a payload in a tool definition that caused the
+  agent to act to this class even though the resulting act ran a command.
+  PROMPT_INJECTION_INDIRECT was considered and rejected because the delivery
+  channel is the tool definition itself, not ordinary retrieved content.
+mitigation: >-
+  Upgrade to Roo Code 3.20.3 or later. Leave auto-approve for file writes off,
+  since the vendor lists it as off by default and the advisory says the chain
+  needs it, and review any .roo directory an agent has touched for entries
+  whose command line is not what you expect.
+sources:
+  - url: https://github.com/RooCodeInc/Roo-Code/security/advisories/GHSA-5x8h-m52g-5v54
+    kind: primary
+    title: "Potential Remote Code Execution via Model Context Protocol in the Roo Code extension (GHSA-5x8h-m52g-5v54)"
+  - url: https://cveawg.mitre.org/api/cve/CVE-2025-53098
+    kind: primary
+    title: "CVE-2025-53098 record: Roo Code remote code execution via the workspace MCP configuration file"
+cve:
+  - CVE-2025-53098
+last_verified: "2026-10-04"

@@ -1,0 +1,37 @@
+id: theoretical-trust-authorization-mismatch-agent
+title: "Trust-Authorization Mismatch proposed as the root cause shared by prompt injection and tool poisoning"
+tier: 3
+attack_class: OTHER
+target: "Agent runtimes that grant permissions statically while an agent's trustworthiness varies per step"
+date: "2025-12-07"
+summary: >-
+  A systematization of more than 200 papers argues that agent runtimes hand an
+  agent a fixed permission set while the agent's trustworthiness at any given
+  step is not a fixed property, and that this mismatch is the shared root under
+  attacks that otherwise look unrelated. It decomposes agent execution into
+  belief formation, intent generation and permission grant, and shows across the
+  surveyed work that prompt injection and tool poisoning are different expressions
+  of one structural problem. The paper systematizes and frames; it runs no
+  attack.
+impact: >-
+  The consequence claimed is that a permission granted at deployment stays
+  granted no matter what changed the agent's belief, so a permission check that
+  passes is not evidence the action was authorized by anything the user
+  intended. Because the paper's unit is the mismatch rather than an incident, it
+  reports no attacker gain of its own and rests on surveyed case results. Filed as
+  OTHER: the object is a runtime property, the decoupling of static permission
+  from per-step trustworthiness, which none of the named classes tests for.
+mitigation: >-
+  Make authorization track the state of the agent rather than a fixed grant:
+  re-evaluate permission at the point of use, against the belief and intent the
+  run actually holds, and let permission narrow as confidence about provenance
+  falls. Pair that with provenance on tool definitions and results so a
+  permission grant can name the content it was based on.
+sources:
+  - url: https://arxiv.org/abs/2512.06914
+    kind: primary
+    title: "SoK: Trust-Authorization Mismatch in LLM Agent Interactions"
+  - url: https://arxiv.org/html/2512.06914v2
+    kind: primary
+    title: "SoK: Trust-Authorization Mismatch in LLM Agent Interactions (full text)"
+last_verified: "2026-10-04"

@@ -1,0 +1,34 @@
+# agentic-flow MCP server tools interpolate tool arguments into shell commands
+
+`T2 [==-]` **Tier 2 - Demonstrated**
+
+| Field | Value |
+| --- | --- |
+| Id | `mcp-agentic-flow-mcp-tool-command-injection` |
+| Tier | `T2 [==-]` **Tier 2 - Demonstrated** |
+| Attack class | Insecure output handling |
+| Target | agentic-flow npm package (and the ruflo / claude-flow CLI wrappers) 2.0.13 and earlier, MCP server tools |
+| Disclosure date | 2026-06-18 |
+| Last verified | 2026-10-04 |
+| CVE | CVE-2026-58195 |
+
+## Summary
+
+agentic-flow is an AI agent orchestration platform that ships MCP servers for stdio, HTTP and SSE. A number of those tools built their shell command by string-substituting call arguments such as agent, task, name, language and agentdb into a double-quoted argument list and handing the result to execSync, so a value containing a closing quote broke out and ran arbitrary commands as the MCP server user. The reporter supplied a minimised payload that created a marker file and captured id output, and the fix rewrote every affected call site to use argv-based execFileSync with the shell disabled. Version 2.0.14 is patched.
+
+## Impact
+
+The advisory states the sinks are reachable without direct attacker access to the host wherever an agent processes untrusted content such as web pages, files or third-party tool output, because the agent supplies the argument the server then interpolates, and it adds that the HTTP and SSE transports expose the same sinks with no authentication or Origin and Host validation. This is INSECURE_OUTPUT_HANDLING rather than TOOL_POISONING because the payload rides in a tool argument value rather than in the tool's published definition. CISA reports the exploitation as a proof of concept.
+
+## Mitigation
+
+Upgrade to agentic-flow 2.0.14 or later, which passes arguments to execFileSync without a shell; the ruflo, claude-flow and @claude-flow/cli packages were pinned to the patched release at 3.12.4. The advisory states there is no in-product configuration that mitigates this without upgrading.
+
+## Sources
+
+- **PRIMARY** - [OS Command Injection in agentic-flow MCP server tools via unsanitized tool-parameter interpolation into execSync (GHSA-vcv2-r9jh-99m5)](https://github.com/ruvnet/agentic-flow/security/advisories/GHSA-vcv2-r9jh-99m5)
+- **PRIMARY** - [CVE-2026-58195 CVE record, including the CISA enrichment reporting proof-of-concept exploitation](https://cveawg.mitre.org/api/cve/CVE-2026-58195)
+
+Generated from `data/entries/mcp-agentic-flow-mcp-tool-command-injection.yml` by `scripts/build.py`. Never hand-edit this page: change the entry file and rebuild.
+
+Back to the [catalogue](../../README.md#full-catalogue), to [what the tiers mean](../TIERS.md), or to the [entry file](../../data/entries/mcp-agentic-flow-mcp-tool-command-injection.yml).

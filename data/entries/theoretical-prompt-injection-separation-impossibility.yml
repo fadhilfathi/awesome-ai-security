@@ -1,0 +1,38 @@
+id: theoretical-prompt-injection-separation-impossibility
+title: "Impossibility of perfect prompt-injection prevention in shared-embedding sequence models"
+tier: 3
+attack_class: PROMPT_INJECTION_INDIRECT
+target: "LLM applications where trusted instructions and untrusted content share one token embedding and one attention pipeline"
+date: "2026-06-25"
+summary: >-
+  A theory paper argues that the failure of prompt-injection defenses is not
+  bad luck. It models a prompted LLM as a Prompted Action Model whose outputs
+  include control decisions such as refusals, tool authorization and memory
+  writes, and defines Semantic-Faithful Control: that behavior depends on what
+  untrusted input means, not on how it is encoded. It then proves that property
+  cannot be held inside a shared pipeline, via a provenance-recovery
+  impossibility result plus an argument that untrusted content reaches
+  control-relevant computation through the same value pathway, plus a
+  finite-coverage invariance argument.
+impact: >-
+  The consequence is a ceiling on what any in-pipeline defense can promise: in
+  architectures that do not separate control from data, some input will be
+  treated as authoritative rather than as data, so the attacker eventually gets a
+  control-authoritative action. The authors compare this to code-data confusion
+  on von Neumann machines and read it as a claim about architecture, not about
+  today's models. The result is a proof, not an attack run against a system.
+mitigation: >-
+  Take the paper's architectural implication rather than another classifier:
+  complete protection needs a mechanism that enforces separation between trusted
+  control and untrusted content, so move control decisions out of the shared
+  embedding pipeline and into a component the untrusted text cannot reach. The
+  authors explicitly note this does not mean useful systems must ignore user
+  input, nor that all defenses are equally ineffective in practice.
+sources:
+  - url: https://arxiv.org/abs/2606.27567
+    kind: primary
+    title: "On the Inseparability of Instructions and Data in Shared-Embedding Sequence Models"
+  - url: https://arxiv.org/html/2606.27567v1
+    kind: primary
+    title: "On the Inseparability of Instructions and Data in Shared-Embedding Sequence Models (full text)"
+last_verified: "2026-10-04"

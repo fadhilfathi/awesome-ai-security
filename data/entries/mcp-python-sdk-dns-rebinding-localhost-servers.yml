@@ -1,0 +1,42 @@
+id: mcp-python-sdk-dns-rebinding-localhost-servers
+title: "MCP Python and TypeScript SDKs shipped with DNS rebinding protection off by default for localhost servers"
+tier: 2
+attack_class: AGENT_PRIVILEGE_ABUSE
+target: "MCP Python SDK before 1.23.0 and MCP TypeScript SDK before 1.24.0, HTTP servers on localhost"
+date: "2025-12-02"
+summary: >-
+  The reference client and server SDKs for MCP bind to localhost by default,
+  which makes DNS rebinding the natural attack against them: a browser resolves
+  an attacker-controlled hostname to 127.0.0.1 and the page's JavaScript speaks
+  straight to the agent's tool server. Both SDKs shipped with that protection
+  disabled unless the operator opted in, so a developer's local MCP server could
+  be invoked from a web page the developer merely opened. Each project
+  published an advisory and a fix on 2 December 2025, credited to the same
+  outside researcher.
+impact: >-
+  A page the developer visits can reach tool servers that were meant to be
+  reachable only from that machine and invoke their tools or resources on the
+  user's behalf, which is an agent exercising authority the operator granted it
+  but did not intend to expose to a web origin, so this is
+  AGENT_PRIVILEGE_ABUSE. INSECURE_OUTPUT_HANDLING was considered and rejected
+  because neither advisory names a defect in how an application consumes model
+  output. Both limit the exposure to HTTP servers run on localhost without
+  authentication and state that stdio servers are unaffected.
+mitigation: >-
+  Upgrade to mcp 1.23.0 or later and @modelcontextprotocol/sdk 1.24.0 or later,
+  which enable the protection by default for servers bound to loopback. Code
+  using StreamableHTTPSessionManager or SseServerTransport directly, or a
+  custom Express setup, must configure TransportSecuritySettings or apply the
+  exported hostHeaderValidation() middleware itself, and should authenticate the
+  server rather than rely on rebinding protection alone.
+sources:
+  - url: https://github.com/modelcontextprotocol/python-sdk/security/advisories/GHSA-9h52-p55h-vw2f
+    kind: primary
+    title: "DNS Rebinding Protection Disabled by Default in Model Context Protocol Python SDK for Servers Running on Localhost (GHSA-9h52-p55h-vw2f)"
+  - url: https://github.com/modelcontextprotocol/typescript-sdk/security/advisories/GHSA-w48q-cv73-mx4w
+    kind: primary
+    title: "DNS Rebinding Protection Disabled by Default in Model Context Protocol TypeScript SDK for Servers Running on Localhost (GHSA-w48q-cv73-mx4w)"
+cve:
+  - CVE-2025-66416
+  - CVE-2025-66414
+last_verified: "2026-10-04"

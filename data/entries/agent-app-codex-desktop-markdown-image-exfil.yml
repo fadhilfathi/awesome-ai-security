@@ -1,0 +1,37 @@
+id: agent-app-codex-desktop-markdown-image-exfil
+title: "Indirect prompt injection exfiltrates data through Markdown images in the Codex desktop app"
+tier: 2
+attack_class: PROMPT_INJECTION_INDIRECT
+target: "OpenAI Codex desktop app for macOS, builds before 26.527.31326"
+date: "2026-07-06"
+summary: >-
+  OpenAI's own CVE record for the Codex desktop app on macOS states that
+  the app rendered remote images from Markdown in model responses without
+  restriction. An attacker who can place an indirect prompt injection in
+  content the app processes, such as a connected-tool result, can induce
+  the model to build a remote image URL that encodes session data, and
+  the app fetches it while rendering, with no separate click; the record
+  is CVE-2026-14898 and the affected builds end at 26.527.31326.
+impact: >-
+  OpenAI states successful exploitation could exfiltrate secrets and other
+  information accessible in the Codex session, naming API keys, source
+  code and data returned by connected tools. INSECURE_OUTPUT_HANDLING was
+  considered, since the Markdown renderer performs the fetch, but OpenAI
+  names the induced model as the failing step. CREDENTIAL_EXPOSURE was
+  also considered, since API keys are named, but the taxonomy routes by
+  the step that yielded capability, here the injected instruction. The
+  record states no integrity or availability impact was shown and no
+  exploitation in the wild is known.
+mitigation: >-
+  Update to a build at or above 26.527.31326. Do not let model output drive
+  automatic network fetches: block external image loads in the renderer,
+  allow only data URIs for locally attached images, require explicit
+  user approval before any remote fetch, and constrain the app's egress so
+  a rendered response cannot reach an arbitrary host.
+sources:
+  - url: https://cveawg.mitre.org/api/cve/CVE-2026-14898
+    kind: primary
+    title: "CVE-2026-14898 OpenAI Codex desktop app for macOS record"
+cve:
+  - CVE-2026-14898
+last_verified: "2026-10-04"

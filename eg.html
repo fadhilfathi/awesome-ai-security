@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="en-US" class="no-js">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2" />
+	<link rel="profile" href="https://gmpg.org/xfn/11" />
+	<link rel="pingback" href="https://www.blackduck.com/xmlrpc.php" />
+
+
+	<!-- Google Fonts -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link crossorigin="anonymous" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+
+	<!-- OneTrust Cookies Consent Notice -->
+	<!-- OneTrust Cookies Consent Notice start for c7e5251261abd7ee159c261eba7fc08b -->
+<script src="https://cdn.cookielaw.org/scripttemplates/otSDKStub.js"  type="text/javascript" charset="UTF-8" data-domain-script="01914ce7-a755-7d2f-8c7a-a2de5df03bad" ></script>
+<script type="text/javascript">
+function OptanonWrapper() { }
+</script>
+<!-- OneTrust Cookies Consent Notice end for blackduck.com -->
+	<!-- Google script in head -->
+	<!-- ============================================================ -->
+<!-- SCRIPT 1: OneTrust Cookie Consent (MUST BE FIRST)           -->
+<!-- ============================================================ -->
+
+<!-- ============================================================ -->
+<!-- SCRIPT 2: Consent Mode v2 - DEFAULT GRANTED (OPT-OUT)       -->
+<!-- ============================================================ -->
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+
+    gtag('consent', 'default', {
+        'ad_storage': 'denied',
+        'ad_user_data': 'denied',
+        'ad_personalization': 'denied',
+        'analytics_storage': 'denied',
+        'personalization_storage': 'denied',
+        'functionality_storage': 'denied',
+        'security_storage': 'granted',
+        'wait_for_update': 500
+    });
+
+    console.log('Consent Mode: Default set to Denied (opt-in)');
+</script>
+
+<!-- ============================================================ -->
+<!-- SCRIPT 3: Google Tag Manager                                 -->
+<!-- ============================================================ -->
+<script>
+    // Load GTM script
+    (function(w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({
+            'gtm.start': new Date().getTime(),
+            event: 'gtm.js'
+        });
+        var f = d.getElementsByTagName(s)[0],
+            j = d.createElement(s),
+            dl = l != 'dataLayer' ? '&l=' + l : '';
+        j.async = true;
+        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-WL5Q7FSW');
+</script>
+
+<!-- ============================================================ -->
+<!-- SCRIPT 4: OneTrust Callback           -->
+<!-- ============================================================ -->
+<script type="text/javascript">
+
+    function OptanonWrapper() {
+        var activeGroups = window.OnetrustActiveGroups || '';
+
+        console.log('OneTrust Active Groups:', activeGroups);
+
+        // Check if user has interacted with the banner
+        var hasInteracted = document.cookie.match('(^|;)\\s*OptanonAlertBoxClosed\\s*=\\s*([^;]+)') !== null;
+
+        if (!hasInteracted) {
+
+            console.log('User has not interacted with banner - no consent update needed');
+            return;
+        }
+
+        // User HAS interacted with banner
+        // Update consent based on their choices
+        console.log('User interacted with banner - updating consent');
+
+        var consentMap = {
+            // Analytics (C0002)
+            'analytics_storage': activeGroups.indexOf('C0002') !== -1 ? 'granted' : 'denied',
+            // Advertising (C0004)
+            'ad_storage': activeGroups.indexOf('C0004') !== -1 ? 'granted' : 'denied',
+            'ad_user_data': activeGroups.indexOf('C0004') !== -1 ? 'granted' : 'denied',
+            'ad_personalization': activeGroups.indexOf('C0004') !== -1 ? 'granted' : 'denied',
+            // Functional (C0003)
+            'functionality_storage': activeGroups.indexOf('C0003') !== -1 ? 'granted' : 'denied',
+            'personalization_storage': activeGroups.indexOf('C0003') !== -1 ? 'granted' : 'denied'
+            // Note: security_storage is always 'granted' (set in defaults, not updated here)
+        };
+
+        console.log('Updating consent:', consentMap);
+
+        gtag('consent', 'update', consentMap);
+
+        window.dataLayer.push({
+            'event': 'onetrust_consent_update',
+            'consent_state': consentMap,
+            'onetrust_groups': activeGroups,
+            'consent_method': 'user_interaction'
+        });
+    }
+</script>
+
+
+	<meta name='robots' content='index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' />
+
+	<!-- This site is optimized with the Yoast SEO Premium plugin v28.4 (Yoast SEO v28.4) - https://yoast.com/product/yoast-seo-premium-wordpress/ -->
+	<title>CVE-2024-5184s Prompt Injection in EmailGPT: CyRC Advisory | Black Duck Blog</title>
+	<meta name="description" content="Learn about CVE-2024-5184s, which identified prompt injection vulnerabilities in API service and Google Chrome extension EmailGPT." />
+	<link rel="canonical" href="https://www.blackduck.com/blog/cyrc-advisory-prompt-injection-emailgpt.html" />
+	<meta property="og:locale" content="en_US" />
+	<meta property="og:type" content="article" />
+	<meta property="og:title" content="CyRC Vulnerability Advisory: CVE-2024-5184s prompt injection in EmailGPT service" />
+	<meta property="og:description" content="Learn about CVE-2024-5184s, which identified prompt injection vulnerabilities in API service and Google Chrome extension EmailGPT." />
+	<meta property="og:url" content="https://www.blackduck.com/blog/cyrc-advisory-prompt-injection-emailgpt.html" />
+	<meta property="og:site_name" content="Black Duck" />
+	<meta property="article:publisher" content="https://www.facebook.com/BlackDuckSoftware/" />
+	<meta property="article:published_time" content="2024-06-04T00:00:00+00:00" />
+	<meta property="article:modified_time" content="2026-09-22T21:27:40+00:00" />
+	<meta property="og:image" content="https://assets.blackduck.com/images/v1777976755/CyRC Vulnerability Advisory Thumbnail/CyRC Vulnerability Advisory Thumbnail.jpg?_i=AA" />
+	<meta property="og:image:width" content="846" />
+	<meta property="og:image:height" content="373" />
+	<meta property="og:image:type" content="image/jpeg" />
+	<meta name="author" content="BlackDuck Admin" />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content="CVE-2024-5184s Prompt Injection in EmailGPT: CyRC Advisory | Black Duck Blog" />
+	<meta name="twitter:description" content="Learn about CVE-2024-5184s, which identified prompt injection vulnerabilities in API service and Google Chrome extension EmailGPT." />
+	<meta name="twitter:creator" content="@https://twitter.com/podence" />
+	<meta name="twitter:site" content="@blackduck_sw" />
+	<meta name="twitter:label1" content="Written by" />
+	<meta name="twitter:data1" content="BlackDuck Admin" />
+	<meta name="twitter:label2" content="Est. reading time" />
+	<meta name="twitter:data2" content="2 minutes" />
+	<script type="application/ld+json" class="yoast-schema-graph">{"@context":"https:\/\/schema.org","@graph":[{"@type":"WebPage","@id":"https:\/\/www.blackduck.com\/blog\/cyrc-advisory-prompt-injection-emailgpt.html","url":"https:\/\/www.blackduck.com\/blog\/cyrc-advisory-prompt-injection-emailgpt.html","name":"CVE-2024-5184s Prompt Injection in EmailGPT: CyRC Advisory | Black Duck Blog","isPartOf":{"@id":"https:\/\/www.blackduck.com\/#website"},"primaryImageOfPage":{"@id":"https:\/\/www.blackduck.com\/blog\/cyrc-advisory-prompt-injection-emailgpt.html#primaryimage"},"image":{"@id":"https:\/\/www.blackduck.com\/blog\/cyrc-advisory-prompt-injection-emailgpt.html#primaryimage"},"thumbnailUrl":"https:\/\/assets.blackduck.com\/images\/v1777976755\/CyRC Vulnerability Advisory Thumbnail\/CyRC Vulnerability Advisory Thumbnail.jpg?_i=AA","datePublished":"2024-06-04T00:00:00+00:00","dateModified":"2026-09-22T21:27:40+00:00","description":"Learn about CVE-2024-5184s, which identified prompt injection vulnerabilities in API service and Google Chrome extension EmailGPT.","breadcrumb":{"@id":"https:\/\/www.blackduck.com\/blog\/cyrc-advisory-prompt-injection-emailgpt.html#breadcrumb"},"inLanguage":"en-US","potentialAction":[{"@type":"ReadAction","target":["https:\/\/www.blackduck.com\/blog\/cyrc-advisory-prompt-injection-emailgpt.html"]}]},{"@type":"ImageObject","inLanguage":"en-US","@id":"https:\/\/www.blackduck.com\/blog\/cyrc-advisory-prompt-injection-emailgpt.html#primaryimage","url":"https:\/\/assets.blackduck.com\/images\/v1777976755\/CyRC Vulnerability Advisory Thumbnail\/CyRC Vulnerability Advisory Thumbnail.jpg?_i=AA","contentUrl":"https:\/\/assets.blackduck.com\/images\/v1777976755\/CyRC Vulnerability Advisory Thumbnail\/CyRC Vulnerability Advisory Thumbnail.jpg?_i=AA","width":846,"height":373,"caption":"CyRC Vulnerability Advisory Thumbnail"},{"@type":"BreadcrumbList","@id":"https:\/\/www.blackduck.com\/blog\/cyrc-advisory-prompt-injection-emailgpt.html#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https:\/\/www.blackduck.com\/"},{"@type":"ListItem","position":2,"name":"CyRC Vulnerability Advisory: CVE-2024-5184s prompt injection in EmailGPT service"}]},{"@type":"WebSite","@id":"https:\/\/www.blackduck.com\/#website","url":"https:\/\/www.blackduck.com\/","name":"Black Duck","description":"Application Security | Open Source Security | SAST\/DAST\/SCA Tools | Black Duck","publisher":{"@id":"https:\/\/www.blackduck.com\/#organization"},"potentialAction":[{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https:\/\/www.blackduck.com\/?s={search_term_string}"},"query-input":{"@type":"PropertyValueSpecification","valueRequired":true,"valueName":"search_term_string"}}],"inLanguage":"en-US"},{"@type":"Organization","@id":"https:\/\/www.blackduck.com\/#organization","name":"Black Duck","url":"https:\/\/www.blackduck.com\/","logo":{"@type":"ImageObject","inLanguage":"en-US","@id":"https:\/\/www.blackduck.com\/#\/schema\/logo\/image\/","url":"https:\/\/assets.blackduck.com\/images\/v1776700396\/BlackDuckLogo\/BlackDuckLogo.svg?_i=AA","contentUrl":"https:\/\/assets.blackduck.com\/images\/v1776700396\/BlackDuckLogo\/BlackDuckLogo.svg?_i=AA","width":1,"height":1,"caption":"Black Duck"},"image":{"@id":"https:\/\/www.blackduck.com\/#\/schema\/logo\/image\/"},"sameAs":["https:\/\/www.facebook.com\/BlackDuckSoftware\/","https:\/\/x.com\/blackduck_sw","https:\/\/www.youtube.com\/@BlackDuckSoftware\/","https:\/\/www.linkedin.com\/company\/black-duck-software\/"]}]}</script>
+	<!-- / Yoast SEO Premium plugin. -->
+
+
+<link rel='dns-prefetch' href='//static.addtoany.com' />
+<link rel='dns-prefetch' href='//static.cloud.coveo.com' />
+<link rel='dns-prefetch' href='//kit.fontawesome.com' />
+<link rel='dns-prefetch' href='//assets.blackduck.com' />
+<link rel='preconnect' href='https://assets.blackduck.com' />
+<link rel="alternate" type="application/rss+xml" title="Black Duck &raquo; Feed" href="https://www.blackduck.com/feed" />
+<link rel="alternate" type="application/rss+xml" title="Black Duck &raquo; Comments Feed" href="https://www.blackduck.com/comments/feed" />
+<link rel="alternate" title="oEmbed (JSON)" type="application/json+oembed" href="https://www.blackduck.com/wp-json.html/oembed/1.0/embed?url=https%3A%2F%2Fwww.blackduck.com%2Fblog%2Fcyrc-advisory-prompt-injection-emailgpt.html" />
+<link rel="alternate" title="oEmbed (XML)" type="text/xml+oembed" href="https://www.blackduck.com/wp-json.html/oembed/1.0/embed?url=https%3A%2F%2Fwww.blackduck.com%2Fblog%2Fcyrc-advisory-prompt-injection-emailgpt.html&#038;format=xml" />
+<style id="wp-img-auto-sizes-contain-inline-css">
+img:is([sizes=auto i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500px}
+/*# sourceURL=wp-img-auto-sizes-contain-inline-css */
+</style>
+<link rel='stylesheet' id='genesis-blocks-style-css-css' href='https://www.blackduck.com/wp-content/plugins/genesis-blocks/dist/style-blocks.build.css' media='all' />
+<style id="wp-block-library-inline-css">
+:root{--wp-block-synced-color:#7a00df;--wp-block-synced-color--rgb:122,0,223;--wp-bound-block-color:var(--wp-block-synced-color);--wp-editor-canvas-background:#ddd;--wp-admin-theme-color:#007cba;--wp-admin-theme-color--rgb:0,124,186;--wp-admin-theme-color-darker-10:#006ba1;--wp-admin-theme-color-darker-10--rgb:0,107,160.5;--wp-admin-theme-color-darker-20:#005a87;--wp-admin-theme-color-darker-20--rgb:0,90,135;--wp-admin-border-width-focus:2px}@media (min-resolution:192dpi){:root{--wp-admin-border-width-focus:1.5px}}.wp-element-button{cursor:pointer}:root .has-very-light-gray-background-color{background-color:#eee}:root .has-very-dark-gray-background-color{background-color:#313131}:root .has-very-light-gray-color{color:#eee}:root .has-very-dark-gray-color{color:#313131}:root .has-vivid-green-cyan-to-vivid-cyan-blue-gradient-background{background:linear-gradient(135deg,#00d084,#0693e3)}:root .has-purple-crush-gradient-background{background:linear-gradient(135deg,#34e2e4,#4721fb 50%,#ab1dfe)}:root .has-hazy-dawn-gradient-background{background:linear-gradient(135deg,#faaca8,#dad0ec)}:root .has-subdued-olive-gradient-background{background:linear-gradient(135deg,#fafae1,#67a671)}:root .has-atomic-cream-gradient-background{background:linear-gradient(135deg,#fdd79a,#004a59)}:root .has-nightshade-gradient-background{background:linear-gradient(135deg,#330968,#31cdcf)}:root .has-midnight-gradient-background{background:linear-gradient(135deg,#020381,#2874fc)}:root{--wp--preset--font-size--normal:16px;--wp--preset--font-size--huge:42px}.has-regular-font-size{font-size:1em}.has-larger-font-size{font-size:2.625em}.has-normal-font-size{font-size:var(--wp--preset--font-size--normal)}.has-huge-font-size{font-size:var(--wp--preset--font-size--huge)}:root .has-text-align-center{text-align:center}:root .has-text-align-left{text-align:left}:root .has-text-align-right{text-align:right}.has-fit-text{white-space:nowrap!important}#end-resizable-editor-section{display:none}.aligncenter{clear:both}.items-justified-left{justify-content:flex-start}.items-justified-center{justify-content:center}.items-justified-right{justify-content:flex-end}.items-justified-space-between{justify-content:space-between}.screen-reader-text{word-wrap:normal!important;border:0;clip-path:inset(50%);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;width:1px;word-break:normal!important}.screen-reader-text:focus{background-color:#ddd;clip-path:none;color:#444;display:block;font-size:1em;height:auto;left:5px;line-height:normal;padding:15px 23px 14px;text-decoration:none;top:5px;width:auto;z-index:100000}html :where(.has-border-color){border-style:solid}html :where([style^=border-color],[style*=";border-color"],[style*="; border-color"]){border-style:solid}html :where([style^=border-top-color],[style*=";border-top-color"],[style*="; border-top-color"]){border-top-style:solid}html :where([style^=border-right-color],[style*=";border-right-color"],[style*="; border-right-color"]){border-right-style:solid}html :where([style^=border-bottom-color],[style*=";border-bottom-color"],[style*="; border-bottom-color"]){border-bottom-style:solid}html :where([style^=border-left-color],[style*=";border-left-color"],[style*="; border-left-color"]){border-left-style:solid}html :where([style^=border-width],[style*=";border-width"],[style*="; border-width"]){border-style:solid}html :where([style^=border-top-width],[style*=";border-top-width"],[style*="; border-top-width"]){border-top-style:solid}html :where([style^=border-right-width],[style*=";border-right-width"],[style*="; border-right-width"]){border-right-style:solid}html :where([style^=border-bottom-width],[style*=";border-bottom-width"],[style*="; border-bottom-width"]){border-bottom-style:solid}html :where([style^=border-left-width],[style*=";border-left-width"],[style*="; border-left-width"]){border-left-style:solid}html :where(img[class*=wp-image-]){height:auto;max-width:100%}:where(figure){margin:0 0 1em}html :where(.is-position-sticky){--wp-admin--admin-bar--position-offset:var(--wp-admin--admin-bar--height,0px)}@media screen and (max-width:600px){html :where(.is-position-sticky){--wp-admin--admin-bar--position-offset:0px}}
+
+/*# sourceURL=/wp-includes/css/dist/block-library/common.min.css */
+</style>
+<style id="wp-block-heading-inline-css">
+h1:where(.wp-block-heading).has-background,h2:where(.wp-block-heading).has-background,h3:where(.wp-block-heading).has-background,h4:where(.wp-block-heading).has-background,h5:where(.wp-block-heading).has-background,h6:where(.wp-block-heading).has-background{padding:1.25em 2.375em}h1.has-text-align-left[style*=writing-mode]:where([style*=vertical-lr]),h1.has-text-align-right[style*=writing-mode]:where([style*=vertical-rl]),h2.has-text-align-left[style*=writing-mode]:where([style*=vertical-lr]),h2.has-text-align-right[style*=writing-mode]:where([style*=vertical-rl]),h3.has-text-align-left[style*=writing-mode]:where([style*=vertical-lr]),h3.has-text-align-right[style*=writing-mode]:where([style*=vertical-rl]),h4.has-text-align-left[style*=writing-mode]:where([style*=vertical-lr]),h4.has-text-align-right[style*=writing-mode]:where([style*=vertical-rl]),h5.has-text-align-left[style*=writing-mode]:where([style*=vertical-lr]),h5.has-text-align-right[style*=writing-mode]:where([style*=vertical-rl]),h6.has-text-align-left[style*=writing-mode]:where([style*=vertical-lr]),h6.has-text-align-right[style*=writing-mode]:where([style*=vertical-rl]){rotate:180deg}
+/*# sourceURL=https://www.blackduck.com/wp-includes/blocks/heading/style.min.css */
+</style>
+<style id="wp-block-list-inline-css">
+ol,ul{box-sizing:border-box}:root :where(.wp-block-list.has-background){padding:1.25em 2.375em}
+/*# sourceURL=https://www.blackduck.com/wp-includes/blocks/list/style.min.css */
+</style>
+<style id="wp-block-paragraph-inline-css">
+.is-small-text{font-size:.875em}.is-regular-text{font-size:1em}.is-large-text{font-size:2.25em}.is-larger-text{font-size:3em}.has-drop-cap:not(:focus):first-letter{float:left;font-size:8.4em;font-style:normal;font-weight:100;line-height:.68;margin:.05em .1em 0 0;text-transform:uppercase}body.rtl .has-drop-cap:not(:focus):first-letter{float:none;margin-left:.1em}p.has-drop-cap.has-background{overflow:hidden}:root :where(p.has-background){padding:1.25em 2.375em}:where(p.has-text-color:not(.has-link-color)) a{color:inherit}p.has-text-align-left[style*="writing-mode:vertical-lr"],p.has-text-align-right[style*="writing-mode:vertical-rl"]{rotate:180deg}
+/*# sourceURL=https://www.blackduck.com/wp-includes/blocks/paragraph/style.min.css */
+</style>
+<style id="wp-block-separator-inline-css">
+@charset "UTF-8";.wp-block-separator{border:none;border-top:2px solid}:root :where(.wp-block-separator.is-style-dots){height:auto;line-height:1;text-align:center}:root :where(.wp-block-separator.is-style-dots):before{color:currentColor;content:"···";font-family:serif;font-size:1.5em;letter-spacing:2em;padding-left:2em}.wp-block-separator.is-style-dots{background:none!important;border:none!important}
+/*# sourceURL=https://www.blackduck.com/wp-includes/blocks/separator/style.min.css */
+</style>
+
+<style id="classic-theme-styles-inline-css">
+/*! This file is auto-generated */
+.wp-block-button__link{color:#fff;background-color:#32373c;border-radius:9999px;box-shadow:none;text-decoration:none;padding:calc(.667em + 2px) calc(1.333em + 2px);font-size:1.125em}.wp-block-file__button{background:#32373c;color:#fff;text-decoration:none}
+/*# sourceURL=/wp-includes/css/classic-themes.min.css */
+</style>
+
+<style id="global-styles-inline-css">
+:root{--wp--preset--aspect-ratio--square: 1;--wp--preset--aspect-ratio--4-3: 4/3;--wp--preset--aspect-ratio--3-4: 3/4;--wp--preset--aspect-ratio--3-2: 3/2;--wp--preset--aspect-ratio--2-3: 2/3;--wp--preset--aspect-ratio--16-9: 16/9;--wp--preset--aspect-ratio--9-16: 9/16;--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgb(6,147,227) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgb(252,185,0) 0%,rgb(255,105,0) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgb(255,105,0) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;--wp--preset--spacing--20: 0.44rem;--wp--preset--spacing--30: 0.67rem;--wp--preset--spacing--40: 1rem;--wp--preset--spacing--50: 1.5rem;--wp--preset--spacing--60: 2.25rem;--wp--preset--spacing--70: 3.38rem;--wp--preset--spacing--80: 5.06rem;--wp--preset--shadow--natural: 6px 6px 9px rgba(0, 0, 0, 0.2);--wp--preset--shadow--deep: 12px 12px 50px rgba(0, 0, 0, 0.4);--wp--preset--shadow--sharp: 6px 6px 0px rgba(0, 0, 0, 0.2);--wp--preset--shadow--outlined: 6px 6px 0px -3px rgb(255, 255, 255), 6px 6px rgb(0, 0, 0);--wp--preset--shadow--crisp: 6px 6px 0px rgb(0, 0, 0);}.wp-block-button{--wp--preset--dimension--25: 25%;--wp--preset--dimension--50: 50%;--wp--preset--dimension--75: 75%;--wp--preset--dimension--100: 100%;}:where(body) { margin: 0; }:where(.is-layout-flex){gap: 0.5em;}:where(.is-layout-grid){gap: 0.5em;}body .is-layout-flex{display: flex;}.is-layout-flex{flex-wrap: wrap;align-items: center;}.is-layout-flex > :is(*, div){margin: 0;}body .is-layout-grid{display: grid;}.is-layout-grid > :is(*, div){margin: 0;}body{padding-top: 0px;padding-right: 0px;padding-bottom: 0px;padding-left: 0px;}:root :where(.wp-element-button, .wp-block-button__link){background-color: #32373c;border-width: 0;color: #fff;font-family: inherit;font-size: inherit;font-style: inherit;font-weight: inherit;letter-spacing: inherit;line-height: inherit;padding-top: calc(0.667em + 2px);padding-right: calc(1.333em + 2px);padding-bottom: calc(0.667em + 2px);padding-left: calc(1.333em + 2px);text-decoration: none;text-transform: inherit;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+/*# sourceURL=global-styles-inline-css */
+</style>
+
+<link rel='stylesheet' id='wpml-menu-item-0-css' href='https://www.blackduck.com/wp-content/plugins/sitepress-multilingual-cms/templates/language-switchers/menu-item/style.min.css' media='all' />
+<link rel='stylesheet' id='blackduck-wp-style-css' href='https://www.blackduck.com/wp-content/themes/blackduck/style.css' media='all' />
+<link rel='stylesheet' id='blackduck-main-css' href='https://www.blackduck.com/wp-content/themes/blackduck/assets/css/style-Dpe_SM3e.css' media='all' />
+<link rel='stylesheet' id='coveo-atomic-style-css' href='https://static.cloud.coveo.com/atomic/v3.57.3/themes/coveo.css' media='all' />
+<link rel='stylesheet' id='gca-column-styles-css' href='https://www.blackduck.com/wp-content/plugins/genesis-columns-advanced/css/gca-column-styles.css' media='all' />
+<link rel='stylesheet' id='addtoany-css' href='https://www.blackduck.com/wp-content/plugins/add-to-any/addtoany.min.css' media='all' />
+<script>
+var CLDLB = {"image_delivery":"on","image_optimization":"off","image_format":"auto","image_quality":"auto","image_freeform":"","svg_support":"on","image_preview":"https:\/\/res.cloudinary.com\/demo\/image\/upload\/w_600\/leather_bag.jpg","crop_sizes":{"150x150":"","600x400":"","600x600":""},"video_delivery":"off","video_player":"cld","adaptive_streaming":"off","adaptive_streaming_mode":"mpd","video_controls":"off","video_loop":"off","video_autoplay_mode":"off","video_optimization":"off","video_format":"auto","video_quality":"auto","video_freeform":"","video_preview":"","use_lazy_load":"on","lazy_threshold":"100px","lazy_custom_color":"rgba(153,153,153,0.5)","lazy_animate":"on","lazy_placeholder":"blur","dpr":"2X","lazyload_preview":"https:\/\/res.cloudinary.com\/demo\/image\/upload\/w_600\/leather_bag.jpg","enable_breakpoints":"on","pixel_step":"418","breakpoints":"5","max_width":"2048","min_width":"375","breakpoints_preview":"https:\/\/res.cloudinary.com\/demo\/image\/upload\/w_600\/leather_bag.jpg","overlay":"on","placeholder":"e_blur:2000,q_1,f_auto","base_url":"https:\/\/assets.blackduck.com"};(()=>{"use strict";const e=e=>Math.round(2*e)/2,t={deviceDensity:window.devicePixelRatio?window.devicePixelRatio:"auto",density:null,config:CLDLB||{},lazyThreshold:0,enabled:!1,sizeBands:[],iObserver:null,pObserver:null,rObserver:null,aboveFold:!0,minPlaceholderThreshold:500,bind(e){e.CLDbound=!0,this.enabled||this._init();const t=e.dataset.size.split(" ");e.originalWidth=t[0],e.originalHeight=t[1],this.pObserver?(this.aboveFold&&this.inInitialView(e)?this.buildImage(e):(this.pObserver.observe(e),this.iObserver.observe(e)),e.addEventListener("error",t=>{e.srcset="",e.src='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="rgba(0,0,0,0.1)"/><text x="50%" y="50%" fill="red" text-anchor="middle" dominant-baseline="middle">%26%23x26A0%3B︎</text></svg>',this.rObserver.unobserve(e)})):this.setupFallback(e)},buildImage(e){e.dataset.srcset?(e.cld_loaded=!0,e.srcset=e.dataset.srcset):(e.src=this.getSizeURL(e),e.dataset.responsive&&this.rObserver.observe(e))},inInitialView(e){const t=e.getBoundingClientRect();return this.aboveFold=t.top<window.innerHeight+this.lazyThreshold,this.aboveFold},setupFallback(e){const t=[];this.sizeBands.forEach(i=>{if(i<=e.originalWidth){const s=this.getSizeURL(e,i,!0)+` ${i}w`;-1===t.indexOf(s)&&t.push(s)}}),e.srcset=t.join(","),e.sizes=`(max-width: ${e.originalWidth}px) 100vw, ${e.originalWidth}px`},_init(){this.enabled=!0,this._calcThreshold(),this._getDensity();let e=parseInt(this.config.max_width);const t=parseInt(this.config.min_width),i=parseInt(this.config.pixel_step);for(;e-i>=t;)e-=i,this.sizeBands.push(e);"undefined"!=typeof IntersectionObserver&&this._setupObservers(),this.enabled=!0},_setupObservers(){const e={rootMargin:this.lazyThreshold+"px 0px "+this.lazyThreshold+"px 0px"},t=this.minPlaceholderThreshold<2*this.lazyThreshold?2*this.lazyThreshold:this.minPlaceholderThreshold,i={rootMargin:t+"px 0px "+t+"px 0px"};this.rObserver=new ResizeObserver((e,t)=>{e.forEach(e=>{e.target.cld_loaded&&e.contentRect.width>=e.target.cld_loaded&&(e.target.src=this.getSizeURL(e.target))})}),this.iObserver=new IntersectionObserver((e,t)=>{e.forEach(e=>{e.isIntersecting&&(this.buildImage(e.target),t.unobserve(e.target),this.pObserver.unobserve(e.target))})},e),this.pObserver=new IntersectionObserver((e,t)=>{e.forEach(e=>{e.isIntersecting&&(e.target.src=this.getPlaceholderURL(e.target),t.unobserve(e.target))})},i)},_calcThreshold(){const e=this.config.lazy_threshold.replace(/[^0-9]/g,"");let t=0;switch(this.config.lazy_threshold.replace(/[0-9]/g,"").toLowerCase()){case"em":t=parseFloat(getComputedStyle(document.body).fontSize)*e;break;case"rem":t=parseFloat(getComputedStyle(document.documentElement).fontSize)*e;break;case"vh":t=window.innerHeight/e*100;break;default:t=e}this.lazyThreshold=parseInt(t,10)},_getDensity(){let t=this.config.dpr?this.config.dpr.replace("X",""):"off";if("off"===t)return this.density=1,1;let i=this.deviceDensity;"auto"!==i&&(i=e(i)),"max"!==t&&"auto"!==i&&(t=parseFloat(t),t=e(t),i=i>Math.ceil(t)?t:i),this.density=i},scaleWidth(e,t,i){const s=parseInt(this.config.max_width),r=Math.round(s/i);if(!t){t=e.width;let a=Math.round(t/i);for(;-1===this.sizeBands.indexOf(t)&&a<r&&t<s;)t++,a=Math.round(t/i)}return t>s&&(t=s),e.originalWidth<t&&(t=e.originalWidth),t},scaleSize(e,t,i){const s=e.dataset.crop?parseFloat(e.dataset.crop):(e.originalWidth/e.originalHeight).toFixed(2),r=this.scaleWidth(e,t,s),a=Math.round(r/s),o=[];return e.dataset.transformationCrop?o.push(e.dataset.transformationCrop):e.dataset.crop||(o.push(e.dataset.crop?"c_fill":"c_scale"),e.dataset.crop&&o.push("g_auto")),o.push("w_"+r),o.push("h_"+a),i&&1!==this.density&&o.push("dpr_"+this.density),e.cld_loaded=r,{transformation:o.join(","),nameExtension:r+"x"+a}},getDeliveryMethod:e=>e.dataset.seo&&"upload"===e.dataset.delivery?"images":"image/"+e.dataset.delivery,getSizeURL(e,t){const i=this.scaleSize(e,t,!0);return[this.config.base_url,this.getDeliveryMethod(e),"upload"===e.dataset.delivery?i.transformation:"",e.dataset.transformations,"v"+e.dataset.version,e.dataset.publicId+"?_i=AA"].filter(this.empty).join("/")},getPlaceholderURL(e){e.cld_placehold=!0;const t=this.scaleSize(e,null,!1);return[this.config.base_url,this.getDeliveryMethod(e),t.transformation,this.config.placeholder,e.dataset.publicId].filter(this.empty).join("/")},empty:e=>void 0!==e&&0!==e.length};window.CLDBind=e=>{e.CLDbound||t.bind(e)},window.initFallback=()=>{[...document.querySelectorAll('img[data-cloudinary="lazy"]')].forEach(e=>{window.CLDBind(e)})},window.addEventListener("load",()=>{window.initFallback()}),document.querySelector('script[src*="?cloudinary_lazy_load_loader"]')&&window.initFallback()})();
+//# sourceMappingURL=inline-loader.js.map
+</script>
+<script id="wpml-cookie-js-extra">
+var wpml_cookies = {"wp-wpml_current_language":{"value":"en","expires":1,"path":"/"}};
+var wpml_cookies = {"wp-wpml_current_language":{"value":"en","expires":1,"path":"/"}};
+//# sourceURL=wpml-cookie-js-extra
+</script>
+<script data-wp-strategy="defer" defer id="wpml-cookie-js" src="https://www.blackduck.com/wp-content/plugins/sitepress-multilingual-cms/res/js/cookies/language-cookie.js"></script>
+<script id="addtoany-core-js-before">
+window.a2a_config=window.a2a_config||{};a2a_config.callbacks=[];a2a_config.overlays=[];a2a_config.templates={};
+a2a_config.icon_color="transparent,#5a2a82";
+
+//# sourceURL=addtoany-core-js-before
+</script>
+<script id="addtoany-core-js" defer src="https://static.addtoany.com/menu/page.js"></script>
+<script id="jquery-core-js" src="https://www.blackduck.com/wp-includes/js/jquery/jquery.min.js"></script>
+<script id="jquery-migrate-js" src="https://www.blackduck.com/wp-includes/js/jquery/jquery-migrate.min.js"></script>
+<script id="addtoany-jquery-js" defer src="https://www.blackduck.com/wp-content/plugins/add-to-any/addtoany.min.js"></script>
+<link rel="https://api.w.org/" href="https://www.blackduck.com/wp-json.html/" /><link rel="alternate" title="JSON" type="application/json" href="https://www.blackduck.com/wp-json.html/wp/v2/posts/8781" /><link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://www.blackduck.com/xmlrpc.php?rsd" />
+<link rel='shortlink' href='https://www.blackduck.com/?p=8781' />
+<meta name="pageTitle" content="CyRC Vulnerability Advisory: CVE-2024-5184s prompt injection in EmailGPT Service">
+<meta name="searchContentType" content="Blog">
+<link rel="icon" href="https://www.blackduck.com/wp-content/uploads/2026/06/cropped-favicon1-32x32.png" sizes="32x32" />
+<link rel="icon" href="https://www.blackduck.com/wp-content/uploads/2026/06/cropped-favicon1-192x192.png" sizes="192x192" />
+<link rel="apple-touch-icon" href="https://www.blackduck.com/wp-content/uploads/2026/06/cropped-favicon1-180x180.png" />
+<meta name="msapplication-TileImage" content="https://www.blackduck.com/wp-content/uploads/2026/06/cropped-favicon1-270x270.png" />
+</head>
+
+<body class="wp-singular post-template-default single single-post postid-8781 single-format-standard wp-theme-blackduck" >
+	<!-- Google script in body -->
+	<!-- Google Tag Manager (noscript) -->
+        <noscript>
+           <div id="gtm-noscript"><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WL5Q7FSW " height="0" width="0" style="display:none;visibility:hidden"></iframe></div></noscript>
+<!-- End Google Tag Manager (noscript) -->
+	<div class="wrapper">
+		<a class="skip-link screen-reader-text" href="#content">Skip to content</a>
+		
+					<div class="utility-nav dark-theme d-none d-lg-block">
+				<div class="container d-flex justify-content-end">
+					<div class="utility-links">
+																						<div class="support-link d-flex align-items-center gap-8">
+										<svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.2571 7.31429C13.2571 4.03143 10.5971 1.37143 7.31429 1.37143C4.03143 1.37143 1.37143 4.03143 1.37143 7.31429C1.37143 10.5971 4.03143 13.2571 7.31429 13.2571C10.5971 13.2571 13.2571 10.5971 13.2571 7.31429ZM0 7.31429C0 3.27429 3.27429 0 7.31429 0C11.3543 0 14.6286 3.27429 14.6286 7.31429C14.6286 11.3543 11.3543 14.6286 7.31429 14.6286C3.27429 14.6286 0 11.3543 0 7.31429ZM7.31429 5.02857C6.80857 5.02857 6.4 5.43714 6.4 5.94286C6.4 6.32286 6.09429 6.62857 5.71429 6.62857C5.33429 6.62857 5.02857 6.32286 5.02857 5.94286C5.02857 4.68 6.05143 3.65714 7.31429 3.65714C8.57714 3.65714 9.6 4.68 9.6 5.94286C9.6 7.29143 8.57143 7.86286 8 8.07143V8.18C8 8.56 7.69429 8.86571 7.31429 8.86571C6.93429 8.86571 6.62857 8.56 6.62857 8.18V7.94857C6.62857 7.36286 7.05143 6.94286 7.48857 6.8C7.67143 6.74 7.86571 6.64286 8.00857 6.50571C8.13143 6.38571 8.22857 6.22 8.22857 5.94571C8.22857 5.44 7.82 5.03143 7.31429 5.03143V5.02857ZM6.4 10.5143C6.4 10.0086 6.80857 9.6 7.31429 9.6C7.82 9.6 8.22857 10.0086 8.22857 10.5143C8.22857 11.02 7.82 11.4286 7.31429 11.4286C6.80857 11.4286 6.4 11.02 6.4 10.5143Z" fill="currentColor"/></svg>										<a class="u-link" href="https://community.blackduck.com/s/" target="_blank" rel="noopener noreferrer" aria-label="Support">Support </a>									</div>
+																					
+						<div class="language-selection d-flex align-items-end gap-8">
+							<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.68878 5.97841L2.62564 6.90347C2.80755 7.08309 3.05314 7.18487 3.31085 7.18487H3.96271C4.22043 7.18487 4.46601 7.28666 4.64793 7.46628L5.53628 8.34344C5.71819 8.52306 5.82128 8.76555 5.82128 9.02001V10.1426C5.82128 10.3971 5.92436 10.6396 6.10628 10.8192L6.50952 11.2174C6.69144 11.397 6.79452 11.6395 6.79452 11.894V12.4538C6.79452 12.9837 7.22809 13.4118 7.76473 13.4118C8.30138 13.4118 8.73495 12.9837 8.73495 12.4538V12.373C8.73495 12.1185 8.83803 11.876 9.01995 11.6964L10.3934 10.3402C10.5753 10.1606 10.6784 9.91812 10.6784 9.66366V8.62484C10.6784 8.09496 10.2448 7.66686 9.70819 7.66686H7.2008C6.94309 7.66686 6.6975 7.56507 6.51558 7.38545L6.03048 6.90646C5.90314 6.78073 5.83037 6.60709 5.83037 6.42747C5.83037 6.05326 6.1366 5.75089 6.51558 5.75089H7.56766C7.94665 5.75089 8.25287 5.44853 8.25287 5.07432C8.25287 4.8947 8.18011 4.72106 8.05277 4.59533L7.45548 4.00557C7.33723 3.89181 7.2766 3.74512 7.2766 3.59244C7.2766 3.43976 7.33723 3.29307 7.44942 3.1823L7.97394 2.66439C8.14979 2.49076 8.24984 2.25425 8.24984 2.00877C8.24984 1.79322 8.17707 1.59863 8.0558 1.44296C7.95878 1.43997 7.86176 1.43697 7.76473 1.43697C4.87229 1.43697 2.43766 3.35893 1.69181 5.97841H1.68878ZM14.0681 7.66387C14.0681 6.62805 13.8134 5.6521 13.3586 4.7959C13.1646 4.82285 12.9736 4.91266 12.8159 5.06833L12.4096 5.46949C12.2277 5.64911 12.1246 5.8916 12.1246 6.14606V7.18487C12.1246 7.71476 12.5582 8.14286 13.0948 8.14286H13.8255C13.9013 8.14286 13.9771 8.13388 14.0469 8.11891C14.059 7.96922 14.062 7.81654 14.062 7.66387H14.0681ZM0 7.66387C0 3.43078 3.47457 0 7.7617 0C12.0488 0 15.5234 3.43078 15.5234 7.66387C15.5234 11.897 12.0488 15.3277 7.7617 15.3277C3.47457 15.3277 0 11.897 0 7.66387Z" fill="currentColor"/></svg>							<!-- language menu -->
+							<ul id="menu-language-switcher-menu" class="language-menu"><li id="menu-item-wpml-ls-21-en" class="menu-item wpml-ls-slot-21 wpml-ls-item wpml-ls-item-en wpml-ls-current-language wpml-ls-menu-item wpml-ls-first-item wpml-ls-last-item menu-item-type-wpml_ls_menu_item menu-item-object-wpml_ls_menu_item menu-item-wpml-ls-21-en"><a href="https://www.blackduck.com/blog/cyrc-advisory-prompt-injection-emailgpt.html" aria-current="page" aria-expanded="false" aria-controls="wpml-ls-submenu-wpml-ls-21-en"><span class="wpml-ls-display">English</span></a></li>
+</ul>						</div>
+					</div>
+				</div>
+			</div>
+				<header class="main-header">
+			<div class="main-nav-wrapper">
+				<div class="container d-flex justify-content-between align-items-center">
+											<div class="brand-wrapper">
+							<a href="https://www.blackduck.com/" class="brand">
+								<img src="https://assets.blackduck.com/images/v1776700396/BlackDuckLogo/BlackDuckLogo.svg?_i=AA" alt="CyRC Vulnerability Advisory: CVE-2024-5184s prompt injection in EmailGPT service Image" class=" skip-lazy" loading="eager" decoding="async" width="" height="">							</a>
+						</div>
+					
+					<div class="nav-menu ">
+						<nav class="primary-navigation d-none d-lg-block">
+							<ul id="menu-header-menu" class="d-flex justify-content-end align-items-center"><li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children has-mega-menu is-label"><span class="menu-link is-featured"><span class="link-text">Products &amp; Services</span></span><div class="mega-menu-wrapper"> <div class="container mega-menu-grid"><ul class="sub-menu level-2"><li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children is-label"><span class="menu-link active" data-tab="level-2-native-index-0"><span class="link-text">Products</span></span></li><li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children is-label"><span class="menu-link" data-tab="level-2-native-index-1"><span class="link-text">Services</span></span></li><li class="menu-label menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children is-label"><span class="menu-link" data-tab="level-2-native-index-2"><span class="link-text">Integrations</span></span></li></ul><div class="level-3-group"><ul class="sub-menu level-3 level-2-native-index-0 active"><li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-col is-label"><span class="menu-link"><span class="link-text">col</span></span><ul class="sub-menu level-4"><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/platform.html" class="menu-link has-description"><span class="link-text">Polaris</span><span class="menu-description">Integrated SaaS Application Security and Risk Management platform.</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/signal-ai-appsec.html" class="menu-link has-description"><span class="link-text">Signal<span class="menu-flag" style="background-color: #00a0ad;">New</span></span><span class="menu-description">Agentic Application Security for AI-Powered software development.</span></a></li></ul></li><li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-col is-label"><span class="menu-link"><span class="link-text">col</span></span><ul class="sub-menu level-4 grid-col-2"><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/static-analysis-tools-sast/coverity.html" class="menu-link"><span class="link-text">Coverity Static</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/software-composition-analysis-tools/black-duck-sca.html" class="menu-link"><span class="link-text">Black Duck SCA</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/dast/continuous-dynamic.html" class="menu-link"><span class="link-text">Continuous Dynamic</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/interactive-application-security-testing.html" class="menu-link"><span class="link-text">Seeker Interactive</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/fuzz-testing.html" class="menu-link"><span class="link-text">Fuzz Testing</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/software-risk-manager.html" class="menu-link"><span class="link-text">Software Risk Manager ASPM</span></a></li></ul></li></ul><ul class="sub-menu level-3 level-2-native-index-1"><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/services/open-source-software-audit.html" class="menu-link"><span class="link-text">Open Source &#038; Security Audits</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/services/security-program.html" class="menu-link"><span class="link-text">Program Strategy &#038; Planning</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/customer-success/implementation.html" class="menu-link"><span class="link-text">Implementation &#038; Deployment</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/customer-success.html" class="menu-link"><span class="link-text">Customer Success &amp; Support</span></a></li></ul><ul class="sub-menu level-3 level-2-native-index-2"><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/code-sight.html" class="menu-link"><span class="link-text">IDE</span></a></li><li class="menu-item menu-item-type-custom menu-item-object-custom"><a href="/integrations#tab-source-code-manager" class="menu-link"><span class="link-text">SCM</span></a></li><li class="menu-item menu-item-type-custom menu-item-object-custom"><a href="/integrations.html#build-and-ci" class="menu-link"><span class="link-text">Build/CI Tools</span></a></li><li class="menu-item menu-item-type-custom menu-item-object-custom"><a href="/integrations.html#workflow" class="menu-link"><span class="link-text">Workflow</span></a></li><li class="menu-item menu-item-type-custom menu-item-object-custom"><a href="/integrations.html#production-deployment" class="menu-link"><span class="link-text">Cloud Deployment</span></a></li></ul></div><div class="col-card"><div class="col-card-cover"> <img width="562" height="300" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1NjIiIGhlaWdodD0iMzAwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIj48YW5pbWF0ZSBhdHRyaWJ1dGVOYW1lPSJmaWxsIiB2YWx1ZXM9InJnYmEoMTUzLDE1MywxNTMsMC41KTtyZ2JhKDE1MywxNTMsMTUzLDAuMSk7cmdiYSgxNTMsMTUzLDE1MywwLjUpIiBkdXI9IjJzIiByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSIgLz48L3JlY3Q+PC9zdmc+" alt="ContextAI™: The model for building secure software." data-public-id="Nav-281px-ContextAI2/Nav-281px-ContextAI2.png" class="wp-post-0 wp-image-7216" data-format="png" data-transformations="" data-version="1778618456" data-seo="1" data-responsive="1" data-size="562 300" data-delivery="upload" onload=";window.CLDBind?CLDBind(this):null;" data-cloudinary="lazy" /><h6>ContextAI™: The model for building secure software.</h6><a class="btn-link" href="https://www.blackduck.com/contextai-ai-powered-software-security-intelligence.html" target="_self" rel="nofollow" aria-label="Learn more">Learn more <svg width="33" height="25" viewBox="0 0 33 25" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32.1978 13.7526C32.9986 12.9518 32.9986 11.6514 32.1978 10.8506L21.9478 0.600586C21.147 -0.200195 19.8466 -0.200195 19.0458 0.600586C18.245 1.40137 18.245 2.70184 19.0458 3.50262L25.798 10.2548H2.05C0.916094 10.2548 0 11.1709 0 12.3048C0 13.4387 0.916094 14.3548 2.05 14.3548H25.798L19.0458 21.107C18.245 21.9078 18.245 23.2082 19.0458 24.009C19.8466 24.8098 21.147 24.8098 21.9478 24.009L32.1978 13.759V13.7526Z" fill="currentColor"/></svg></a></div></div></div></div></li>
+<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children has-mega-menu is-label"><span class="menu-link is-featured"><span class="link-text">Solutions</span></span><div class="mega-menu-wrapper"> <div class="container mega-menu-grid"><ul class="sub-menu level-2"><li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children is-label"><span class="menu-link active" data-tab="level-2-native-index-0"><span class="link-text">By Use Case</span></span></li><li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children is-label"><span class="menu-link" data-tab="level-2-native-index-1"><span class="link-text">By Technology</span></span></li><li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children is-label"><span class="menu-link" data-tab="level-2-native-index-2"><span class="link-text">By Industry</span></span></li></ul><div class="level-3-group"><ul class="sub-menu level-3 level-2-native-index-0 active"><li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-col is-label"><span class="menu-link"><span class="link-text">solution-col-1</span></span><ul class="sub-menu level-4 grid-col-2"><li class="menu-item menu-item-type-custom menu-item-object-custom"><a href="https://www.blackduck.com/solutions/artificial-intelligence-software-development.html" class="menu-link"><span class="link-text">AI-Generated Code</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/solutions/api-security-testing.html" class="menu-link"><span class="link-text">API Security Testing</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/solutions/application-security-testing.html" class="menu-link"><span class="link-text">Application Security Testing</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/solutions/devsecops.html" class="menu-link"><span class="link-text">DevSecOps</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/solutions/eu-cyber-resilience-act-compliance.html" class="menu-link"><span class="link-text">EU Cyber Resilience Act Compliance</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/solutions/software-supply-chain-security.html" class="menu-link"><span class="link-text">Software Supply Chain Security</span></a></li></ul></li><li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-col is-label"><span class="menu-link"><span class="link-text">solution-col-2</span></span><ul class="sub-menu level-4"><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/solutions/enterprise-application-security-risk-management.html" class="menu-link"><span class="link-text">Manage Enterprise AppSec Risk</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/solutions/container-security.html" class="menu-link"><span class="link-text">Container Security</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/solutions/open-source-security.html" class="menu-link"><span class="link-text">Open Source License Compliance</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/solutions/mergers-and-acquisitions.html" class="menu-link"><span class="link-text">M&#038;A Due Diligence</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/solutions/compliance.html" class="menu-link"><span class="link-text">Quality and Security Standards Compliance</span></a></li></ul></li></ul><ul class="sub-menu level-3 level-2-native-index-1"><li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-col is-label"><span class="menu-link"><span class="link-text">solution-col-1</span></span><ul class="sub-menu level-4"><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/signal-ai-appsec.html" class="menu-link"><span class="link-text">AI AppSec<span class="menu-flag" style="background-color: #00a0ad;">New</span></span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/static-analysis-tools-sast.html" class="menu-link"><span class="link-text">Static Analysis (SAST)</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/dast.html" class="menu-link"><span class="link-text">Dynamic Application Security Testing</span></a></li></ul></li><li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-col is-label"><span class="menu-link"><span class="link-text">solution-col-2</span></span><ul class="sub-menu level-4"><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/software-risk-manager.html" class="menu-link"><span class="link-text">Application Security Posture Management (ASPM)</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/software-composition-analysis-tools.html" class="menu-link"><span class="link-text">Software Composition Analysis (SCA)</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/interactive-application-security-testing.html" class="menu-link"><span class="link-text">Interactive Application Security Testing (IAST)</span></a></li></ul></li></ul><ul class="sub-menu level-3 level-2-native-index-2"><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/solutions/automotive.html" class="menu-link"><span class="link-text">Automotive</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/solutions/embedded-software-security.html" class="menu-link"><span class="link-text">Embedded Software and ISV</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/solutions/financial-services.html" class="menu-link"><span class="link-text">Financial Services</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/solutions/healthcare.html" class="menu-link"><span class="link-text">Medical Devices</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/solutions/government.html" class="menu-link"><span class="link-text">Public Sector</span></a></li></ul></div><div class="col-card"><div class="col-card-cover"> <img width="562" height="300" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1NjIiIGhlaWdodD0iMzAwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIj48YW5pbWF0ZSBhdHRyaWJ1dGVOYW1lPSJmaWxsIiB2YWx1ZXM9InJnYmEoMTUzLDE1MywxNTMsMC41KTtyZ2JhKDE1MywxNTMsMTUzLDAuMSk7cmdiYSgxNTMsMTUzLDE1MywwLjUpIiBkdXI9IjJzIiByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSIgLz48L3JlY3Q+PC9zdmc+" alt="The State of AI-Powered Software Development" data-public-id="Nav-281px-State-of-AI/Nav-281px-State-of-AI.png" class="wp-post-0 wp-image-22871" data-format="png" data-transformations="" data-version="1781209051" data-seo="1" data-responsive="1" data-size="562 300" data-delivery="upload" onload=";window.CLDBind?CLDBind(this):null;" data-cloudinary="lazy" /><h6>The State of AI-Powered Software Development</h6><a class="btn-link" href="https://www.blackduck.com/resources/analyst-reports/state-of-ai-powered-software-development.html" target="_self" rel="nofollow" aria-label="Read the report">Read the report <svg width="33" height="25" viewBox="0 0 33 25" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32.1978 13.7526C32.9986 12.9518 32.9986 11.6514 32.1978 10.8506L21.9478 0.600586C21.147 -0.200195 19.8466 -0.200195 19.0458 0.600586C18.245 1.40137 18.245 2.70184 19.0458 3.50262L25.798 10.2548H2.05C0.916094 10.2548 0 11.1709 0 12.3048C0 13.4387 0.916094 14.3548 2.05 14.3548H25.798L19.0458 21.107C18.245 21.9078 18.245 23.2082 19.0458 24.009C19.8466 24.8098 21.147 24.8098 21.9478 24.009L32.1978 13.759V13.7526Z" fill="currentColor"/></svg></a></div></div><div class="mega-menu-view-all"><a class="btn btn-secondary" href="https://www.blackduck.com/solutions.html" target="_self" rel="nofollow" aria-label="Explore All Solutions">Explore All Solutions <svg width="33" height="25" viewBox="0 0 33 25" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32.1978 13.7526C32.9986 12.9518 32.9986 11.6514 32.1978 10.8506L21.9478 0.600586C21.147 -0.200195 19.8466 -0.200195 19.0458 0.600586C18.245 1.40137 18.245 2.70184 19.0458 3.50262L25.798 10.2548H2.05C0.916094 10.2548 0 11.1709 0 12.3048C0 13.4387 0.916094 14.3548 2.05 14.3548H25.798L19.0458 21.107C18.245 21.9078 18.245 23.2082 19.0458 24.009C19.8466 24.8098 21.147 24.8098 21.9478 24.009L32.1978 13.759V13.7526Z" fill="currentColor"/></svg></a></div></div></div></li>
+<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children has-mega-menu is-label"><span class="menu-link is-featured"><span class="link-text">Resources</span></span><div class="mega-menu-wrapper"> <div class="container mega-menu-grid"><ul class="sub-menu level-2"><li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children is-label"><span class="menu-link active" data-tab="level-2-native-index-0"><span class="link-text">Knowledge Hub</span></span></li><li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children is-label"><span class="menu-link" data-tab="level-2-native-index-1"><span class="link-text">Get Support</span></span></li><li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children is-label"><span class="menu-link" data-tab="level-2-native-index-2"><span class="link-text">Explore Resources</span></span></li></ul><div class="level-3-group"><ul class="sub-menu level-3 level-2-native-index-0 active"><li class="menu-item menu-item-type-custom menu-item-object-custom"><a href="https://blackduck.skilljar.com/" target="_blank" rel="noopener" class="menu-link"><span class="link-text">Black Duck Academy</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/resources/cybersecurity-research-center.html" class="menu-link"><span class="link-text">Cybersecurity Research Center</span></a></li><li class="menu-item menu-item-type-custom menu-item-object-custom"><a href="https://community.blackduck.com/s/global-search/%40uri" target="_blank" rel="noopener" class="menu-link"><span class="link-text">Search Knowledge Base</span></a></li></ul><ul class="sub-menu level-3 level-2-native-index-1"><li class="menu-item menu-item-type-custom menu-item-object-custom"><a href="https://community.blackduck.com/s/discussions" target="_blank" rel="noopener" class="menu-link"><span class="link-text">Discussions</span></a></li><li class="menu-item menu-item-type-custom menu-item-object-custom"><a href="https://docs.blackduck.com/" target="_blank" rel="noopener" class="menu-link"><span class="link-text">Documentation</span></a></li><li class="menu-item menu-item-type-custom menu-item-object-custom"><a href="https://community.blackduck.com/s/ideas-portal" target="_blank" rel="noopener" class="menu-link"><span class="link-text">Ideas</span></a></li><li class="menu-item menu-item-type-custom menu-item-object-custom"><a href="https://community.blackduck.com/s/" target="_blank" rel="noopener" class="menu-link"><span class="link-text">Support</span></a></li></ul><ul class="sub-menu level-3 level-2-native-index-2 grid-col-2"><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/glossary.html" class="menu-link"><span class="link-text">AppSec Glossary</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/resources/case-studies.html" class="menu-link"><span class="link-text">Case Studies</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/blog.html" class="menu-link"><span class="link-text">Blog</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/customer-value.html" class="menu-link"><span class="link-text">Customer Value</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/resources/ebooks.html" class="menu-link"><span class="link-text">eBooks</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/resources/datasheets.html" class="menu-link"><span class="link-text">Datasheets</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/resources/webinars.html" class="menu-link"><span class="link-text">Webinars</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/resources/analyst-reports.html" class="menu-link"><span class="link-text">Research &amp; Reports</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/resources/white-papers.html" class="menu-link"><span class="link-text">White Papers</span></a></li></ul></div><div class="col-card"><div class="col-card-cover"> <img width="281" height="153" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyODEiIGhlaWdodD0iMTUzIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIj48YW5pbWF0ZSBhdHRyaWJ1dGVOYW1lPSJmaWxsIiB2YWx1ZXM9InJnYmEoMTUzLDE1MywxNTMsMC41KTtyZ2JhKDE1MywxNTMsMTUzLDAuMSk7cmdiYSgxNTMsMTUzLDE1MywwLjUpIiBkdXI9IjJzIiByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSIgLz48L3JlY3Q+PC9zdmc+" alt="See why Black Duck is a Leader" data-public-id="Nav-281px-mq-sscs/Nav-281px-mq-sscs.png" class="wp-post-0 wp-image-23161" data-format="png" data-transformations="" data-version="1782158127" data-seo="1" data-responsive="1" data-size="281 153" data-delivery="upload" onload=";window.CLDBind?CLDBind(this):null;" data-cloudinary="lazy" /><h6>See why Black Duck is a Leader</h6><a class="btn-link" href="https://www.blackduck.com/resources/analyst-reports/gartner-magic-quadrant-software-supply-chain-security.html" target="_self" rel="nofollow" aria-label="Read the report">Read the report <svg width="33" height="25" viewBox="0 0 33 25" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32.1978 13.7526C32.9986 12.9518 32.9986 11.6514 32.1978 10.8506L21.9478 0.600586C21.147 -0.200195 19.8466 -0.200195 19.0458 0.600586C18.245 1.40137 18.245 2.70184 19.0458 3.50262L25.798 10.2548H2.05C0.916094 10.2548 0 11.1709 0 12.3048C0 13.4387 0.916094 14.3548 2.05 14.3548H25.798L19.0458 21.107C18.245 21.9078 18.245 23.2082 19.0458 24.009C19.8466 24.8098 21.147 24.8098 21.9478 24.009L32.1978 13.759V13.7526Z" fill="currentColor"/></svg></a></div></div><div class="mega-menu-view-all"><a class="btn btn-secondary" href="https://news.blackduck.com" target="_blank" rel="noopener noreferrer" aria-label="View Newsroom">View Newsroom <svg width="33" height="25" viewBox="0 0 33 25" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32.1978 13.7526C32.9986 12.9518 32.9986 11.6514 32.1978 10.8506L21.9478 0.600586C21.147 -0.200195 19.8466 -0.200195 19.0458 0.600586C18.245 1.40137 18.245 2.70184 19.0458 3.50262L25.798 10.2548H2.05C0.916094 10.2548 0 11.1709 0 12.3048C0 13.4387 0.916094 14.3548 2.05 14.3548H25.798L19.0458 21.107C18.245 21.9078 18.245 23.2082 19.0458 24.009C19.8466 24.8098 21.147 24.8098 21.9478 24.009L32.1978 13.759V13.7526Z" fill="currentColor"/></svg></a></div></div></div></li>
+<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children has-mega-menu is-label"><span class="menu-link is-featured"><span class="link-text">Company</span></span><div class="mega-menu-wrapper"> <div class="container mega-menu-grid"><ul class="sub-menu level-2"><li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children is-label"><span class="menu-link active" data-tab="level-2-native-index-0"><span class="link-text">About Us</span></span></li><li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children is-label"><span class="menu-link" data-tab="level-2-native-index-1"><span class="link-text">Latest Updates</span></span></li></ul><div class="level-3-group"><ul class="sub-menu level-3 level-2-native-index-0 active"><li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-col is-label"><span class="menu-link"><span class="link-text">col-1</span></span><ul class="sub-menu level-4 grid-col-2"><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/company.html" class="menu-link"><span class="link-text">About Black Duck</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/company/leadership.html" class="menu-link"><span class="link-text">Leadership</span></a></li><li class="menu-item menu-item-type-custom menu-item-object-custom"><a href="https://news.blackduck.com/" class="menu-link"><span class="link-text">Newsroom</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/blog.html" class="menu-link"><span class="link-text">Blog</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/partners.html" class="menu-link"><span class="link-text">Partners</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/customer-value.html" class="menu-link"><span class="link-text">Customer Value</span></a></li></ul></li><li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-col is-label"><span class="menu-link"><span class="link-text">col-2</span></span><ul class="sub-menu level-4"><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/company/careers.html" class="menu-link"><span class="link-text">Careers</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/contact-sales.html" class="menu-link"><span class="link-text">Contact Sales</span></a></li></ul></li></ul><ul class="sub-menu level-3 level-2-native-index-1"><li class="menu-item menu-item-type-custom menu-item-object-custom"><a href="https://news.blackduck.com/" class="menu-link"><span class="link-text">Newsroom</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/blog.html" class="menu-link"><span class="link-text">Software and Application Security Blog</span></a></li><li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="https://www.blackduck.com/resources/cybersecurity-research-center.html" class="menu-link"><span class="link-text">Cybersecurity Research Center</span></a></li></ul></div><div class="col-card"><div class="col-card-cover"> <img width="" height="" src="https://assets.blackduck.com/images/f_svg/fl_sanitize/v1780399533/Nav-281px-Gartner-1/Nav-281px-Gartner-1.svg?_i=AA" alt="Learn why Black Duck is a Leader for the eighth year in a row" data-public-id="Nav-281px-Gartner-1/Nav-281px-Gartner-1.svg" class="wp-post-0 wp-image-21988" data-format="svg" data-transformations="f_svg/fl_sanitize" data-version="1780399533" data-seo="1" /><h6>Learn why Black Duck is a Leader for the eighth year in a row</h6><a class="btn-link" href="https://www.blackduck.com/resources/analyst-reports/gartner-magic-quadrant-appsec.html" target="_self" rel="nofollow" aria-label="Read the report">Read the report <svg width="33" height="25" viewBox="0 0 33 25" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32.1978 13.7526C32.9986 12.9518 32.9986 11.6514 32.1978 10.8506L21.9478 0.600586C21.147 -0.200195 19.8466 -0.200195 19.0458 0.600586C18.245 1.40137 18.245 2.70184 19.0458 3.50262L25.798 10.2548H2.05C0.916094 10.2548 0 11.1709 0 12.3048C0 13.4387 0.916094 14.3548 2.05 14.3548H25.798L19.0458 21.107C18.245 21.9078 18.245 23.2082 19.0458 24.009C19.8466 24.8098 21.147 24.8098 21.9478 24.009L32.1978 13.759V13.7526Z" fill="currentColor"/></svg></a></div></div></div></div></li>
+</ul>						</nav>
+					</div>
+					<div class="header-actions d-flex align-items-center">
+
+													<button class="search-toggle" aria-label="Search" data-target="#searchbox">
+								<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19.5 9.75C19.5 11.9016 18.8016 13.8891 17.625 15.5016L23.5594 21.4406C24.1453 22.0266 24.1453 22.9781 23.5594 23.5641C22.9734 24.15 22.0219 24.15 21.4359 23.5641L15.5016 17.625C13.8891 18.8062 11.9016 19.5 9.75 19.5C4.36406 19.5 0 15.1359 0 9.75C0 4.36406 4.36406 0 9.75 0C15.1359 0 19.5 4.36406 19.5 9.75ZM9.75 16.5C10.6364 16.5 11.5142 16.3254 12.3331 15.9862C13.1521 15.647 13.8962 15.1498 14.523 14.523C15.1498 13.8962 15.647 13.1521 15.9862 12.3331C16.3254 11.5142 16.5 10.6364 16.5 9.75C16.5 8.86358 16.3254 7.98583 15.9862 7.16689C15.647 6.34794 15.1498 5.60382 14.523 4.97703C13.8962 4.35023 13.1521 3.85303 12.3331 3.51381C11.5142 3.17459 10.6364 3 9.75 3C8.86358 3 7.98583 3.17459 7.16689 3.51381C6.34794 3.85303 5.60382 4.35023 4.97703 4.97703C4.35023 5.60382 3.85303 6.34794 3.51381 7.16689C3.17459 7.98583 3 8.86358 3 9.75C3 10.6364 3.17459 11.5142 3.51381 12.3331C3.85303 13.1521 4.35023 13.8962 4.97703 14.523C5.60382 15.1498 6.34794 15.647 7.16689 15.9862C7.98583 16.3254 8.86358 16.5 9.75 16.5Z" fill="currentColor"/></svg>							</button>
+						
+													<div class="header-contact-sales d-none d-lg-block">
+								<a class="btn btn-primary" href="https://www.blackduck.com/contact-sales.html" target="_self" rel="nofollow" aria-label="Contact sales">Contact sales </a>							</div>
+						
+						<!-- Hamburger -->
+						<a href="javascript:;" class="hamburger" role="button" aria-label="Hamburger">
+							<svg class="hamburger-open" width="42" height="36" viewBox="0 0 42 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path d="M38 34V36H4V34H38ZM40 32V4C40 2.89543 39.1046 2 38 2H4C2.89543 2 2 2.89543 2 4V32C2 33.1046 2.89543 34 4 34V36L3.79395 35.9951C1.7488 35.8913 0.108652 34.2512 0.00488281 32.2061L0 32V4C0 1.79086 1.79086 4.0266e-08 4 0H38C40.2091 0 42 1.79086 42 4V32C42 34.14 40.3194 35.8879 38.2061 35.9951L38 36V34C39.1046 34 40 33.1046 40 32Z" fill="#9A73B8" fill-opacity="0.7"/>
+				<path d="M30 8.5C30.8284 8.5 31.5 9.17157 31.5 10C31.5 10.8284 30.8284 11.5 30 11.5H12C11.1716 11.5 10.5 10.8284 10.5 10C10.5 9.17157 11.1716 8.5 12 8.5H30Z" fill="#5A2A82"/>
+				<path d="M26 16.5L26.1533 16.5078C26.9097 16.5846 27.5 17.2233 27.5 18C27.5 18.7767 26.9097 19.4154 26.1533 19.4922L26 19.5H12C11.1716 19.5 10.5 18.8284 10.5 18C10.5 17.1716 11.1716 16.5 12 16.5H26Z" fill="#5A2A82"/>
+				<path d="M21 24.5C21.8284 24.5 22.5 25.1716 22.5 26C22.5 26.8284 21.8284 27.5 21 27.5H12C11.1716 27.5 10.5 26.8284 10.5 26C10.5 25.1716 11.1716 24.5 12 24.5H21Z" fill="#5A2A82"/>
+			</svg>							<svg class="hamburger-close" width="42" height="36" viewBox="0 0 42 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+			<rect width="42" height="36" rx="4" fill="#5A2A82"/>
+			<path d="M15 12L27.7279 24.7279" stroke="white" stroke-width="3" stroke-linecap="round"/>
+			<path d="M27.7266 12L14.9986 24.7279" stroke="white" stroke-width="3" stroke-linecap="round"/>
+			</svg>						</a>
+					</div>
+				</div>
+			</div>
+
+			<!-- Search dropdown -->
+			<section id="search-dropdown" class="component-search">
+				<div id="searchbox" class="snps-searchbox" data-enable-history data-endpoint="default">
+					<div class="coveo-search-section">
+						<atomic-search-interface id="coveoSearchboxInterface">
+							<atomic-search-box number-of-queries="5" minimum-query-length="1"></atomic-search-box>
+						</atomic-search-interface>
+					</div>
+				</div>
+			</section>
+
+			<!-- Device menu -->
+							<div class="mbnav d-lg-none">
+					<div class="mbnav__backdrop"></div>
+					<div class="mbnav__state" data-clickable="false">
+						<div class="mbnav__inner">
+							<div class="menu-wrap">
+								<div class="menu-inner">
+									<ul id="menu-header-menu-1" class="menu"><li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item menu-item-depth-0 has-sub"><span class="menu-label"><span class="menu-item-title">Products &#038; Services</span></span><em class="mbnav-caret"></em>
+<div class="menu-wrap"><div class="menu-inner"><span class="back-click"><svg width="33" height="25" viewBox="0 0 33 25" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.802188 11.2474C0.00136719 12.0482 0.00136719 13.3486 0.802188 14.1494L11.0522 24.3994C11.853 25.2002 13.1534 25.2002 13.9542 24.3994C14.755 23.5986 14.755 22.2982 13.9542 21.4974L7.202 14.7452H30.95C32.0839 14.7452 33 13.8291 33 12.6952C33 11.5613 32.0839 10.6452 30.95 10.6452H7.202L13.9542 3.893C14.755 3.09219 14.755 1.79172 13.9542 0.990937C13.1534 0.190156 11.853 0.190156 11.0522 0.990937L0.802188 11.241V11.2474Z" fill="currentColor"/></svg>Back</span><ul class="sub-menu">
+	<li><span class="menu-group-title">Products &amp; Services</span></li>
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item menu-item-depth-1 has-sub"><span class="menu-label"><span class="menu-item-title">Products</span></span><em class="mbnav-caret"></em>
+	<ul class="sub-menu dropdown-menu">
+		<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item menu-item-depth-2 has-sub"><span class="menu-label"><span class="menu-item-title">col</span></span><em class="mbnav-caret"></em>
+		<ul class="sub-menu dropdown-menu">
+			<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-3"><a href="https://www.blackduck.com/platform.html"><span class="menu-item-title">Polaris</span><span class="menu-item-description">Integrated SaaS Application Security and Risk Management platform.</span></a></li>
+			<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-3"><a href="https://www.blackduck.com/signal-ai-appsec.html"><span class="menu-item-title">Signal<span class="menu-flag" style="background-color: #00a0ad;">New</span></span><span class="menu-item-description">Agentic Application Security for AI-Powered software development.</span></a></li>
+		</ul>
+</li>
+		<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item menu-item-depth-2 has-sub"><span class="menu-label"><span class="menu-item-title">col</span></span><em class="mbnav-caret"></em>
+		<ul class="sub-menu dropdown-menu">
+			<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-3"><a href="https://www.blackduck.com/static-analysis-tools-sast/coverity.html"><span class="menu-item-title">Coverity Static</span></a></li>
+			<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-3"><a href="https://www.blackduck.com/software-composition-analysis-tools/black-duck-sca.html"><span class="menu-item-title">Black Duck SCA</span></a></li>
+			<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-3"><a href="https://www.blackduck.com/dast/continuous-dynamic.html"><span class="menu-item-title">Continuous Dynamic</span></a></li>
+			<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-3"><a href="https://www.blackduck.com/interactive-application-security-testing.html"><span class="menu-item-title">Seeker Interactive</span></a></li>
+			<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-3"><a href="https://www.blackduck.com/fuzz-testing.html"><span class="menu-item-title">Fuzz Testing</span></a></li>
+			<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-3"><a href="https://www.blackduck.com/software-risk-manager.html"><span class="menu-item-title">Software Risk Manager ASPM</span></a></li>
+		</ul>
+</li>
+	</ul>
+</li>
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item menu-item-depth-1 has-sub"><span class="menu-label"><span class="menu-item-title">Services</span></span><em class="mbnav-caret"></em>
+	<ul class="sub-menu dropdown-menu">
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-2"><a href="https://www.blackduck.com/services/open-source-software-audit.html"><span class="menu-item-title">Open Source &#038; Security Audits</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-2"><a href="https://www.blackduck.com/services/security-program.html"><span class="menu-item-title">Program Strategy &#038; Planning</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-2"><a href="https://www.blackduck.com/customer-success/implementation.html"><span class="menu-item-title">Implementation &#038; Deployment</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-2"><a href="https://www.blackduck.com/customer-success.html"><span class="menu-item-title">Customer Success &#038; Support</span></a></li>
+	</ul>
+</li>
+	<li class="menu-label menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item menu-item-depth-1 has-sub"><span class="menu-label"><span class="menu-item-title">Integrations</span></span><em class="mbnav-caret"></em>
+	<ul class="sub-menu dropdown-menu">
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-2"><a href="https://www.blackduck.com/code-sight.html"><span class="menu-item-title">IDE</span></a></li>
+		<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item menu-item-depth-2"><a href="/integrations#tab-source-code-manager"><span class="menu-item-title">SCM</span></a></li>
+		<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item menu-item-depth-2"><a href="/integrations.html#build-and-ci"><span class="menu-item-title">Build/CI Tools</span></a></li>
+		<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item menu-item-depth-2"><a href="/integrations.html#workflow"><span class="menu-item-title">Workflow</span></a></li>
+		<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item menu-item-depth-2"><a href="/integrations.html#production-deployment"><span class="menu-item-title">Cloud Deployment</span></a></li>
+	</ul>
+</li>
+</ul></div></div>
+</li>
+<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item menu-item-depth-0 has-sub"><span class="menu-label"><span class="menu-item-title">Solutions</span></span><em class="mbnav-caret"></em>
+<div class="menu-wrap"><div class="menu-inner"><span class="back-click"><svg width="33" height="25" viewBox="0 0 33 25" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.802188 11.2474C0.00136719 12.0482 0.00136719 13.3486 0.802188 14.1494L11.0522 24.3994C11.853 25.2002 13.1534 25.2002 13.9542 24.3994C14.755 23.5986 14.755 22.2982 13.9542 21.4974L7.202 14.7452H30.95C32.0839 14.7452 33 13.8291 33 12.6952C33 11.5613 32.0839 10.6452 30.95 10.6452H7.202L13.9542 3.893C14.755 3.09219 14.755 1.79172 13.9542 0.990937C13.1534 0.190156 11.853 0.190156 11.0522 0.990937L0.802188 11.241V11.2474Z" fill="currentColor"/></svg>Back</span><ul class="sub-menu">
+	<li><span class="menu-group-title">Solutions</span></li>
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item menu-item-depth-1 has-sub"><span class="menu-label"><span class="menu-item-title">By Use Case</span></span><em class="mbnav-caret"></em>
+	<ul class="sub-menu dropdown-menu">
+		<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item menu-item-depth-2 has-sub"><span class="menu-label"><span class="menu-item-title">solution-col-1</span></span><em class="mbnav-caret"></em>
+		<ul class="sub-menu dropdown-menu">
+			<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item menu-item-depth-3"><a href="https://www.blackduck.com/solutions/artificial-intelligence-software-development.html"><span class="menu-item-title">AI-Generated Code</span></a></li>
+			<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-3"><a href="https://www.blackduck.com/solutions/api-security-testing.html"><span class="menu-item-title">API Security Testing</span></a></li>
+			<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-3"><a href="https://www.blackduck.com/solutions/application-security-testing.html"><span class="menu-item-title">Application Security Testing</span></a></li>
+			<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-3"><a href="https://www.blackduck.com/solutions/devsecops.html"><span class="menu-item-title">DevSecOps</span></a></li>
+			<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-3"><a href="https://www.blackduck.com/solutions/eu-cyber-resilience-act-compliance.html"><span class="menu-item-title">EU Cyber Resilience Act Compliance</span></a></li>
+			<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-3"><a href="https://www.blackduck.com/solutions/software-supply-chain-security.html"><span class="menu-item-title">Software Supply Chain Security</span></a></li>
+		</ul>
+</li>
+		<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item menu-item-depth-2 has-sub"><span class="menu-label"><span class="menu-item-title">solution-col-2</span></span><em class="mbnav-caret"></em>
+		<ul class="sub-menu dropdown-menu">
+			<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-3"><a href="https://www.blackduck.com/solutions/enterprise-application-security-risk-management.html"><span class="menu-item-title">Manage Enterprise AppSec Risk</span></a></li>
+			<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-3"><a href="https://www.blackduck.com/solutions/container-security.html"><span class="menu-item-title">Container Security</span></a></li>
+			<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-3"><a href="https://www.blackduck.com/solutions/open-source-security.html"><span class="menu-item-title">Open Source License Compliance</span></a></li>
+			<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-3"><a href="https://www.blackduck.com/solutions/mergers-and-acquisitions.html"><span class="menu-item-title">M&#038;A Due Diligence</span></a></li>
+			<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-3"><a href="https://www.blackduck.com/solutions/compliance.html"><span class="menu-item-title">Quality and Security Standards Compliance</span></a></li>
+		</ul>
+</li>
+	</ul>
+</li>
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item menu-item-depth-1 has-sub"><span class="menu-label"><span class="menu-item-title">By Technology</span></span><em class="mbnav-caret"></em>
+	<ul class="sub-menu dropdown-menu">
+		<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item menu-item-depth-2 has-sub"><span class="menu-label"><span class="menu-item-title">solution-col-1</span></span><em class="mbnav-caret"></em>
+		<ul class="sub-menu dropdown-menu">
+			<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-3"><a href="https://www.blackduck.com/signal-ai-appsec.html"><span class="menu-item-title">AI AppSec<span class="menu-flag" style="background-color: #00a0ad;">New</span></span></a></li>
+			<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-3"><a href="https://www.blackduck.com/static-analysis-tools-sast.html"><span class="menu-item-title">Static Analysis (SAST)</span></a></li>
+			<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-3"><a href="https://www.blackduck.com/dast.html"><span class="menu-item-title">Dynamic Application Security Testing</span></a></li>
+		</ul>
+</li>
+		<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item menu-item-depth-2 has-sub"><span class="menu-label"><span class="menu-item-title">solution-col-2</span></span><em class="mbnav-caret"></em>
+		<ul class="sub-menu dropdown-menu">
+			<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-3"><a href="https://www.blackduck.com/software-risk-manager.html"><span class="menu-item-title">Application Security Posture Management (ASPM)</span></a></li>
+			<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-3"><a href="https://www.blackduck.com/software-composition-analysis-tools.html"><span class="menu-item-title">Software Composition Analysis (SCA)</span></a></li>
+			<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-3"><a href="https://www.blackduck.com/interactive-application-security-testing.html"><span class="menu-item-title">Interactive Application Security Testing (IAST)</span></a></li>
+		</ul>
+</li>
+	</ul>
+</li>
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item menu-item-depth-1 has-sub"><span class="menu-label"><span class="menu-item-title">By Industry</span></span><em class="mbnav-caret"></em>
+	<ul class="sub-menu dropdown-menu">
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-2"><a href="https://www.blackduck.com/solutions/automotive.html"><span class="menu-item-title">Automotive</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-2"><a href="https://www.blackduck.com/solutions/embedded-software-security.html"><span class="menu-item-title">Embedded Software and ISV</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-2"><a href="https://www.blackduck.com/solutions/financial-services.html"><span class="menu-item-title">Financial Services</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-2"><a href="https://www.blackduck.com/solutions/healthcare.html"><span class="menu-item-title">Medical Devices</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-2"><a href="https://www.blackduck.com/solutions/government.html"><span class="menu-item-title">Public Sector</span></a></li>
+	</ul>
+</li>
+</ul></div></div>
+</li>
+<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item menu-item-depth-0 has-sub"><span class="menu-label"><span class="menu-item-title">Resources</span></span><em class="mbnav-caret"></em>
+<div class="menu-wrap"><div class="menu-inner"><span class="back-click"><svg width="33" height="25" viewBox="0 0 33 25" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.802188 11.2474C0.00136719 12.0482 0.00136719 13.3486 0.802188 14.1494L11.0522 24.3994C11.853 25.2002 13.1534 25.2002 13.9542 24.3994C14.755 23.5986 14.755 22.2982 13.9542 21.4974L7.202 14.7452H30.95C32.0839 14.7452 33 13.8291 33 12.6952C33 11.5613 32.0839 10.6452 30.95 10.6452H7.202L13.9542 3.893C14.755 3.09219 14.755 1.79172 13.9542 0.990937C13.1534 0.190156 11.853 0.190156 11.0522 0.990937L0.802188 11.241V11.2474Z" fill="currentColor"/></svg>Back</span><ul class="sub-menu">
+	<li><span class="menu-group-title">Resources</span></li>
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item menu-item-depth-1 has-sub"><span class="menu-label"><span class="menu-item-title">Knowledge Hub</span></span><em class="mbnav-caret"></em>
+	<ul class="sub-menu dropdown-menu">
+		<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item menu-item-depth-2"><a target="_blank" rel="noopener" href="https://blackduck.skilljar.com/"><span class="menu-item-title">Black Duck Academy</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-2"><a href="https://www.blackduck.com/resources/cybersecurity-research-center.html"><span class="menu-item-title">Cybersecurity Research Center</span></a></li>
+		<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item menu-item-depth-2"><a target="_blank" rel="noopener" href="https://community.blackduck.com/s/global-search/%40uri"><span class="menu-item-title">Search Knowledge Base</span></a></li>
+	</ul>
+</li>
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item menu-item-depth-1 has-sub"><span class="menu-label"><span class="menu-item-title">Get Support</span></span><em class="mbnav-caret"></em>
+	<ul class="sub-menu dropdown-menu">
+		<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item menu-item-depth-2"><a target="_blank" rel="noopener" href="https://community.blackduck.com/s/discussions"><span class="menu-item-title">Discussions</span></a></li>
+		<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item menu-item-depth-2"><a target="_blank" rel="noopener" href="https://docs.blackduck.com/"><span class="menu-item-title">Documentation</span></a></li>
+		<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item menu-item-depth-2"><a target="_blank" rel="noopener" href="https://community.blackduck.com/s/ideas-portal"><span class="menu-item-title">Ideas</span></a></li>
+		<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item menu-item-depth-2"><a target="_blank" rel="noopener" href="https://community.blackduck.com/s/"><span class="menu-item-title">Support</span></a></li>
+	</ul>
+</li>
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item menu-item-depth-1 has-sub"><span class="menu-label"><span class="menu-item-title">Explore Resources</span></span><em class="mbnav-caret"></em>
+	<ul class="sub-menu dropdown-menu">
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-2"><a href="https://www.blackduck.com/glossary.html"><span class="menu-item-title">AppSec Glossary</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-2"><a href="https://www.blackduck.com/resources/case-studies.html"><span class="menu-item-title">Case Studies</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-2"><a href="https://www.blackduck.com/blog.html"><span class="menu-item-title">Blog</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-2"><a href="https://www.blackduck.com/customer-value.html"><span class="menu-item-title">Customer Value</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-2"><a href="https://www.blackduck.com/resources/ebooks.html"><span class="menu-item-title">eBooks</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-2"><a href="https://www.blackduck.com/resources/datasheets.html"><span class="menu-item-title">Datasheets</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-2"><a href="https://www.blackduck.com/resources/webinars.html"><span class="menu-item-title">Webinars</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-2"><a href="https://www.blackduck.com/resources/analyst-reports.html"><span class="menu-item-title">Research &#038; Reports</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-2"><a href="https://www.blackduck.com/resources/white-papers.html"><span class="menu-item-title">White Papers</span></a></li>
+	</ul>
+</li>
+</ul></div></div>
+</li>
+<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item menu-item-depth-0 has-sub"><span class="menu-label"><span class="menu-item-title">Company</span></span><em class="mbnav-caret"></em>
+<div class="menu-wrap"><div class="menu-inner"><span class="back-click"><svg width="33" height="25" viewBox="0 0 33 25" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.802188 11.2474C0.00136719 12.0482 0.00136719 13.3486 0.802188 14.1494L11.0522 24.3994C11.853 25.2002 13.1534 25.2002 13.9542 24.3994C14.755 23.5986 14.755 22.2982 13.9542 21.4974L7.202 14.7452H30.95C32.0839 14.7452 33 13.8291 33 12.6952C33 11.5613 32.0839 10.6452 30.95 10.6452H7.202L13.9542 3.893C14.755 3.09219 14.755 1.79172 13.9542 0.990937C13.1534 0.190156 11.853 0.190156 11.0522 0.990937L0.802188 11.241V11.2474Z" fill="currentColor"/></svg>Back</span><ul class="sub-menu">
+	<li><span class="menu-group-title">Company</span></li>
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item menu-item-depth-1 has-sub"><span class="menu-label"><span class="menu-item-title">About Us</span></span><em class="mbnav-caret"></em>
+	<ul class="sub-menu dropdown-menu">
+		<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item menu-item-depth-2 has-sub"><span class="menu-label"><span class="menu-item-title">col-1</span></span><em class="mbnav-caret"></em>
+		<ul class="sub-menu dropdown-menu">
+			<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-3"><a href="https://www.blackduck.com/company.html"><span class="menu-item-title">About Black Duck</span></a></li>
+			<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-3"><a href="https://www.blackduck.com/company/leadership.html"><span class="menu-item-title">Leadership</span></a></li>
+			<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item menu-item-depth-3"><a href="https://news.blackduck.com/"><span class="menu-item-title">Newsroom</span></a></li>
+			<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-3"><a href="https://www.blackduck.com/blog.html"><span class="menu-item-title">Blog</span></a></li>
+			<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-3"><a href="https://www.blackduck.com/partners.html"><span class="menu-item-title">Partners</span></a></li>
+			<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-3"><a href="https://www.blackduck.com/customer-value.html"><span class="menu-item-title">Customer Value</span></a></li>
+		</ul>
+</li>
+		<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item menu-item-depth-2 has-sub"><span class="menu-label"><span class="menu-item-title">col-2</span></span><em class="mbnav-caret"></em>
+		<ul class="sub-menu dropdown-menu">
+			<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-3"><a href="https://www.blackduck.com/company/careers.html"><span class="menu-item-title">Careers</span></a></li>
+			<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-3"><a href="https://www.blackduck.com/contact-sales.html"><span class="menu-item-title">Contact Sales</span></a></li>
+		</ul>
+</li>
+	</ul>
+</li>
+	<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item menu-item-depth-1 has-sub"><span class="menu-label"><span class="menu-item-title">Latest Updates</span></span><em class="mbnav-caret"></em>
+	<ul class="sub-menu dropdown-menu">
+		<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item menu-item-depth-2"><a href="https://news.blackduck.com/"><span class="menu-item-title">Newsroom</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-2"><a href="https://www.blackduck.com/blog.html"><span class="menu-item-title">Software and Application Security Blog</span></a></li>
+		<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item menu-item-depth-2"><a href="https://www.blackduck.com/resources/cybersecurity-research-center.html"><span class="menu-item-title">Cybersecurity Research Center</span></a></li>
+	</ul>
+</li>
+</ul></div></div>
+</li>
+</ul>
+									<div class="menu-footer">
+										<div class="utility-links d-lg-none">
+											<div class="language-selection d-flex align-items-end gap-8">
+												<!-- language menu -->
+												<ul id="menu-language-switcher-menu-1" class="language-menu"><li class="menu-item wpml-ls-slot-21 wpml-ls-item wpml-ls-item-en wpml-ls-current-language wpml-ls-menu-item wpml-ls-first-item wpml-ls-last-item menu-item-type-wpml_ls_menu_item menu-item-object-wpml_ls_menu_item menu-item-wpml-ls-21-en"><a href="https://www.blackduck.com/blog/cyrc-advisory-prompt-injection-emailgpt.html" aria-current="page" aria-expanded="false" aria-controls="wpml-ls-submenu-wpml-ls-21-en"><span class="wpml-ls-display">English</span></a></li>
+</ul>																																					<div class="support-link d-flex align-items-center gap-8">
+															<svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.2571 7.31429C13.2571 4.03143 10.5971 1.37143 7.31429 1.37143C4.03143 1.37143 1.37143 4.03143 1.37143 7.31429C1.37143 10.5971 4.03143 13.2571 7.31429 13.2571C10.5971 13.2571 13.2571 10.5971 13.2571 7.31429ZM0 7.31429C0 3.27429 3.27429 0 7.31429 0C11.3543 0 14.6286 3.27429 14.6286 7.31429C14.6286 11.3543 11.3543 14.6286 7.31429 14.6286C3.27429 14.6286 0 11.3543 0 7.31429ZM7.31429 5.02857C6.80857 5.02857 6.4 5.43714 6.4 5.94286C6.4 6.32286 6.09429 6.62857 5.71429 6.62857C5.33429 6.62857 5.02857 6.32286 5.02857 5.94286C5.02857 4.68 6.05143 3.65714 7.31429 3.65714C8.57714 3.65714 9.6 4.68 9.6 5.94286C9.6 7.29143 8.57143 7.86286 8 8.07143V8.18C8 8.56 7.69429 8.86571 7.31429 8.86571C6.93429 8.86571 6.62857 8.56 6.62857 8.18V7.94857C6.62857 7.36286 7.05143 6.94286 7.48857 6.8C7.67143 6.74 7.86571 6.64286 8.00857 6.50571C8.13143 6.38571 8.22857 6.22 8.22857 5.94571C8.22857 5.44 7.82 5.03143 7.31429 5.03143V5.02857ZM6.4 10.5143C6.4 10.0086 6.80857 9.6 7.31429 9.6C7.82 9.6 8.22857 10.0086 8.22857 10.5143C8.22857 11.02 7.82 11.4286 7.31429 11.4286C6.80857 11.4286 6.4 11.02 6.4 10.5143Z" fill="currentColor"/></svg>															<a class="u-link" href="https://community.blackduck.com/s/" target="_blank" rel="noopener noreferrer" aria-label="Support">Support </a>														</div>
+																																															</div>
+										</div>
+										<div class="header-contact-sales">
+											<a class="btn btn-primary w-md-full" href="https://www.blackduck.com/contact-sales.html" target="_self" rel="nofollow" aria-label="Contact sales">Contact sales </a>										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+					</header>
+<div class="container"><ul class="breadcrumb"><li class="breadcrumb-item home">
+  <a property="item" typeof="WebPage" href="https://www.blackduck.com">
+    <span property="name">Home</span>
+  </a>
+  <meta property="position" content="1">
+</li><li class="breadcrumb-item taxonomy category">
+  <a property="item" typeof="WebPage" href="https://www.blackduck.com/blog/category.cyrc.html">
+    <span property="name">CyRC</span>
+  </a>
+  <meta property="position" content="2">
+</li><li class="breadcrumb-item post post-post current-item">
+  <span property="name">CyRC Vulnerability Advisory: CVE-2024-5184s prompt injection in EmailGPT service</span>
+  <meta property="position" content="3">
+</li></ul></div><section class="banner banner-regular banner-align-left bg-dark pt-md pb-md"><div class="container banner-inner"><h1 class="banner-title h1">CyRC Vulnerability Advisory: CVE-2024-5184s prompt injection in EmailGPT service</h1><div class="banner-meta"><div class="banner-meta-left"><span class="banner-date">June 4, 2024</span><span class="slash">|</span><span class="banner-read-time">2 min read</span></div><div class="banner-meta-right"><div class="author-images"><a href="https://www.blackduck.com/blog/authors/mohammed-alshehri.html" class="author-image"><img width="40" height="40" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSI+PGFuaW1hdGUgYXR0cmlidXRlTmFtZT0iZmlsbCIgdmFsdWVzPSJyZ2JhKDE1MywxNTMsMTUzLDAuNSk7cmdiYSgxNTMsMTUzLDE1MywwLjEpO3JnYmEoMTUzLDE1MywxNTMsMC41KSIgZHVyPSIycyIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiIC8+PC9yZWN0Pjwvc3ZnPg==" alt="Mohammed Alshehri" data-public-id="mohammed-alshehri/mohammed-alshehri.jpg" data-transformation-crop="w_150,h_150,c_scale" class="wp-post-0 wp-image-18894" data-format="jpg" data-transformations="" data-version="1777976800" data-seo="1" data-responsive="1" data-size="40 40" data-delivery="upload" onload=";window.CLDBind?CLDBind(this):null;" data-cloudinary="lazy" /></a></div><div class="author-names"><a href="https://www.blackduck.com/blog/authors/mohammed-alshehri.html" class="author-name">Mohammed Alshehri</a></div></div></div></div></section>
+<main id="content" class="main-content">
+	<div class="container space-md">
+		<div class="d-flex blog-wrapper">
+			<div class="blog-sidebar">
+				<div class="blog-sidebar-wrapper">
+					<div class="blog-topics">
+						<span class="blog-topics-title d-block mb-16">Table of Contents</span>
+						<ul class="blog-topics-list"></ul> <!-- TOC will be populated using JS Default targeted headings H2. -->
+					</div>
+											<div class="blog-social-share">
+							<span class="blog-social-share-label">Share</span>
+							<div class="blog-social-share-icons">
+								<div class="addtoany_shortcode"><div class="a2a_kit a2a_kit_size_32 addtoany_list" data-a2a-url="https://www.blackduck.com/blog/cyrc-advisory-prompt-injection-emailgpt.html" data-a2a-title="CyRC Vulnerability Advisory: CVE-2024-5184s prompt injection in EmailGPT service"><a class="a2a_button_facebook" href="https://www.addtoany.com/add_to/facebook?linkurl=https%3A%2F%2Fwww.blackduck.com%2Fblog%2Fcyrc-advisory-prompt-injection-emailgpt.html&amp;linkname=CyRC%20Vulnerability%20Advisory%3A%20CVE-2024-5184s%20prompt%20injection%20in%20EmailGPT%20service" title="Facebook" rel="nofollow noopener" target="_blank"></a><a class="a2a_button_linkedin" href="https://www.addtoany.com/add_to/linkedin?linkurl=https%3A%2F%2Fwww.blackduck.com%2Fblog%2Fcyrc-advisory-prompt-injection-emailgpt.html&amp;linkname=CyRC%20Vulnerability%20Advisory%3A%20CVE-2024-5184s%20prompt%20injection%20in%20EmailGPT%20service" title="LinkedIn" rel="nofollow noopener" target="_blank"></a><a class="a2a_button_x" href="https://www.addtoany.com/add_to/x?linkurl=https%3A%2F%2Fwww.blackduck.com%2Fblog%2Fcyrc-advisory-prompt-injection-emailgpt.html&amp;linkname=CyRC%20Vulnerability%20Advisory%3A%20CVE-2024-5184s%20prompt%20injection%20in%20EmailGPT%20service" title="X" rel="nofollow noopener" target="_blank"></a></div></div>							</div>
+						</div>
+					
+					<!-- SIG Marketo Form -->
+					
+<div id="sig-form-6ac20ea58c41b" class="sig-marketo-form-section varient-default">
+	<div class="sig-marketo-form-state ">
+				<div class="sig-marketo-form-inner">
+													<div class="sig-marketo-form-description">
+						<h4 class="modal-title h4 text-default">Subscribe to the blog newsletter</h4>
+											</div>
+							
+			<div class="sig-marketo-form-wrapper">
+				<div class="form-content">
+					<form id="mktoForm_1045"></form>
+				</div>
+			</div><!-- /.sig-marketo-form-wrapper -->
+		</div>
+	</div>
+</div>
+
+<script src="//go26.blackduck.com/js/forms2/js/forms2.min.js"></script>
+<script>
+var $ = jQuery;
+MktoForms2.loadForm("\/\/go26.blackduck.com", "801-WRE-860", 1045, function (form) {
+	// Restrict phone field length to 20 characters (Remediation for Sr No. 17)
+	form.getFormElem().find('input[type="tel"], input[name*="phone"], input[name*="Phone"]').attr('maxlength', '20');
+
+	var gdprCountriesArr = ["Austria","Belgium","Bulgaria","Croatia","Cyprus","Czech Republic","Denmark","Estonia","Germany","Greece","Hungary","Iceland","Italy","Latvia","Liechtenstein","Lithuania","Luxembourg","Malta","Netherlands","Norway","Poland","Romania","Slovakia","Slovenia","Spain","Switzerland"];
+	var gdprConsentCtryMap = ["germany"];
+	var gdprConsentVersion = "v20180515";
+	var gdprConsentVersionValue = "v20190627";
+	var marketoFormName = "SIG - Blog Subscription Web";
+	var currentPagePath = window.location.pathname;
+	var ctaSubmitElem = form.getFormElem().find(".mktoButton");
+	var ctaSubmitText = "";
+	var dt = new Date();
+	var twoDigitMonth = dt.getMonth() >= 9 ? (dt.getMonth()+1) : '0' + (dt.getMonth()+1);
+	var twoDigitDate = dt.getDate() > 9 ? dt.getDate() :  '0' + (dt.getDate());
+	var dtFormatted = dt.getFullYear() + '/' + twoDigitMonth + '/' + twoDigitDate;
+
+	form.onValidate(function(){
+		try {
+			if ($(".mktoInvalid").closest(".mktoFieldWrap").find(".mktoLabel").text().length > 0) {
+				var error = $(".mktoInvalid").closest(".mktoFieldWrap").find(".mktoLabel").text();
+				var a1 = error.split(":");
+				var a2 = a1.map((s) => s.slice(1));
+				a2 = a2.filter(function (e) {
+					return e;
+				});
+				var a4 = a2.join("|");
+
+					// Collect specific error messages (ACCUMULATE, don't overwrite)
+				var errorMessages = [];
+
+				if ($("#ValidMsgEmail").is(":visible")) {
+					var e = $("#ValidMsgEmail").text();
+					errorMessages.push("Business Email:" + e);
+				}
+				if ($("#ValidMsgFirstName").is(":visible")) {
+					var e = $("#ValidMsgFirstName").text();
+					errorMessages.push("First Name:" + e);
+				}
+				if ($("#ValidMsgLastName").is(":visible")) {
+					var e = $("#ValidMsgLastName").text();
+					errorMessages.push("Last Name:" + e);
+				}
+				if ($("#ValidMsgCompany").is(":visible")) {
+					var e = $("#ValidMsgCompany").text();
+					errorMessages.push("Company:" + e);
+				}
+				if ($("#ValidMsgCountry").is(":visible")) {
+					var e = $("#ValidMsgCountry").text();
+					errorMessages.push("Country:" + e);
+				}
+				var errorM = errorMessages.join("|");
+				window.dataLayer = window.dataLayer || [];
+				window.dataLayer.push({
+					event: "formError",
+					formName: "Subscribe to the blog newsletter",
+					formType: "SIG - Blog Subscription Web",
+					formErrorField: a4,
+					formErrorMessage: errorM,
+					formErrors: 1,
+					pageURL: window.location.href,
+					web: {
+						webPageDetails: {
+							URL: window.location.href,
+							name: "",
+						},
+					},
+					_softwareintegritygroupinc: {
+						forms: {
+							formErrorField: a4,
+							formName: "Subscribe to the blog newsletter",
+							formErrorMessage: errorM,
+							formType: "SIG - Blog Subscription Web",
+							formErrors: {
+								value: 1,
+							},
+						},
+					},
+				});
+			}
+		} catch (err) {
+			console.error("GTM Data Layer error tracking failed:", err);
+		}
+	});
+
+	form.onSubmit(function(){
+		form.getFormElem().find("[name='GCLID__c']").val(getGclid('sig_gclid'));
+		ctaSubmitText = ctaSubmitElem.text();
+
+		var referrerURL = getCookie('refCookie');
+		referrerURL = referrerURL.length > 0 ? referrerURL : document.referrer;
+		form.getFormElem().find("[name='Most_Recent_Referring_URL__c']").val(referrerURL);
+
+		var campaign = getUrlParam("cmp");
+		//Populate from s_campaign cookie value if available
+		if(campaign == 'undefined' || campaign === ''){
+			campaign = getCookie('cmp_session');
+		}
+
+		var aemUtmTerm = getUrlParam("utm_term");
+		if(aemUtmTerm== 'undefined' || aemUtmTerm == '') {
+			aemUtmTerm = getCookie('utm_term_session');
+		}
+
+		var aemUtmSource = getUrlParam("utm_source");
+		if(aemUtmSource== 'undefined' || aemUtmSource == '') {
+			aemUtmSource = getCookie('utm_source_session');
+		}
+
+		var aemUtmMedium = getUrlParam("utm_medium");
+		if(aemUtmMedium== 'undefined' || aemUtmMedium == '') {
+			aemUtmMedium = getCookie('utm_medium_session');
+		}
+
+		var aemUtmContent = getUrlParam("utm_content");
+		if(aemUtmContent== 'undefined' || aemUtmContent == '') {
+			aemUtmContent = getCookie('utm_content_session');
+		}
+		var aemUtmCampaign = getUrlParam("utm_campaign");
+		if(aemUtmCampaign== 'undefined' || aemUtmCampaign == '') {
+			aemUtmCampaign = getCookie('utm_campaign_session');
+		}
+
+		form.addHiddenFields({
+			"internalCampaignTag": campaign,
+			"utmterm": aemUtmTerm,
+			"utmsource": aemUtmSource,
+			"utmmedium": aemUtmMedium,
+			"utm_content__c": aemUtmContent,
+			"utmcampaign": aemUtmCampaign,
+			'mktotrkcookie': getSatTrackCookie('_mkto_trk')
+		});
+
+		// START:: Change to set the sig_last_pdf cookie value in hidden field CM_PDF_CTA__c
+
+		var lastPDFCookieValue = getCookie('sig_last_pdf');
+		form.getFormElem().find("[name='CM_PDF_CTA__c']").val(lastPDFCookieValue);
+
+		// END:: Change to set the sig_last_pdf cookie value in hidden field Last_PDF_CTA__c
+	});
+
+	/**
+	 * Get query string param value.
+	 */
+
+	const getUrlParam = function (name) {
+		var results = new RegExp('[\?&]' + name + '=([^&#]*)')
+							.exec(window.location.search);
+
+		return (results !== null) ? results[1] || 0 : '';
+	}
+
+	/**
+	 * Get Cookie value
+	 */
+	const getCookie = function(c_name) {
+		if (document.cookie.length > 0) {
+			var c_start = document.cookie.indexOf(c_name + "=");
+			if (c_start != -1) {
+				c_start = c_start + c_name.length + 1;
+				var c_end = document.cookie.indexOf(";", c_start);
+				if (c_end == -1) {
+					c_end = document.cookie.length;
+				}
+				return unescape(document.cookie.substring(c_start, c_end));
+			}
+		}
+		return "";
+	}
+
+	/**
+	 * Get SatTrack Cookie
+	 */
+	const getSatTrackCookie = function (name) {
+		const value = `; ${document.cookie}`;
+		const parts = value.split(`; ${name}=`);
+		if (parts.length === 2) {
+			return parts.pop().split(';').shift();
+		}
+		return '';
+	}
+
+	/**
+	 * Returns true if country is GDPR Country.
+	*/
+	var checkGDPRCountry = function (obj) {
+		var country = $(obj).val();
+		var isGDPRCountry = false;
+			if(country !== '' && country != 'undefined'){
+				$.each(gdprCountriesArr,function(index, value){
+					if(value === country){
+						isGDPRCountry = true;
+						return false;
+					}
+				});
+			}
+		return isGDPRCountry;
+	};
+
+	/**
+	 * Gets GDPR Country consent version
+	 */
+	var getConsentVersion = function(CountryName) {
+		var consentVersion = "";
+		$.each(gdprCountriesArr,function(index, value){
+			if(value === CountryName){
+				if(gdprConsentCtryMap.includes(CountryName.toLowerCase())) {
+					consentVersion = gdprConsentVersionValue;
+					return false;
+				}else {
+					consentVersion =  gdprConsentVersion;
+					return false;
+				}
+			}
+		});
+		return consentVersion;
+	};
+
+	/**
+	 * Get GCLID value.
+	 */
+	const getGclid = function (name) {
+		var gclid = getUrlParam("gclid");
+		if(gclid == '')
+		{
+			gclid = getCookie('sig_gclid');
+		}
+		return gclid;
+	}
+
+	/**
+	 * Pushes formSuccess event in Google Tag Manager (GTM) dataLayer object.
+	 */
+	const sendFormSuccessEvent = function () {
+		try {
+			window.dataLayer = window.dataLayer || [];
+			window.dataLayer.push({
+				event: "formSuccess",
+				formName: "Subscribe to the blog newsletter",
+				formType: "SIG - Blog Subscription Web",
+				formSuccess: 1,
+				pageURL: window.location.href,
+				web: {
+					webPageDetails: {
+						URL: window.location.href,
+						name: "",
+					},
+				},
+				_softwareintegritygroupinc: {
+					forms: {
+						formName: "Subscribe to the blog newsletter",
+						formType: "SIG - Blog Subscription Web",
+						formSuccess: {
+							value: 1,
+						},
+					},
+				},
+			});
+		} catch (e) {
+			console.error("GTM Data Layer push failed:", e);
+		}
+	}
+
+	// -------------------------------
+	var langMapping = {
+			'zh-Hans': 'zh_CN',
+			'ja': 'ja',
+			'en': 'en',
+			'zh-Hant': 'zh_TW',
+			'de': 'de'
+	};
+	var langCode = $("html").attr("lang");
+	var locale   = langMapping[langCode];
+	if(langMapping[langCode] === null || langMapping[langCode] === undefined){
+		locale = langMapping.en;
+	}
+
+	var i18nData = {
+		'zh_CN': {'requiredConsentBoxErrorMsg' : '请勾选下面的同意框，以完成表格来通过电子邮件接收您的资料。'},
+		'ja':  {'requiredConsentBoxErrorMsg' : '下記のチェックボックスにチェックをしていただき、emailにてファイルをお受取りください。'},
+		'en':  {'requiredConsentBoxErrorMsg' :'Please check the consent box below to complete the form and receive your asset via email.'},
+		'zh_TW':  {'requiredConsentBoxErrorMsg' :'请勾选下面的同意框，以完成表格来通过电子邮件接收您的资料。'},
+		'de':  {'requiredConsentBoxErrorMsg' :'Bitte klicken Sie zum Ausdruck Ihrer Zustimmung das enstprechende Kästchen und Sie erhalten Ihr angefordertes Dokument via E-Mail.'}
+	};
+
+	form.onSuccess(function (vals, thankYouURL) {
+		var date = new Date();
+		date.setTime(date.getTime() + (5 * 60 * 1000)); // 5 minutes
+		document.cookie = "sig_form_submitted=1; path=/; expires=" + date.toUTCString() + "; max-age=300; SameSite=Lax";
+
+		var url = "https:\/\/www.blackduck.com\/blog\/thankyou.html";
+
+		// If thank you URL is not explicitly configured, determine it dynamically from current URL
+		if (typeof url === 'undefined' || url === '' || url === null) {
+			var currentPath = window.location.pathname;
+			if (currentPath.endsWith('/')) {
+				currentPath = currentPath.slice(0, -1);
+			}
+			if (currentPath.endsWith('.html')) {
+				currentPath = currentPath.substring(0, currentPath.length - 5);
+			}
+			url = currentPath + "/thankyou.html";
+		}
+
+		if(checkGDPRCountry($("#Country"))
+		&& !form.getFormElem().find("[name='Consent_Agreement__c']").prop("checked")
+		&& marketoFormName
+		&& marketoFormName.toLowerCase().indexOf("medium priority") > -1){
+			if ($(".customMktoErrMsg").length == 0) {
+				var firstRow = form.getFormElem().find(".mktoFormRow").get(0);
+				$('<div class="mktoFormRow customMktoErrMsg"><div class="mktoError"><div class="mktoErrorMsg" style="margin-bottom: 10px">' + '</div></div></div>')
+						.insertBefore($(firstRow));
+			}
+			else if($(".customMktoErrMsg .mktoErrorMsg").length == 0){
+				$(".customMktoErrMsg").html('<div class="mktoError"><div class="mktoErrorMsg" style="margin-bottom: 10px">'  + '</div></div>');
+			}
+			formLoadingErrMsg = i18nData[locale].requiredConsentBoxErrorMsg;
+			$(".customMktoErrMsg .mktoErrorMsg").text(formLoadingErrMsg);
+
+			ctaSubmitElem.prop('disabled', false);
+			ctaSubmitElem.text(ctaSubmitText);
+
+			$('html, body').animate({
+				scrollTop: $(".snps-aem-mktoForm").offset().top
+			})
+		}
+		else if(vals["Country"] && vals["Country"] === 'Germany'
+				&& marketoFormName && marketoFormName.toLowerCase().indexOf("medium priority") > -1){
+
+			sendFormSuccessEvent();
+			if (currentPagePath.indexOf("/content/black-duck") > -1) {
+				url = "/contact-sales/dede-thank-you.html";
+			}
+			window.location.href = url;
+		}
+		else {
+			sendFormSuccessEvent();
+			if (url.indexOf("http") == 0) {
+				window.location.href = url;
+			} else if (url.indexOf("/") == 0) {
+				window.location.href = window.location.origin + url;
+			} else {
+				window.location.href = url;
+			}
+		}
+
+		return false;
+	}); //onSuccess
+
+	form.addHiddenFields({
+		"hiddenLandingPageURL": window.location.href,
+		// "wfi":"",
+		"Last_Campaign_ID__c": "#",
+		"Last_Campaign_Name__c": "#",
+		"autoresponderID": "#",
+		//"hidden_leadsource": "",
+		"Alert_Email__c": "#",
+		"Lead_Source_Most_Recent__c": "Web"	});
+
+	// function appendDigitalDataObj(form) {
+	// 	var vals = form.vals(); // Get the form field values
+	// 	var formId = vals.formid;
+	// 	var templatePath = "${pageProperties.cq:template @ context='scriptString'}";
+
+	// 	var formDetailsObj = {
+	// 		"type": templatePath.length > 0 ? templatePath.split('/').pop() : '',
+	// 		"name": "${model.marketoFormName  @ context='scriptString'}",
+	// 		"id": formId
+	// 	}
+
+	// 	if (typeof digitalData != "undefined") {
+	// 		digitalData.page["form_details"] = formDetailsObj;
+	// 	}
+	// }
+});
+
+var checkFlag = true;
+
+$(document).on("keyup", ".mktoLabel input, .mktoField input", function (e) {
+	e.preventDefault();
+	if (checkFlag == true) {
+		window.dataLayer = window.dataLayer || [];
+		window.dataLayer.push({
+			event: "formInitiation",
+			formName: "Subscribe to the blog newsletter",
+			formType: "SIG - Blog Subscription Web",
+			formInitiations: 1,
+			pageURL: window.location.href,
+			web: {
+				webPageDetails: {
+					URL: window.location.href,
+					name: "SIG - Blog Subscription Web",
+				},
+			},
+			_softwareintegritygroupinc: {
+				forms: {
+					formName: "Subscribe to the blog newsletter",
+					formType: "SIG - Blog Subscription Web",
+					formInitiations: {
+						value: 1,
+					},
+				},
+			},
+		});
+	}
+	checkFlag = false;
+
+	return true;
+});
+</script>
+
+											<div class="community-engagement">
+							<h6 class="community-engagement-title">Get answers from the Community</h6>
+							<a class="btn-link" href="https://community.blackduck.com/s/discussions" target="_blank" rel="noopener noreferrer" aria-label="Join discussions">Join discussions <svg width="33" height="25" viewBox="0 0 33 25" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32.1978 13.7526C32.9986 12.9518 32.9986 11.6514 32.1978 10.8506L21.9478 0.600586C21.147 -0.200195 19.8466 -0.200195 19.0458 0.600586C18.245 1.40137 18.245 2.70184 19.0458 3.50262L25.798 10.2548H2.05C0.916094 10.2548 0 11.1709 0 12.3048C0 13.4387 0.916094 14.3548 2.05 14.3548H25.798L19.0458 21.107C18.245 21.9078 18.245 23.2082 19.0458 24.009C19.8466 24.8098 21.147 24.8098 21.9478 24.009L32.1978 13.759V13.7526Z" fill="currentColor"/></svg></a>						</div>
+									</div>
+			</div>
+			<div class="blog-content">
+															<article>
+							
+<h2 class="wp-block-heading">Overview</h2>
+
+
+
+<p class="wp-block-paragraph">The Black Duck Cybersecurity Research Center (CyRC) has exposed <a href="https://genai.owasp.org/llmrisk/llm01-prompt-injection/">prompt injection</a> vulnerabilities in the EmailGPT service. EmailGPT is an API service and Google Chrome extension that assists users in writing emails inside Gmail using OpenAI&#8217;s GPT models.</p>
+
+
+
+<p class="wp-block-paragraph">The service uses an API service that allows a malicious user to inject a direct prompt and take over the service logic.&nbsp;Attackers can exploit the issue by forcing the AI service to leak the standard hard-coded system prompts&nbsp;and/or&nbsp;execute unwanted prompts.</p>
+
+
+
+<hr class="wp-block-separator has-alpha-channel-opacity is-style-wide"/>
+
+
+
+<h2 class="wp-block-heading">Exploitation</h2>
+
+
+
+<p class="wp-block-paragraph">When engaging with EmailGPT by submitting a malicious prompt that requests harmful information, the system will respond by providing the requested data. This vulnerability can be exploited by any individual with access to the service.</p>
+
+
+
+<h3 class="wp-block-heading">Affected software</h3>
+
+
+
+<ul class="wp-block-list">
+<li><b>EmailGPT &nbsp;&#8220;main&#8221; branch</b></li>
+</ul>
+
+
+
+<h2 class="wp-block-heading">Impact</h2>
+
+
+
+<p class="wp-block-paragraph">Exploitation of this vulnerability would lead to intellectual property leakage, denial-of-service, and direct financial loss through an attacker making repeated requests to the AI provider’s API which are pay-per-use.</p>
+
+
+
+<ul class="wp-block-list">
+<li><b>CVSS Base Score: 6.5 (Medium)</b></li>
+<li><b>CVSS 3.1 Vector: CVSS:3.1/AV:A/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N</b></li>
+</ul>
+
+
+
+<h2 class="wp-block-heading">Remediation</h2>
+
+
+
+<p class="wp-block-paragraph">The CyRC reached out to the developers but has not received a response within the 90-day timeline dictated by our responsible disclosure policy. <b>The CyRC recommends removing the applications from networks immediately.</b></p>
+
+
+
+<h2 class="wp-block-heading">Discovery credit</h2>
+
+
+
+<p class="wp-block-paragraph">This vulnerability was discovered by <b>Mohammed Alshehri</b>, a security researcher at Black Duck.</p>
+
+
+
+<h3 class="wp-block-heading">Timeline</h3>
+
+
+
+<ul class="wp-block-list">
+<li><b>February 26, 2024:</b> Initial contact attempt</li>
+<li><b>April 4, 2024:</b> Second contact attempt</li>
+<li><b>May 1, 2024:</b> Final contact attempt</li>
+<li><b>June 5, 2024:</b> Advisory published by Black Duck</li>
+</ul>
+
+
+
+<h3 class="wp-block-heading">References</h3>
+
+
+
+<p class="wp-block-paragraph"><a href="https://github.com/Coeeter/emailgpt">https://github.com/Coeeter/emailgpt</a></p>
+
+
+
+<h2 class="wp-block-heading">About CVSS</h2>
+
+
+
+<p class="wp-block-paragraph">FIRST.Org, Inc (FIRST) is a non-profit organization based out of US that owns and manages CVSS. It is not required to be a member of FIRST to utilize or implement CVSS but FIRST does require any individual or organization give appropriate attribution while using CVSS. FIRST also states that any individual or organization that publishes scores follow the guideline so that anyone can understand how the score was calculated.</p>
+						</article>
+									
+				<!-- Explore Topics -->
+				<div class="explore-topics-section pt-32">
+					<div class="explore-topics-wrapper">
+						<a href="https://www.blackduck.com/blog/category.cyrc.html" class="topic-pill">CyRC</a><a href="https://www.blackduck.com/blog/category.security-news-research.html" class="topic-pill">Security News &amp; Trends</a>					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+			<div class="blog-related-posts bg-light-grey pt-xs pb-md">
+			
+<section id="article-dynamic-cards-6ac20ea59665e" class="article-dynamic-cards-section">
+	<div class="container">
+
+		<div class="row align-items-center pb-32 block-header">
+			<div class="
+							cell-xl-12 ">
+									<h2 class="article-dynamic-cards-title h2">Continue Reading</h2>
+							</div>
+					</div>
+
+		<div class="article-dynamic-cards-wrapper "
+			>
+			<div class="article-grid d-grid grid-cols-1 grid-cols-md-2 grid-cols-lg-3 gap-32">
+									<div class="article-card-col  ">
+						<div class="article-card">
+							<div class="article-card-inner">
+																	<a href="https://www.blackduck.com/blog/polaris-september-2026-update.html" class="article-card-image">
+										<img src="https://www.blackduck.com/wp-content/uploads/2026/09/blog-polaris-September-768x461.png" alt="Polaris release update: Bringing AI security findings, scan governance, and remediation together">
+									</a>
+								
+								<div class="article-card-content">
+									<h6 class="article-card-title h6"><a href="https://www.blackduck.com/blog/polaris-september-2026-update.html">Polaris release update: Bringing AI security findings, scan governance, and remediation together</a></h6>
+
+									<div class="article-card-footer">
+																					<div class="article-card-authors">
+												<div class="author-images">
+																																										<a href="https://www.blackduck.com/blog/authors/rachel-zahr.html" class="author-image">
+																<img width="200" height="200" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIj48YW5pbWF0ZSBhdHRyaWJ1dGVOYW1lPSJmaWxsIiB2YWx1ZXM9InJnYmEoMTUzLDE1MywxNTMsMC41KTtyZ2JhKDE1MywxNTMsMTUzLDAuMSk7cmdiYSgxNTMsMTUzLDE1MywwLjUpIiBkdXI9IjJzIiByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSIgLz48L3JlY3Q+PC9zdmc+" alt="Rachel Zahr" data-public-id="rachel-zahr-author/rachel-zahr-author.jpg" data-transformation-crop="w_150,h_150,c_scale" class="wp-post-0 wp-image-18789" data-format="jpg" data-transformations="" data-version="1777976806" data-seo="1" data-responsive="1" data-size="200 200" data-delivery="upload" onload=";window.CLDBind?CLDBind(this):null;" data-cloudinary="lazy" />
+															</a>
+																																							</div>
+												<div class="author-names">
+													<a href="https://www.blackduck.com/blog/authors/rachel-zahr.html" class="author-name">Rachel Zahr</a>												</div>
+											</div>
+																				<div class="article-card-meta">
+											Sep 23, 2026 | 8 min read										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+									<div class="article-card-col  ">
+						<div class="article-card">
+							<div class="article-card-inner">
+																	<a href="https://www.blackduck.com/blog/top-10-free-hacking-tools-for-penetration-testers.html" class="article-card-image">
+										<img width="846" height="373" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4NDYiIGhlaWdodD0iMzczIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIj48YW5pbWF0ZSBhdHRyaWJ1dGVOYW1lPSJmaWxsIiB2YWx1ZXM9InJnYmEoMTUzLDE1MywxNTMsMC41KTtyZ2JhKDE1MywxNTMsMTUzLDAuMSk7cmdiYSgxNTMsMTUzLDE1MywwLjUpIiBkdXI9IjJzIiByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSIgLz48L3JlY3Q+PC9zdmc+" alt="Top 10 free penetration testing tools" data-public-id="top-10-free-hacking-tools-for-penetration-testers/top-10-free-hacking-tools-for-penetration-testers.jpg" data-transformation-crop="w_768,h_339,c_scale" class="wp-post-0 wp-image-19882" data-format="jpg" data-transformations="" data-version="1777976744" data-seo="1" data-responsive="1" data-size="846 373" data-delivery="upload" onload=";window.CLDBind?CLDBind(this):null;" data-cloudinary="lazy" />
+									</a>
+								
+								<div class="article-card-content">
+									<h6 class="article-card-title h6"><a href="https://www.blackduck.com/blog/top-10-free-hacking-tools-for-penetration-testers.html">Top 10 free penetration testing tools</a></h6>
+
+									<div class="article-card-footer">
+																					<div class="article-card-authors">
+												<div class="author-images">
+																																										<a href="https://www.blackduck.com/blog/authors/black-duck-editorial-team.html" class="author-image">
+																<img width="" height="" src="https://assets.blackduck.com/images/f_svg/fl_sanitize/v1777976778/BlackDuckIcon/BlackDuckIcon.svg?_i=AA" alt="Black Duck Editorial Staff" data-public-id="BlackDuckIcon/BlackDuckIcon.svg" class="wp-post-0 wp-image-8275" data-format="svg" data-transformations="f_svg/fl_sanitize" data-version="1777976778" data-seo="1" />
+															</a>
+																																							</div>
+												<div class="author-names">
+													<a href="https://www.blackduck.com/blog/authors/black-duck-editorial-team.html" class="author-name">Black Duck Editorial Staff</a>												</div>
+											</div>
+																				<div class="article-card-meta">
+											Sep 23, 2026 | 12 min read										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+									<div class="article-card-col  ">
+						<div class="article-card">
+							<div class="article-card-inner">
+																	<a href="https://www.blackduck.com/blog/hidden-costs-ai-security-programs.html" class="article-card-image">
+										<img src="https://www.blackduck.com/wp-content/uploads/2026/09/blog-AI-expense-768x461.png" alt="The real and hidden costs of AI security programs">
+									</a>
+								
+								<div class="article-card-content">
+									<h6 class="article-card-title h6"><a href="https://www.blackduck.com/blog/hidden-costs-ai-security-programs.html">The real and hidden costs of AI security programs</a></h6>
+
+									<div class="article-card-footer">
+																					<div class="article-card-authors">
+												<div class="author-images">
+																																										<a href="https://www.blackduck.com/blog/authors/dom-glavach.html" class="author-image">
+																<img src="https://assets.blackduck.com/images/v1786648493/Dom_Glavach_Headshot/Dom_Glavach_Headshot.jpg" alt="Dom Glavach">
+															</a>
+																																							</div>
+												<div class="author-names">
+													<a href="https://www.blackduck.com/blog/authors/dom-glavach.html" class="author-name">Dom Glavach</a>												</div>
+											</div>
+																				<div class="article-card-meta">
+											Sep 21, 2026 | 6 min read										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+									<div class="article-card-col  ">
+						<div class="article-card">
+							<div class="article-card-inner">
+																	<a href="https://www.blackduck.com/blog/black-duck-signal-byo-llm.html" class="article-card-image">
+										<img width="1080" height="648" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDgwIiBoZWlnaHQ9IjY0OCI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSI+PGFuaW1hdGUgYXR0cmlidXRlTmFtZT0iZmlsbCIgdmFsdWVzPSJyZ2JhKDE1MywxNTMsMTUzLDAuNSk7cmdiYSgxNTMsMTUzLDE1MywwLjEpO3JnYmEoMTUzLDE1MywxNTMsMC41KSIgZHVyPSIycyIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiIC8+PC9yZWN0Pjwvc3ZnPg==" alt="Agentic AppSec on your infrastructure with Black Duck Signal" data-public-id="blog-infrastructure-signal/blog-infrastructure-signal.png" data-transformation-crop="w_768,h_461,c_scale" class="wp-post-0 wp-image-25085" data-format="png" data-transformations="" data-version="1789147096" data-seo="1" data-responsive="1" data-size="1080 648" data-delivery="upload" onload=";window.CLDBind?CLDBind(this):null;" data-cloudinary="lazy" />
+									</a>
+								
+								<div class="article-card-content">
+									<h6 class="article-card-title h6"><a href="https://www.blackduck.com/blog/black-duck-signal-byo-llm.html">Agentic AppSec on your infrastructure with Black Duck Signal</a></h6>
+
+									<div class="article-card-footer">
+																					<div class="article-card-authors">
+												<div class="author-images">
+																																										<a href="https://www.blackduck.com/blog/authors/corey-hamilton.html" class="author-image">
+																<img width="500" height="500" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIj48YW5pbWF0ZSBhdHRyaWJ1dGVOYW1lPSJmaWxsIiB2YWx1ZXM9InJnYmEoMTUzLDE1MywxNTMsMC41KTtyZ2JhKDE1MywxNTMsMTUzLDAuMSk7cmdiYSgxNTMsMTUzLDE1MywwLjUpIiBkdXI9IjJzIiByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSIgLz48L3JlY3Q+PC9zdmc+" alt="Corey Hamilton" data-public-id="cory-hamilton/cory-hamilton.jpg" data-transformation-crop="w_150,h_150,c_scale" class="wp-post-0 wp-image-21139" data-format="jpg" data-transformations="" data-version="1777976802" data-seo="1" data-responsive="1" data-size="500 500" data-delivery="upload" onload=";window.CLDBind?CLDBind(this):null;" data-cloudinary="lazy" />
+															</a>
+																																							</div>
+												<div class="author-names">
+													<a href="https://www.blackduck.com/blog/authors/corey-hamilton.html" class="author-name">Corey Hamilton</a>												</div>
+											</div>
+																				<div class="article-card-meta">
+											Sep 10, 2026 | 6 min read										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+									<div class="article-card-col  ">
+						<div class="article-card">
+							<div class="article-card-inner">
+																	<a href="https://www.blackduck.com/blog/the-vulnerability-you-didnt-write.html" class="article-card-image">
+										<img width="1080" height="648" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDgwIiBoZWlnaHQ9IjY0OCI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSI+PGFuaW1hdGUgYXR0cmlidXRlTmFtZT0iZmlsbCIgdmFsdWVzPSJyZ2JhKDE1MywxNTMsMTUzLDAuNSk7cmdiYSgxNTMsMTUzLDE1MywwLjEpO3JnYmEoMTUzLDE1MywxNTMsMC41KSIgZHVyPSIycyIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiIC8+PC9yZWN0Pjwvc3ZnPg==" alt="The vulnerability you didn’t write" data-public-id="blog-vulnerabilities/blog-vulnerabilities.png" data-transformation-crop="w_768,h_461,c_scale" class="wp-post-0 wp-image-24764" data-format="png" data-transformations="" data-version="1788553916" data-seo="1" data-responsive="1" data-size="1080 648" data-delivery="upload" onload=";window.CLDBind?CLDBind(this):null;" data-cloudinary="lazy" />
+									</a>
+								
+								<div class="article-card-content">
+									<h6 class="article-card-title h6"><a href="https://www.blackduck.com/blog/the-vulnerability-you-didnt-write.html">The vulnerability you didn’t write</a></h6>
+
+									<div class="article-card-footer">
+																					<div class="article-card-authors">
+												<div class="author-images">
+																																										<a href="https://www.blackduck.com/blog/authors/jessy-mcdermott.html" class="author-image">
+																<img width="436" height="460" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MzYiIGhlaWdodD0iNDYwIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIj48YW5pbWF0ZSBhdHRyaWJ1dGVOYW1lPSJmaWxsIiB2YWx1ZXM9InJnYmEoMTUzLDE1MywxNTMsMC41KTtyZ2JhKDE1MywxNTMsMTUzLDAuMSk7cmdiYSgxNTMsMTUzLDE1MywwLjUpIiBkdXI9IjJzIiByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSIgLz48L3JlY3Q+PC9zdmc+" alt="Jessy McDermott" data-public-id="jessy-mcdermott/jessy-mcdermott.jpg" data-crop="1" data-transformation-crop="w_150,h_150,c_scale" class="wp-post-0 wp-image-23959" data-format="jpg" data-transformations="" data-version="1786126263" data-seo="1" data-responsive="1" data-size="436 460" data-delivery="upload" onload=";window.CLDBind?CLDBind(this):null;" data-cloudinary="lazy" />
+															</a>
+																																							</div>
+												<div class="author-names">
+													<a href="https://www.blackduck.com/blog/authors/jessy-mcdermott.html" class="author-name">Jessy McDermott</a>												</div>
+											</div>
+																				<div class="article-card-meta">
+											Sep 08, 2026 | 5 min read										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+									<div class="article-card-col  ">
+						<div class="article-card">
+							<div class="article-card-inner">
+																	<a href="https://www.blackduck.com/blog/stories-from-the-field-vulnerability-scores.html" class="article-card-image">
+										<img width="1080" height="648" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDgwIiBoZWlnaHQ9IjY0OCI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSI+PGFuaW1hdGUgYXR0cmlidXRlTmFtZT0iZmlsbCIgdmFsdWVzPSJyZ2JhKDE1MywxNTMsMTUzLDAuNSk7cmdiYSgxNTMsMTUzLDE1MywwLjEpO3JnYmEoMTUzLDE1MywxNTMsMC41KSIgZHVyPSIycyIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiIC8+PC9yZWN0Pjwvc3ZnPg==" alt="Stories from the field, part 2: When vulnerability scores don’t tell the whole story" data-public-id="blog-MA-vulnerability-score/blog-MA-vulnerability-score.png" data-transformation-crop="w_768,h_461,c_scale" class="wp-post-0 wp-image-24722" data-format="png" data-transformations="" data-version="1788397726" data-seo="1" data-responsive="1" data-size="1080 648" data-delivery="upload" onload=";window.CLDBind?CLDBind(this):null;" data-cloudinary="lazy" />
+									</a>
+								
+								<div class="article-card-content">
+									<h6 class="article-card-title h6"><a href="https://www.blackduck.com/blog/stories-from-the-field-vulnerability-scores.html">Stories from the field, part 2: When vulnerability scores don’t tell the whole story</a></h6>
+
+									<div class="article-card-footer">
+																					<div class="article-card-authors">
+												<div class="author-images">
+																																										<a href="https://www.blackduck.com/blog/authors/sean-huang.html" class="author-image">
+																<img src="https://assets.blackduck.com/images/v1788396634/Sean_Huang/Sean_Huang.jpg" alt="Sean Huang">
+															</a>
+																																																								<a href="https://www.blackduck.com/blog/authors/madhuri-padmanabhan.html" class="author-image">
+																<img src="https://assets.blackduck.com/images/v1788396634/Madhuri_Padmanabhan/Madhuri_Padmanabhan.jpg" alt="Madhuri Padmanabhan">
+															</a>
+																																							</div>
+												<div class="author-names">
+													<a href="https://www.blackduck.com/blog/authors/sean-huang.html" class="author-name">Sean Huang</a>, <a href="https://www.blackduck.com/blog/authors/madhuri-padmanabhan.html" class="author-name">Madhuri Padmanabhan</a>												</div>
+											</div>
+																				<div class="article-card-meta">
+											Sep 02, 2026 | 6 min read										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+							</div>
+
+					</div>
+	</div>
+</section>
+		</div>
+	
+			<div class="bg-light-gray pt-md pb-md">
+			<section id="explore-topics-6ac20ea5a942d" class="explore-topics-section">
+	<div class="container">
+					<h2 class="explore-topics-title h2">Explore Topics</h2>
+		
+		<div class="explore-topics-wrapper">
+			<a href="https://www.blackduck.com/blog/category.agile-ci-cd.html" class="topic-pill">Agile, CI/CD</a><a href="https://www.blackduck.com/blog/category.appsec-best-practices.html" class="topic-pill">AppSec Best Practices</a><a href="https://www.blackduck.com/blog/category.ai-code-security.html" class="topic-pill">AI Code Security</a><a href="https://www.blackduck.com/blog/category.build-secure-software.html" class="topic-pill">Build Security into DevOps</a><a href="https://www.blackduck.com/blog/category.cloud-security.html" class="topic-pill">Cloud Security</a><a href="https://www.blackduck.com/blog/category.compliance.html" class="topic-pill">Compliance</a><a href="https://www.blackduck.com/blog/category.container-security.html" class="topic-pill">Container Security</a><a href="https://www.blackduck.com/blog/category.cyrc.html" class="topic-pill">CyRC</a><a href="https://www.blackduck.com/blog/category.devsecops.html" class="topic-pill">DevSecOps</a><a href="https://www.blackduck.com/blog/category.dast.html" class="topic-pill">DAST</a><a href="https://www.blackduck.com/blog/category.fuzzing.html" class="topic-pill">Fuzzing</a><a href="https://www.blackduck.com/blog/category.m-a.html" class="topic-pill">Mergers and Acquisitions</a><a href="https://www.blackduck.com/blog/category.manage-security-risks.html" class="topic-pill">Manage Security Risks</a><a href="https://www.blackduck.com/blog/category.oss-license-compliance.html" class="topic-pill">OSS License Compliance</a><a href="https://www.blackduck.com/blog/category.sast.html" class="topic-pill">SAST</a><a href="https://www.blackduck.com/blog/category.sca.html" class="topic-pill">SCA</a><a href="https://www.blackduck.com/blog/category.software-supply-chain.html" class="topic-pill">Secure the Software Supply Chain</a><a href="https://www.blackduck.com/blog/category.security-news-research.html" class="topic-pill">Security News &amp; Trends</a><a href="https://www.blackduck.com/blog/category.web-appsec.html" class="topic-pill">Web AppSec</a><a href="https://www.blackduck.com/blog/category.iast.html" class="topic-pill">IAST</a>		</div>
+	</div>
+</section>
+		</div>
+	</main><!-- #main -->
+
+	<footer class="site-footer bg-purple">
+		<div class="container">
+			<div class="footer-top">
+				<!-- Column 1: Brand Info -->
+				<div class="brand-col">
+					<div class="brand-col-wrapper">
+											<div class="footer-logo">
+							<a href="https://www.blackduck.com/">
+								<img width="200" height="30" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMzAiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9ImZpbGwiIHZhbHVlcz0icmdiYSgxNTMsMTUzLDE1MywwLjUpO3JnYmEoMTUzLDE1MywxNTMsMC4xKTtyZ2JhKDE1MywxNTMsMTUzLDAuNSkiIGR1cj0iMnMiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIiAvPjwvcmVjdD48L3N2Zz4=" class="attachment-medium size-medium wp-image-8217" alt="" decoding="async" loading="lazy" data-public-id="black-duck-logo/black-duck-logo.png" data-format="png" data-transformations="" data-version="1776700396" data-seo="1" data-responsive="1" data-size="200 30" data-delivery="upload" onload=";window.CLDBind?CLDBind(this):null;" data-cloudinary="lazy" />							</a>
+						</div>
+					
+											<div class="social-icons">
+															<a href="https://www.facebook.com/BlackDuckSoftware/" class="social-link" target="_blank">
+									<i class="fa-brands fa-facebook" aria-hidden="true"></i>								</a>
+															<a href="https://x.com/blackduck_sw/" class="social-link" target="_blank">
+									<i class="fa-brands fa-x-twitter" aria-hidden="true"></i>								</a>
+															<a href="https://www.youtube.com/@BlackDuckSoftware/" class="social-link" target="_blank">
+									<i class="fa-brands fa-youtube" aria-hidden="true"></i>								</a>
+															<a href="https://www.linkedin.com/company/black-duck-software/" class="social-link" target="_blank">
+									<i class="fa-brands fa-linkedin-in" aria-hidden="true"></i>								</a>
+													</div>
+					
+											<div class="footer-address">
+							<svg xmlns="http://www.w3.org/2000/svg" width="34" height="44" viewBox="0 0 34 44" fill="none"><path d="M17.0002 0C7.6113 0 0 7.6113 0 17.0002C0 21.1918 1.52389 25.0224 4.03873 27.9866L17.0002 43.2515L29.9613 27.9861C32.4761 25.0224 34 21.1913 34 16.9998C34.0005 7.6113 26.3892 0 17.0002 0ZM17.0002 23.4063C13.1388 23.4063 10.0089 20.2763 10.0089 16.4149C10.0089 12.5535 13.1388 9.42354 17.0002 9.42354C20.8616 9.42354 23.9916 12.5535 23.9916 16.4149C23.9916 20.2763 20.8616 23.4063 17.0002 23.4063Z" fill="currentColor"/></svg>							<a class="footer-address-link" href="https://maps.app.goo.gl/EgSbE82szjix4E1P8" target="_blank" rel="noopener noreferrer" aria-label="800 District Ave. Ste 201 Burlington, MA 01803">800 District Ave. Ste 201 Burlington, MA 01803 </a>						</div>
+					
+					<div class="footer-contact">
+						<a class="btn btn-primary w-md-full" href="https://www.blackduck.com/contact-sales/" target="_self" rel="nofollow" aria-label="Contact sales">Contact sales </a>					</div>
+				</div>
+				</div>
+
+				<ul id="menu-footer-main-menu" class="footer-menu"><li id="menu-item-578" class="menu-label menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-578"><a href="#">SOLUTIONS</a>
+<ul class="sub-menu">
+	<li id="menu-item-25641" class="menu-item menu-item-type-post_type menu-item-object-solutions menu-item-25641"><a href="https://www.blackduck.com/solutions/artificial-intelligence-software-development.html">AI-Generated Code</a></li>
+	<li id="menu-item-3912" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3912"><a href="https://www.blackduck.com/solutions/api-security-testing.html">API Security Testing</a></li>
+	<li id="menu-item-3914" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3914"><a href="https://www.blackduck.com/solutions/application-security-testing.html">Application Security Testing</a></li>
+	<li id="menu-item-583" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-583"><a href="https://www.blackduck.com/solutions/devsecops.html">DevSecOps</a></li>
+	<li id="menu-item-584" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-584"><a href="https://www.blackduck.com/solutions/eu-cyber-resilience-act-compliance.html">EU Cyber Resilience Act Compliance</a></li>
+	<li id="menu-item-589" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-589"><a href="https://www.blackduck.com/solutions/software-supply-chain-security.html">Software Supply Chain Security</a></li>
+	<li id="menu-item-4056" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-4056"><a href="https://www.blackduck.com/solutions/enterprise-application-security-risk-management.html">Manage AppSec Risk</a></li>
+	<li id="menu-item-582" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-582"><a href="https://www.blackduck.com/solutions/container-security.html">Container Security</a></li>
+	<li id="menu-item-587" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-587"><a href="https://www.blackduck.com/solutions/open-source-security.html">Open Source License Compliance</a></li>
+	<li id="menu-item-585" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-585"><a href="https://www.blackduck.com/solutions/mergers-and-acquisitions.html">M&#038;A Due Diligence</a></li>
+	<li id="menu-item-4057" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-4057"><a href="https://www.blackduck.com/solutions/compliance.html">Quality &#038; Security Standards Compliance</a></li>
+</ul>
+</li>
+<li id="menu-item-603" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-603"><a href="#">PRODUCTS &#038; SERVICES</a>
+<ul class="sub-menu">
+	<li id="menu-item-4060" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-4060"><a href="https://www.blackduck.com/platform.html">AppSec SaaS Platform</a></li>
+	<li id="menu-item-4061" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-4061"><a href="https://www.blackduck.com/signal-ai-appsec.html">AI Application Security</a></li>
+	<li id="menu-item-611" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-611"><a href="https://www.blackduck.com/static-analysis-tools-sast.html">Static Analysis (SAST)</a></li>
+	<li id="menu-item-3915" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3915"><a href="https://www.blackduck.com/software-composition-analysis-tools.html">Software Composition Analysis Tools</a></li>
+	<li id="menu-item-608" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-608"><a href="https://www.blackduck.com/interactive-application-security-testing.html">Interactive Analysis (IAST)</a></li>
+	<li id="menu-item-607" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-607"><a href="https://www.blackduck.com/dast.html">Dynamic Analysis (DAST)</a></li>
+	<li id="menu-item-4064" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-4064"><a href="https://www.blackduck.com/fuzz-testing.html">Protocol Fuzzing</a></li>
+	<li id="menu-item-4069" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-4069"><a href="https://www.blackduck.com/services/security-program.html">AppSec Program Services</a></li>
+</ul>
+</li>
+<li id="menu-item-612" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-612"><a href="#">RESOURCES &#038; SUPPORT</a>
+<ul class="sub-menu">
+	<li id="menu-item-614" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-614"><a href="https://www.blackduck.com/customer-value.html">Customer Value</a></li>
+	<li id="menu-item-3916" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3916"><a href="https://www.blackduck.com/resources/datasheets.html">Datasheets</a></li>
+	<li id="menu-item-3917" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3917"><a href="https://www.blackduck.com/resources/webinars.html">Webinars</a></li>
+	<li id="menu-item-4071" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-4071"><a href="https://www.blackduck.com/contact-sales.html">Demos</a></li>
+	<li id="menu-item-3918" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3918"><a href="https://www.blackduck.com/resources/analyst-reports.html">Research &#038; Reports</a></li>
+	<li id="menu-item-3919" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3919"><a href="https://www.blackduck.com/resources/white-papers.html">White Papers</a></li>
+	<li id="menu-item-958" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-958"><a href="https://www.blackduck.com/blog.html">Software and Application Security Blog</a></li>
+	<li id="menu-item-4072" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-4072"><a target="_blank" href="https://community.blackduck.com/s/">Support</a></li>
+	<li id="menu-item-4073" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-4073"><a target="_blank" href="https://docs.blackduck.com/">Documentation</a></li>
+	<li id="menu-item-4074" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-4074"><a target="_blank" href="https://blackduck.skilljar.com/">Product Education</a></li>
+	<li id="menu-item-4075" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-4075"><a href="https://www.blackduck.com/customer-success.html">Add-On Services</a></li>
+</ul>
+</li>
+<li id="menu-item-623" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-623"><a href="#">COMPANY</a>
+<ul class="sub-menu">
+	<li id="menu-item-624" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-624"><a href="https://www.blackduck.com/company.html">About Black Duck</a></li>
+	<li id="menu-item-25561" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-25561"><a href="https://www.blackduck.com/compare.html">Why Black Duck</a></li>
+	<li id="menu-item-4076" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-4076"><a href="https://news.blackduck.com/">Newsroom</a></li>
+	<li id="menu-item-626" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-626"><a href="https://www.blackduck.com/company/careers.html">Careers</a></li>
+	<li id="menu-item-627" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-627"><a href="https://www.blackduck.com/partners.html">Partners</a></li>
+	<li id="menu-item-4077" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-4077"><a href="https://www.blackduck.com/resources/case-studies.html">Customer Stories</a></li>
+	<li id="menu-item-629" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-629"><a href="https://www.blackduck.com/glossary.html">Glossary</a></li>
+	<li id="menu-item-630" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-630"><a href="https://www.blackduck.com/company/locations.html">Office Locations</a></li>
+	<li id="menu-item-631" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-631"><a href="https://www.blackduck.com/sitemap.html">Sitemap</a></li>
+</ul>
+</li>
+</ul>			</div>
+
+			<div class="footer-bottom">
+				<div class="copyright">
+					&copy; 2026 Black Duck Software, Inc. All Rights Reserved				</div>
+				<ul id="menu-footer-bottom-menu" class="footer-bottom-menu"><li id="menu-item-4091" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-4091"><a href="https://www.blackduck.com/company/legal.html">Agreements</a></li>
+<li id="menu-item-597" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-597"><a href="https://www.blackduck.com/company/legal/privacy-policy.html">Privacy</a></li>
+<li id="menu-item-4098" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-4098"><a href="https://www.blackduck.com/company/legal/vulnerability-disclosure-policy.html">Security</a></li>
+<li id="menu-item-598" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-598"><a href="https://www.blackduck.com/sitemap.html">Sitemap</a></li>
+<li id="menu-item-4100" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-4100"><a target="_blank" href="https://go26.blackduck.com/email-subscription-center.html">Manage Email Preferences</a></li>
+<li id="menu-item-600" class="ot-sdk-show-settings menu-item menu-item-type-custom menu-item-object-custom menu-item-600"><a>Do Not Sell or Share My Information</a></li>
+</ul>			</div>
+		</div>
+	</footer>
+
+</div><!-- #page -->
+
+<script type="speculationrules">
+{"prefetch":[{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":["/wp-*.php","/wp-admin/*","/wp-content/uploads/*","/wp-content/*","/wp-content/plugins/*","/wp-content/themes/blackduck/*","/*\\?(.+)"]}},{"not":{"selector_matches":"a[rel~=\"nofollow\"]"}},{"not":{"selector_matches":".no-prefetch, .no-prefetch a"}}]},"eagerness":"conservative"}]}
+</script>
+	<script type="text/javascript">
+		function genesisBlocksShare( url, title, w, h ){
+			var left = ( window.innerWidth / 2 )-( w / 2 );
+			var top  = ( window.innerHeight / 2 )-( h / 2 );
+			return window.open(url, title, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=600, height=600, top='+top+', left='+left);
+		}
+		// Open share popup via data attributes; never reads executable context from the DOM.
+		document.addEventListener( 'click', function( e ) {
+			var el = e.target && e.target.closest( '[data-gb-share-url]' );
+			if ( ! el ) { return; }
+			e.preventDefault();
+			genesisBlocksShare( el.getAttribute( 'data-gb-share-url' ), el.getAttribute( 'data-gb-share-label' ) || '', '600', '600' );
+		} );
+	</script>
+	<script id="genesis-blocks-dismiss-js-js" src="https://www.blackduck.com/wp-content/plugins/genesis-blocks/dist/assets/js/dismiss.js"></script>
+<script id="blackduck-main-js-extra">
+var blackduck_coveo_config = {"orgId":"synopsysproductionabf4g1og","token":"eyJhbGciOiJIUzI1NiJ9.eyJzZWFyY2hIdWIiOiJTTlBTLU1haW4tU2VhcmNoIiwidjgiOnRydWUsInRva2VuSWQiOiJzaHpqaXM3cjdubmlsd2tnczZsYWt2c3A3dSIsIm9yZ2FuaXphdGlvbiI6InN5bm9wc3lzcHJvZHVjdGlvbmFiZjRnMW9nIiwidXNlcklkcyI6W3sidHlwZSI6IlVzZXIiLCJuYW1lIjoiYW5vbnltb3VzIiwicHJvdmlkZXIiOiJFbWFpbCBTZWN1cml0eSBQcm92aWRlciJ9XSwicm9sZXMiOlsicXVlcnlFeGVjdXRvciJdLCJpc3MiOiJTZWFyY2hBcGkiLCJleHAiOjE3OTExMTExMDIsImlhdCI6MTc5MTAyNDcwMn0.PBrYLiYo1TBwuUX-bt9_MJh6pKPI2CbSjUxc7eRG3Mw","tokens":{"snps":"eyJhbGciOiJIUzI1NiJ9.eyJzZWFyY2hIdWIiOiJTTlBTLU1haW4tU2VhcmNoIiwidjgiOnRydWUsInRva2VuSWQiOiJzaHpqaXM3cjdubmlsd2tnczZsYWt2c3A3dSIsIm9yZ2FuaXphdGlvbiI6InN5bm9wc3lzcHJvZHVjdGlvbmFiZjRnMW9nIiwidXNlcklkcyI6W3sidHlwZSI6IlVzZXIiLCJuYW1lIjoiYW5vbnltb3VzIiwicHJvdmlkZXIiOiJFbWFpbCBTZWN1cml0eSBQcm92aWRlciJ9XSwicm9sZXMiOlsicXVlcnlFeGVjdXRvciJdLCJpc3MiOiJTZWFyY2hBcGkiLCJleHAiOjE3OTExMTExMDIsImlhdCI6MTc5MTAyNDcwMn0.PBrYLiYo1TBwuUX-bt9_MJh6pKPI2CbSjUxc7eRG3Mw","sig":"eyJhbGciOiJIUzI1NiJ9.eyJzZWFyY2hIdWIiOiJTSUctTGVhcm5pbmctU2VhcmNoIiwidjgiOnRydWUsInRva2VuSWQiOiJ0NXA2cDM3eTcyeGhvZXZxajdub3BpY2I2dSIsIm9yZ2FuaXphdGlvbiI6InN5bm9wc3lzcHJvZHVjdGlvbmFiZjRnMW9nIiwidXNlcklkcyI6W3sidHlwZSI6IlVzZXIiLCJuYW1lIjoiYW5vbnltb3VzIiwicHJvdmlkZXIiOiJFbWFpbCBTZWN1cml0eSBQcm92aWRlciJ9XSwicm9sZXMiOlsicXVlcnlFeGVjdXRvciJdLCJpc3MiOiJTZWFyY2hBcGkiLCJleHAiOjE3OTExMTExMDIsImlhdCI6MTc5MTAyNDcwMn0._5WrEBSRiTWke_eef5a-OKYYxH_CC_9CH6DvFLorE64","sig-defensics":"eyJhbGciOiJIUzI1NiJ9.eyJzZWFyY2hIdWIiOiJEZWZlbnNpY3MiLCJ2OCI6dHJ1ZSwidG9rZW5JZCI6InVoZ3d3bGFlZm1zZXgzdWM3ZHRmeGlrYWZlIiwib3JnYW5pemF0aW9uIjoic3lub3BzeXNwcm9kdWN0aW9uYWJmNGcxb2ciLCJ1c2VySWRzIjpbeyJ0eXBlIjoiVXNlciIsIm5hbWUiOiJhbm9ueW1vdXMiLCJwcm92aWRlciI6IkVtYWlsIFNlY3VyaXR5IFByb3ZpZGVyIn1dLCJyb2xlcyI6WyJxdWVyeUV4ZWN1dG9yIl0sImlzcyI6IlNlYXJjaEFwaSIsImV4cCI6MTc5MTExMTEwMiwiaWF0IjoxNzkxMDI0NzAyfQ.2V5DyL-jHCBmSaXaADRqUQtChzQ9hoqCdtbuWeUPhI0","defensics":"eyJhbGciOiJIUzI1NiJ9.eyJmaWx0ZXIiOiIoQGRvY3VtZW50dHlwZT09XCJkZWZlbnNpY3NcIikiLCJzZWFyY2hIdWIiOiJkZWZlbnNpY3MiLCJ2OCI6dHJ1ZSwidG9rZW5JZCI6InF6bHh1YTc1YWx6cmZ0aW1jd2Z2bXgya2g0Iiwib3JnYW5pemF0aW9uIjoic3lub3BzeXNwcm9kdWN0aW9uYWJmNGcxb2ciLCJ1c2VySWRzIjpbeyJ0eXBlIjoiVXNlciIsIm5hbWUiOiJhbm9ueW1vdXMiLCJwcm92aWRlciI6IkVtYWlsIFNlY3VyaXR5IFByb3ZpZGVyIn1dLCJyb2xlcyI6WyJxdWVyeUV4ZWN1dG9yIl0sImlzcyI6IlNlYXJjaEFwaSIsImV4cCI6MTc5MTExMTEwMiwiaWF0IjoxNzkxMDI0NzAyfQ.koeS4GPZAiKEsta0DU1-OuiQjaFlQ140fVuTFGMGhcU","ebook":"eyJhbGciOiJIUzI1NiJ9.eyJmaWx0ZXIiOiIoKEBjb3Zlb2NvbnRlbnR0eXBlPT1cImVCb29rXCIgT1IgQGRvY3VtZW50dHlwZT09XCJlYm9va3NcIiBPUiBAc3lzdXJpPVwiKmVib29rcypcIikgTk9UIEBzeXN1cmk9XCIqamEtanAqXCIgTk9UIEBzeXN1cmk9XCIqamEvKlwiIE5PVCBAc3lzdXJpPVwiKnpoLXR3KlwiIE5PVCBAc3lzdXJpPVwiKnpoLWNuKlwiIE5PVCBAc3lzdXJpPVwiKmtvLWtyKlwiIE5PVCBAc3lzdXJpPVwiKmRlLWRlKlwiKSIsInNlYXJjaEh1YiI6ImVib29rIiwidjgiOnRydWUsInRva2VuSWQiOiJzNzVzemY2dWkzeHZnbTRiaTdzd29tY2poZSIsIm9yZ2FuaXphdGlvbiI6InN5bm9wc3lzcHJvZHVjdGlvbmFiZjRnMW9nIiwidXNlcklkcyI6W3sidHlwZSI6IlVzZXIiLCJuYW1lIjoiYW5vbnltb3VzIiwicHJvdmlkZXIiOiJFbWFpbCBTZWN1cml0eSBQcm92aWRlciJ9XSwicm9sZXMiOlsicXVlcnlFeGVjdXRvciJdLCJpc3MiOiJTZWFyY2hBcGkiLCJleHAiOjE3OTExMTExMDIsImlhdCI6MTc5MTAyNDcwMn0.Gib01JorSPJ26SRXYlGNnJKPzakv-5wE3Fjp1NfqV6c","ebook_jp":"eyJhbGciOiJIUzI1NiJ9.eyJmaWx0ZXIiOiIoKEBjb3Zlb2NvbnRlbnR0eXBlPT1cImVCb29rXCIgT1IgQGRvY3VtZW50dHlwZT09XCJlYm9va3NcIiBPUiBAc3lzdXJpPVwiKmVib29rcypcIikgQHN5c3VyaT1cIipqYS1qcCpcIikiLCJzZWFyY2hIdWIiOiJTTlBTLU1haW4tU2VhcmNoIiwidjgiOnRydWUsInRva2VuSWQiOiJ0dzNqY2Z6aW5rMmRncmN3NHZjaTd5a2w3dSIsIm9yZ2FuaXphdGlvbiI6InN5bm9wc3lzcHJvZHVjdGlvbmFiZjRnMW9nIiwidXNlcklkcyI6W3sidHlwZSI6IlVzZXIiLCJuYW1lIjoiYW5vbnltb3VzIiwicHJvdmlkZXIiOiJFbWFpbCBTZWN1cml0eSBQcm92aWRlciJ9XSwicm9sZXMiOlsicXVlcnlFeGVjdXRvciJdLCJpc3MiOiJTZWFyY2hBcGkiLCJleHAiOjE3OTExMTExMDIsImlhdCI6MTc5MTAyNDcwMn0.c5DGPyFQbrE1EJP1AJTYWQUxYQ7cY-j9OSsi5039H0w","white-paper":"eyJhbGciOiJIUzI1NiJ9.eyJmaWx0ZXIiOiIoKEBjb3Zlb2NvbnRlbnR0eXBlPT1cIldoaXRlIFBhcGVyXCIgT1IgQGRvY3VtZW50dHlwZT09XCJ3aGl0ZS1wYXBlcnNcIiBPUiBAc3lzdXJpPVwiKndoaXRlLXBhcGVycypcIikgTk9UIEBzeXN1cmk9XCIqamEtanAqXCIgTk9UIEBzeXN1cmk9XCIqamEvKlwiIE5PVCBAc3lzdXJpPVwiKnpoLXR3KlwiIE5PVCBAc3lzdXJpPVwiKnpoLWNuKlwiIE5PVCBAc3lzdXJpPVwiKmtvLWtyKlwiIE5PVCBAc3lzdXJpPVwiKmRlLWRlKlwiKSIsInNlYXJjaEh1YiI6IndoaXRlLXBhcGVyIiwidjgiOnRydWUsInRva2VuSWQiOiJ4Y3I3Ym40eHEyMnFsa3EzdHJvNzM1MmR4dSIsIm9yZ2FuaXphdGlvbiI6InN5bm9wc3lzcHJvZHVjdGlvbmFiZjRnMW9nIiwidXNlcklkcyI6W3sidHlwZSI6IlVzZXIiLCJuYW1lIjoiYW5vbnltb3VzIiwicHJvdmlkZXIiOiJFbWFpbCBTZWN1cml0eSBQcm92aWRlciJ9XSwicm9sZXMiOlsicXVlcnlFeGVjdXRvciJdLCJpc3MiOiJTZWFyY2hBcGkiLCJleHAiOjE3OTExMTExMDIsImlhdCI6MTc5MTAyNDcwMn0.MqmkXMCQUdymCRxujYJ0xrB1G5oYCDZV7X5Jyqnwhmk","whitepaper_jp":"eyJhbGciOiJIUzI1NiJ9.eyJmaWx0ZXIiOiIoKEBjb3Zlb2NvbnRlbnR0eXBlPT1cIldoaXRlIFBhcGVyXCIgT1IgQGRvY3VtZW50dHlwZT09XCJ3aGl0ZS1wYXBlcnNcIiBPUiBAc3lzdXJpPVwiKndoaXRlLXBhcGVycypcIikgQHN5c3VyaT1cIipqYS1qcCpcIikiLCJzZWFyY2hIdWIiOiJTTlBTLU1haW4tU2VhcmNoIiwidjgiOnRydWUsInRva2VuSWQiOiJ0bXd0bDN4c2oycjJoNGFrb3ZmenA3Y2N1aSIsIm9yZ2FuaXphdGlvbiI6InN5bm9wc3lzcHJvZHVjdGlvbmFiZjRnMW9nIiwidXNlcklkcyI6W3sidHlwZSI6IlVzZXIiLCJuYW1lIjoiYW5vbnltb3VzIiwicHJvdmlkZXIiOiJFbWFpbCBTZWN1cml0eSBQcm92aWRlciJ9XSwicm9sZXMiOlsicXVlcnlFeGVjdXRvciJdLCJpc3MiOiJTZWFyY2hBcGkiLCJleHAiOjE3OTExMTExMDIsImlhdCI6MTc5MTAyNDcwMn0.YPdJbnvjPrpHGd1kExTylqQLb6StjJOiXa3ySHWASNI","analyst_reports":"eyJhbGciOiJIUzI1NiJ9.eyJmaWx0ZXIiOiIoKEBjb3Zlb2NvbnRlbnR0eXBlPT1cIkFuYWx5c3QgUmVwb3J0c1wiIE9SIEBjb3Zlb2NvbnRlbnR0eXBlPT1cIkFuYWx5c3QgUmVwb3J0XCIgT1IgQGNvdmVvY29udGVudHR5cGU9PVwiYW5hbHlzdC1yZXBvcnRzXCIgT1IgQGRvY3VtZW50dHlwZT09XCJhbmFseXN0LXJlcG9ydHNcIiBPUiBAc3lzdXJpPVwiKmFuYWx5c3QtcmVwb3J0cypcIikgTk9UIEBzeXN1cmk9XCIqamEtanAqXCIgTk9UIEBzeXN1cmk9XCIqamEvKlwiIE5PVCBAc3lzdXJpPVwiKnpoLXR3KlwiIE5PVCBAc3lzdXJpPVwiKnpoLWNuKlwiIE5PVCBAc3lzdXJpPVwiKmtvLWtyKlwiIE5PVCBAc3lzdXJpPVwiKmRlLWRlKlwiKSIsInNlYXJjaEh1YiI6ImFuYWx5c3RfcmVwb3J0cyIsInY4Ijp0cnVlLCJ0b2tlbklkIjoidzR3aWF4Z2RtN2FwdnV3Y3FzNWt0eWtkaWUiLCJvcmdhbml6YXRpb24iOiJzeW5vcHN5c3Byb2R1Y3Rpb25hYmY0ZzFvZyIsInVzZXJJZHMiOlt7InR5cGUiOiJVc2VyIiwibmFtZSI6ImFub255bW91cyIsInByb3ZpZGVyIjoiRW1haWwgU2VjdXJpdHkgUHJvdmlkZXIifV0sInJvbGVzIjpbInF1ZXJ5RXhlY3V0b3IiXSwiaXNzIjoiU2VhcmNoQXBpIiwiZXhwIjoxNzkxMTExMTAyLCJpYXQiOjE3OTEwMjQ3MDJ9.eJQ0nrkk3drel-X_PptVd2RrQi5bz6Pc4Wuq70vB4uI","analyst_reports_jp":"eyJhbGciOiJIUzI1NiJ9.eyJmaWx0ZXIiOiIoKEBjb3Zlb2NvbnRlbnR0eXBlPT1cIkFuYWx5c3QgUmVwb3J0c1wiIE9SIEBjb3Zlb2NvbnRlbnR0eXBlPT1cIkFuYWx5c3QgUmVwb3J0XCIgT1IgQGNvdmVvY29udGVudHR5cGU9PVwiYW5hbHlzdC1yZXBvcnRzXCIgT1IgQGRvY3VtZW50dHlwZT09XCJhbmFseXN0LXJlcG9ydHNcIiBPUiBAc3lzdXJpPVwiKmFuYWx5c3QtcmVwb3J0cypcIikgQHN5c3VyaT1cIipqYS1qcCpcIikiLCJzZWFyY2hIdWIiOiJTTlBTLU1haW4tU2VhcmNoIiwidjgiOnRydWUsInRva2VuSWQiOiJ4b3N4bWQycXVoMnl3cTNzNm9iNmFya2JwcSIsIm9yZ2FuaXphdGlvbiI6InN5bm9wc3lzcHJvZHVjdGlvbmFiZjRnMW9nIiwidXNlcklkcyI6W3sidHlwZSI6IlVzZXIiLCJuYW1lIjoiYW5vbnltb3VzIiwicHJvdmlkZXIiOiJFbWFpbCBTZWN1cml0eSBQcm92aWRlciJ9XSwicm9sZXMiOlsicXVlcnlFeGVjdXRvciJdLCJpc3MiOiJTZWFyY2hBcGkiLCJleHAiOjE3OTExMTExMDIsImlhdCI6MTc5MTAyNDcwMn0.Kt8HC1QpGYFUqZ1dF3GYGNyFUKb_wo1c3AmxnxUccE8","case-study":"eyJhbGciOiJIUzI1NiJ9.eyJmaWx0ZXIiOiIoKEBjb3Zlb2NvbnRlbnR0eXBlPT1cIkNhc2UgU3R1ZHlcIiBPUiBAZG9jdW1lbnR0eXBlPT1cImNhc2Utc3R1ZGllc1wiIE9SIEBzeXN1cmk9XCIqY2FzZS1zdHVkaWVzKlwiKSBOT1QgQHN5c3VyaT1cIipqYS1qcCpcIiBOT1QgQHN5c3VyaT1cIipqYS8qXCIgTk9UIEBzeXN1cmk9XCIqemgtdHcqXCIgTk9UIEBzeXN1cmk9XCIqemgtY24qXCIgTk9UIEBzeXN1cmk9XCIqa28ta3IqXCIgTk9UIEBzeXN1cmk9XCIqZGUtZGUqXCIpIiwic2VhcmNoSHViIjoiY2FzZS1zdHVkeSIsInY4Ijp0cnVlLCJ0b2tlbklkIjoieDY2aTVwYzZseGJpcjRqc3QyNno1cDJjajQiLCJvcmdhbml6YXRpb24iOiJzeW5vcHN5c3Byb2R1Y3Rpb25hYmY0ZzFvZyIsInVzZXJJZHMiOlt7InR5cGUiOiJVc2VyIiwibmFtZSI6ImFub255bW91cyIsInByb3ZpZGVyIjoiRW1haWwgU2VjdXJpdHkgUHJvdmlkZXIifV0sInJvbGVzIjpbInF1ZXJ5RXhlY3V0b3IiXSwiaXNzIjoiU2VhcmNoQXBpIiwiZXhwIjoxNzkxMTExMTAyLCJpYXQiOjE3OTEwMjQ3MDJ9.6aGZHdKdH64iGGVEUkvHP_o6kk8TVtaHb3G_-BwRtPA","case-study_jp":"eyJhbGciOiJIUzI1NiJ9.eyJmaWx0ZXIiOiIoKEBjb3Zlb2NvbnRlbnR0eXBlPT1cIkNhc2UgU3R1ZHlcIiBPUiBAZG9jdW1lbnR0eXBlPT1cImNhc2Utc3R1ZGllc1wiIE9SIEBzeXN1cmk9XCIqY2FzZS1zdHVkaWVzKlwiKSBAc3lzdXJpPVwiKmphLWpwKlwiKSIsInNlYXJjaEh1YiI6IlNOUFMtTWFpbi1TZWFyY2giLCJ2OCI6dHJ1ZSwidG9rZW5JZCI6InR3NnFhZG9jZ2c0bmpyaTZsZm9wcWdrZXlpIiwib3JnYW5pemF0aW9uIjoic3lub3BzeXNwcm9kdWN0aW9uYWJmNGcxb2ciLCJ1c2VySWRzIjpbeyJ0eXBlIjoiVXNlciIsIm5hbWUiOiJhbm9ueW1vdXMiLCJwcm92aWRlciI6IkVtYWlsIFNlY3VyaXR5IFByb3ZpZGVyIn1dLCJyb2xlcyI6WyJxdWVyeUV4ZWN1dG9yIl0sImlzcyI6IlNlYXJjaEFwaSIsImV4cCI6MTc5MTExMTEwMiwiaWF0IjoxNzkxMDI0NzAyfQ.xirhVrNHfteK5oHTxRzLBYt0FhVyOltx0dyF6T6r1PQ","datasheet":"eyJhbGciOiJIUzI1NiJ9.eyJmaWx0ZXIiOiIoKEBjb3Zlb2NvbnRlbnR0eXBlPT1cIkRhdGFzaGVldFwiIE9SIEBkb2N1bWVudHR5cGU9PVwiZGF0YXNoZWV0c1wiIE9SIEBzeXN1cmk9XCIqZGF0YXNoZWV0cypcIikgTk9UIEBzeXN1cmk9XCIqamEtanAqXCIgTk9UIEBzeXN1cmk9XCIqamEvKlwiIE5PVCBAc3lzdXJpPVwiKnpoLXR3KlwiIE5PVCBAc3lzdXJpPVwiKnpoLWNuKlwiIE5PVCBAc3lzdXJpPVwiKmtvLWtyKlwiIE5PVCBAc3lzdXJpPVwiKmRlLWRlKlwiKSIsInNlYXJjaEh1YiI6ImRhdGFzaGVldCIsInY4Ijp0cnVlLCJ0b2tlbklkIjoidXpxZTdic3IyaWVwdndjZ3BobXdhdXNtZmkiLCJvcmdhbml6YXRpb24iOiJzeW5vcHN5c3Byb2R1Y3Rpb25hYmY0ZzFvZyIsInVzZXJJZHMiOlt7InR5cGUiOiJVc2VyIiwibmFtZSI6ImFub255bW91cyIsInByb3ZpZGVyIjoiRW1haWwgU2VjdXJpdHkgUHJvdmlkZXIifV0sInJvbGVzIjpbInF1ZXJ5RXhlY3V0b3IiXSwiaXNzIjoiU2VhcmNoQXBpIiwiZXhwIjoxNzkxMTExMTAyLCJpYXQiOjE3OTEwMjQ3MDJ9.JjaWUMArr3Gs_32NIxd48JTFiZ60SNsvXCbPnXCLdPw","datasheet_jp":"eyJhbGciOiJIUzI1NiJ9.eyJmaWx0ZXIiOiIoKEBjb3Zlb2NvbnRlbnR0eXBlPT1cIkRhdGFzaGVldFwiIE9SIEBkb2N1bWVudHR5cGU9PVwiZGF0YXNoZWV0c1wiIE9SIEBzeXN1cmk9XCIqZGF0YXNoZWV0cypcIikgQHN5c3VyaT1cIipqYS1qcCpcIikiLCJzZWFyY2hIdWIiOiJTTlBTLU1haW4tU2VhcmNoIiwidjgiOnRydWUsInRva2VuSWQiOiJ2bGk1Z3hvcWFvM3hvY290NGhreGdqa2Z1dSIsIm9yZ2FuaXphdGlvbiI6InN5bm9wc3lzcHJvZHVjdGlvbmFiZjRnMW9nIiwidXNlcklkcyI6W3sidHlwZSI6IlVzZXIiLCJuYW1lIjoiYW5vbnltb3VzIiwicHJvdmlkZXIiOiJFbWFpbCBTZWN1cml0eSBQcm92aWRlciJ9XSwicm9sZXMiOlsicXVlcnlFeGVjdXRvciJdLCJpc3MiOiJTZWFyY2hBcGkiLCJleHAiOjE3OTExMTExMDIsImlhdCI6MTc5MTAyNDcwMn0.vR6jw3EFDmJBJulPvDy1RvPOGlcOneaqxDVqfVUmpzs"},"hubs":{"snps":"SNPS-Main-Search","sig":"SIG-Learning-Search","sig-defensics":"Defensics","defensics":"defensics","ebook":"ebook","ebook_jp":"SNPS-Main-Search","white-paper":"white-paper","whitepaper_jp":"SNPS-Main-Search","analyst_reports":"analyst_reports","analyst_reports_jp":"SNPS-Main-Search","case-study":"case-study","case-study_jp":"SNPS-Main-Search","datasheet":"datasheet","datasheet_jp":"SNPS-Main-Search"},"filters":{"defensics":"(@documenttype==\"defensics\")","ebook":"((@coveocontenttype==\"eBook\" OR @documenttype==\"ebooks\" OR @sysuri=*ebooks*) NOT @sysuri=*ja-jp* NOT @sysuri=*ja/* NOT @sysuri=*zh-tw* NOT @sysuri=*zh-cn* NOT @sysuri=*ko-kr* NOT @sysuri=*de-de*)","ebook_jp":"((@coveocontenttype==\"eBook\" OR @documenttype==\"ebooks\" OR @sysuri=*ebooks*) AND @sysuri=*ja-jp*)","white-paper":"((@coveocontenttype==\"White Paper\" OR @documenttype==\"white-papers\" OR @sysuri=*white-papers*) NOT @sysuri=*ja-jp* NOT @sysuri=*ja/* NOT @sysuri=*zh-tw* NOT @sysuri=*zh-cn* NOT @sysuri=*ko-kr* NOT @sysuri=*de-de*)","whitepaper_jp":"((@coveocontenttype==\"White Paper\" OR @documenttype==\"white-papers\" OR @sysuri=*white-papers*) AND @sysuri=*ja-jp*)","analyst_reports":"((@coveocontenttype==\"Analyst Reports\" OR @coveocontenttype==\"Analyst Report\" OR @coveocontenttype==\"analyst-reports\" OR @documenttype==\"analyst-reports\" OR @sysuri=*analyst-reports*) NOT @sysuri=*ja-jp* NOT @sysuri=*ja/* NOT @sysuri=*zh-tw* NOT @sysuri=*zh-cn* NOT @sysuri=*ko-kr* NOT @sysuri=*de-de*)","analyst_reports_jp":"((@coveocontenttype==\"Analyst Reports\" OR @coveocontenttype==\"Analyst Report\" OR @coveocontenttype==\"analyst-reports\" OR @documenttype==\"analyst-reports\" OR @sysuri=*analyst-reports*) AND @sysuri=*ja-jp*)","case-study":"((@coveocontenttype==\"Case Study\" OR @documenttype==\"case-studies\" OR @sysuri=*case-studies*) NOT @sysuri=*ja-jp* NOT @sysuri=*ja/* NOT @sysuri=*zh-tw* NOT @sysuri=*zh-cn* NOT @sysuri=*ko-kr* NOT @sysuri=*de-de*)","case-study_jp":"((@coveocontenttype==\"Case Study\" OR @documenttype==\"case-studies\" OR @sysuri=*case-studies*) AND @sysuri=*ja-jp*)","datasheet":"((@coveocontenttype==\"Datasheet\" OR @documenttype==\"datasheets\" OR @sysuri=*datasheets*) NOT @sysuri=*ja-jp* NOT @sysuri=*ja/* NOT @sysuri=*zh-tw* NOT @sysuri=*zh-cn* NOT @sysuri=*ko-kr* NOT @sysuri=*de-de*)","datasheet_jp":"((@coveocontenttype==\"Datasheet\" OR @documenttype==\"datasheets\" OR @sysuri=*datasheets*) AND @sysuri=*ja-jp*)"},"ajax_url":"https://www.blackduck.com/wp-admin/admin-ajax.php","redirects":[]};
+//# sourceURL=blackduck-main-js-extra
+</script>
+<script id="blackduck-main-js" type="module" src="https://www.blackduck.com/wp-content/themes/blackduck/assets/js/main-gnW8BbHr.js"></script>
+<script id="blackduck-ajax-scripts-js-extra">
+var blackduck_ajax_object = {"ajax_url":"https://www.blackduck.com/wp-admin/admin-ajax.php","nonce":"200d743856"};
+//# sourceURL=blackduck-ajax-scripts-js-extra
+</script>
+<script id="blackduck-ajax-scripts-js" type="module" src="https://www.blackduck.com/wp-content/themes/blackduck/assets/js/modules/ajax-scripts-BFM-4EOQ.js"></script>
+<script id="coveo-atomic-js" integrity="sha512-GRJJlh1RgXj+2mYgh+YOJjHhj4OQ4giCe0WF2BGZLsoI0CbhBDwPPLXhhl6vzZkWHdqKNNnS1zOT2vTX9g8djg==" crossorigin="anonymous" type="module" src="https://static.cloud.coveo.com/atomic/v3.57.3/atomic.esm.js"></script>
+<script id="font-awesome-js" integrity="" crossorigin="anonymous" src="https://kit.fontawesome.com/15c3c99f58.js"></script>
+		<script>
+		(function() {
+			'use strict';
+			var parentSelector = '.menu-item.wpml-ls-current-language.menu-item-has-children';
+			
+			function toggleSubmenu(link, forceClose) {
+				var isExpanded = link.getAttribute('aria-expanded') === 'true';
+				if (forceClose || isExpanded) {
+					link.setAttribute('aria-expanded', 'false');
+				} else {
+					link.setAttribute('aria-expanded', 'true');
+				}
+			}
+			
+			function handleKeydown(e) {
+				var key = e.key || e.keyCode;
+				if (key === 'Enter' || key === ' ' || key === 13 || key === 32) {
+					e.preventDefault();
+					toggleSubmenu(this);
+				} else if (key === 'Escape' || key === 'Esc' || key === 27) {
+					if (this.getAttribute('aria-expanded') === 'true') {
+						e.preventDefault();
+						toggleSubmenu(this, true);
+					}
+				}
+			}
+			
+			function handleBlur(e) {
+				var link = this;
+				var parent = link.closest(parentSelector);
+				if (!parent) return;
+				
+				setTimeout(function() {
+					if (!parent.contains(document.activeElement)) {
+						toggleSubmenu(link, true);
+					}
+				}, 100);
+			}
+			
+			function init() {
+				var parents = document.querySelectorAll(parentSelector);
+				for (var i = 0; i < parents.length; i++) {
+					var link = parents[i].querySelector('a[aria-expanded]');
+					if (link) {
+						link.addEventListener('keydown', handleKeydown);
+						link.addEventListener('blur', handleBlur);
+					}
+				}
+			}
+			
+			if (document.readyState === 'loading') {
+				document.addEventListener('DOMContentLoaded', init);
+			} else {
+				init();
+			}
+		})();
+		</script>
+		
+</body>
+</html>

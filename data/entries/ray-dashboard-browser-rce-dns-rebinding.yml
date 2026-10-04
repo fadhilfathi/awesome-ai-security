@@ -3,7 +3,7 @@ title: "Ray dashboard remote code execution from a developer's browser via DNS r
 tier: 1
 attack_class: AGENT_PRIVILEGE_ABUSE
 target: "Ray before 2.52.0 (pip package ray), dashboard used as a development tool"
-date: "2026-08-17"
+date: "2025-11-26"
 summary: >-
   Ray is a distributed compute engine widely used to run AI and machine
   learning workloads, and its dashboard is normally reachable only from the

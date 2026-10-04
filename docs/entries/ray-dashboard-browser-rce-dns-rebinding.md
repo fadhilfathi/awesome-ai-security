@@ -8,7 +8,7 @@
 | Tier | `T1 [===]` **Tier 1 - Confirmed in the wild** |
 | Attack class | Agent privilege abuse |
 | Target | Ray before 2.52.0 (pip package ray), dashboard used as a development tool |
-| Disclosure date | 2026-08-17 |
+| Disclosure date | 2025-11-26 |
 | Last verified | 2026-10-04 |
 | CVE | CVE-2025-62593 |
 

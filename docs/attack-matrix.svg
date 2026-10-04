@@ -13,26 +13,34 @@
 <text class="m-head" x="295" y="20" text-anchor="middle">T3</text>
 <text class="m-label" x="14" y="50">Prompt injection (direct)</text>
 <rect x="220" y="34" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
-<rect x="250" y="34" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
+<rect x="250" y="34" width="30" height="24" fill="#ef8a62" stroke="#24292f" stroke-width="1"/>
+<text class="m-num" x="265" y="47">3</text>
 <rect x="280" y="34" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
 <text class="m-label" x="14" y="74">Prompt injection (indirect)</text>
 <rect x="220" y="58" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
-<rect x="250" y="58" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
-<rect x="280" y="58" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
+<rect x="250" y="58" width="30" height="24" fill="#ef8a62" stroke="#24292f" stroke-width="1"/>
+<text class="m-num" x="265" y="71">7</text>
+<rect x="280" y="58" width="30" height="24" fill="#67a9cf" stroke="#24292f" stroke-width="1"/>
+<text class="m-num" x="295" y="71">2</text>
 <text class="m-label" x="14" y="98">Tool poisoning</text>
 <rect x="220" y="82" width="30" height="24" fill="#b2182b" stroke="#24292f" stroke-width="1"/>
 <text class="m-num" x="235" y="95">1</text>
-<rect x="250" y="82" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
+<rect x="250" y="82" width="30" height="24" fill="#ef8a62" stroke="#24292f" stroke-width="1"/>
+<text class="m-num" x="265" y="95">2</text>
 <rect x="280" y="82" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
 <text class="m-label" x="14" y="122">Agent privilege abuse</text>
 <rect x="220" y="106" width="30" height="24" fill="#b2182b" stroke="#24292f" stroke-width="1"/>
 <text class="m-num" x="235" y="119">3</text>
-<rect x="250" y="106" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
-<rect x="280" y="106" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
+<rect x="250" y="106" width="30" height="24" fill="#ef8a62" stroke="#24292f" stroke-width="1"/>
+<text class="m-num" x="265" y="119">3</text>
+<rect x="280" y="106" width="30" height="24" fill="#67a9cf" stroke="#24292f" stroke-width="1"/>
+<text class="m-num" x="295" y="119">1</text>
 <text class="m-label" x="14" y="146">Data exfiltration</text>
 <rect x="220" y="130" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
-<rect x="250" y="130" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
-<rect x="280" y="130" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
+<rect x="250" y="130" width="30" height="24" fill="#ef8a62" stroke="#24292f" stroke-width="1"/>
+<text class="m-num" x="265" y="143">5</text>
+<rect x="280" y="130" width="30" height="24" fill="#67a9cf" stroke="#24292f" stroke-width="1"/>
+<text class="m-num" x="295" y="143">2</text>
 <text class="m-label" x="14" y="170">Supply chain (package)</text>
 <rect x="220" y="154" width="30" height="24" fill="#b2182b" stroke="#24292f" stroke-width="1"/>
 <text class="m-num" x="235" y="167">1</text>
@@ -40,7 +48,8 @@
 <rect x="280" y="154" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
 <text class="m-label" x="14" y="194">Supply chain (model)</text>
 <rect x="220" y="178" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
-<rect x="250" y="178" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
+<rect x="250" y="178" width="30" height="24" fill="#ef8a62" stroke="#24292f" stroke-width="1"/>
+<text class="m-num" x="265" y="191">5</text>
 <rect x="280" y="178" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
 <text class="m-label" x="14" y="218">Code assistant abuse</text>
 <rect x="220" y="202" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
@@ -49,7 +58,8 @@
 <text class="m-label" x="14" y="242">Training data poisoning</text>
 <rect x="220" y="226" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
 <rect x="250" y="226" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
-<rect x="280" y="226" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
+<rect x="280" y="226" width="30" height="24" fill="#67a9cf" stroke="#24292f" stroke-width="1"/>
+<text class="m-num" x="295" y="239">1</text>
 <text class="m-label" x="14" y="266">Model theft and extraction</text>
 <rect x="220" y="250" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
 <rect x="250" y="250" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
@@ -60,12 +70,14 @@
 <rect x="280" y="274" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
 <text class="m-label" x="14" y="314">Insecure output handling</text>
 <rect x="220" y="298" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
-<rect x="250" y="298" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
+<rect x="250" y="298" width="30" height="24" fill="#ef8a62" stroke="#24292f" stroke-width="1"/>
+<text class="m-num" x="265" y="311">10</text>
 <rect x="280" y="298" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
 <text class="m-label" x="14" y="338">Credential exposure</text>
 <rect x="220" y="322" width="30" height="24" fill="#b2182b" stroke="#24292f" stroke-width="1"/>
 <text class="m-num" x="235" y="335">2</text>
-<rect x="250" y="322" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
+<rect x="250" y="322" width="30" height="24" fill="#ef8a62" stroke="#24292f" stroke-width="1"/>
+<text class="m-num" x="265" y="335">5</text>
 <rect x="280" y="322" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
 <text class="m-label" x="14" y="362">Denial of service</text>
 <rect x="220" y="346" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
@@ -73,10 +85,12 @@
 <rect x="280" y="346" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
 <text class="m-label" x="14" y="386">Other</text>
 <rect x="220" y="370" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
-<rect x="250" y="370" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
-<rect x="280" y="370" width="30" height="24" fill="none" stroke="#8c959f" stroke-width="1" stroke-dasharray="2 2"/>
-<text class="m-note" x="14" y="411">7 entries; dashed empty cells are not yet documented.</text>
+<rect x="250" y="370" width="30" height="24" fill="#ef8a62" stroke="#24292f" stroke-width="1"/>
+<text class="m-num" x="265" y="383">1</text>
+<rect x="280" y="370" width="30" height="24" fill="#67a9cf" stroke="#24292f" stroke-width="1"/>
+<text class="m-num" x="295" y="383">8</text>
+<text class="m-note" x="14" y="411">62 entries; dashed empty cells are not yet documented.</text>
 <text class="m-head" x="235" y="411" text-anchor="middle">7</text>
-<text class="m-head" x="265" y="411" text-anchor="middle">0</text>
-<text class="m-head" x="295" y="411" text-anchor="middle">0</text>
+<text class="m-head" x="265" y="411" text-anchor="middle">41</text>
+<text class="m-head" x="295" y="411" text-anchor="middle">14</text>
 </svg>

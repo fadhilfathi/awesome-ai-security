@@ -1,0 +1,42 @@
+id: mcp-python-sdk-session-hijack
+title: "MCP Python SDK serves HTTP session traffic without checking which principal owns the session"
+tier: 2
+attack_class: DATA_EXFILTRATION
+target: "MCP Python SDK (pip package mcp) 1.27.1 and earlier, HTTP transports with bearer-token auth"
+date: "2026-06-05"
+summary: >-
+  The MCP Python SDK routed HTTP requests to an existing MCP session using only
+  the session identifier, supplied as a query parameter on the SSE transport
+  and as the Mcp-Session-Id header on stateful streamable HTTP. It never
+  compared the request's authentication context with the credentials that
+  created the session, so any client holding a valid bearer token for the same
+  server could send JSON-RPC messages into another client's session if it
+  learned the session ID. Version 1.27.2 records the principal that created
+  each session and answers a mismatched request with the same 404 it gives for
+  an unknown session.
+impact: >-
+  A client authenticated to the same server could inject tool calls into
+  another user's session and, on streamable HTTP, read the results back in its
+  own request response; on SSE the results are pushed to the original client's
+  event stream. That is tool results moving to an unintended principal, so the
+  entry is DATA_EXFILTRATION and not CREDENTIAL_EXPOSURE, because the advisory
+  names no credential as the exposed item. Session IDs are randomly generated
+  UUIDs, so obtaining one out of band, through logs or network observation, is
+  a prerequisite.
+mitigation: >-
+  Upgrade to mcp 1.27.2 or later. Deployments where many end users share a
+  single OAuth client, such as hosted clients and gateways, should ensure their
+  token verifier populates AccessToken.subject so sessions are isolated per
+  user rather than per client. Deployments using a custom authentication
+  backend rather than the built-in BearerAuthBackend should enforce the same
+  principal check themselves.
+sources:
+  - url: https://github.com/modelcontextprotocol/python-sdk/security/advisories/GHSA-jpw9-pfvf-9f58
+    kind: primary
+    title: "HTTP transports serve session requests without verifying the authenticated principal (GHSA-jpw9-pfvf-9f58)"
+  - url: https://cveawg.mitre.org/api/cve/CVE-2026-52869
+    kind: primary
+    title: "CVE-2026-52869 CVE record, including the CISA enrichment reporting no exploitation"
+cve:
+  - CVE-2026-52869
+last_verified: "2026-10-04"

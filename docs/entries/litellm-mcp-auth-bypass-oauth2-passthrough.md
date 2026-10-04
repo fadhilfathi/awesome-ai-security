@@ -8,7 +8,7 @@
 | Tier | `T1 [===]` **Tier 1 - Confirmed in the wild** |
 | Attack class | Credential exposure |
 | Target | BerriAI LiteLLM, versions before 1.84.0 (pip package litellm) |
-| Disclosure date | 2026-06-30 |
+| Disclosure date | 2026-07-08 |
 | Last verified | 2026-10-04 |
 | CVE | CVE-2026-59822 |
 

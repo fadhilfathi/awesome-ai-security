@@ -1,0 +1,39 @@
+id: agent-app-aidex-chatbot-prompt-injection-command-execution
+title: "Prompt injection in the AiDex LLM chatbot executes operating system commands"
+tier: 2
+attack_class: PROMPT_INJECTION_DIRECT
+target: "AiDex LLM chatbot, versions earlier than 1.7, /api/<string-chat>/message endpoint"
+date: "2025-04-15"
+summary: >-
+  Spain's INCIBE coordinated the publication of two critical findings in
+  the AiDex chatbot, one of which covers prompt injection on the message
+  endpoint of an open chat registry. The advisory states that an
+  authenticated user manipulating the content parameter could make the
+  chatbot run commands the product never intended, and that this was
+  assigned CVE-2025-3579. The vendor fixed both findings in AiDex 1.7.
+impact: >-
+  The advisory states the attacker can run Unix commands, talk to
+  internal services such as PHP or MySQL, and invoke native functions of
+  the framework behind the product, so the gain is command execution as
+  the application rather than a refused answer. CISA recorded
+  Exploitation: none and no source reports affected users, so this is
+  demonstrated rather than confirmed. INSECURE_OUTPUT_HANDLING was
+  considered and rejected: the taxonomy keys the class on the defective
+  component, and the defect here is a model obeying text that arrived on
+  the normal user input channel.
+mitigation: >-
+  Upgrade to AiDex 1.7 or later, which the advisory names as the fix. Do
+  not let a chat endpoint reach shell, interpreter or framework internals
+  on the strength of model output alone: put an explicit allowlist of
+  callable operations between the model and the host, and require an
+  operator decision for anything outside it.
+sources:
+  - url: https://www.incibe.es/en/incibe-cert/notices/aviso/multiple-vulnerabilities-aidex
+    kind: primary
+    title: "Multiple vulnerabilities in AiDex (INCIBE-2025-0185)"
+  - url: https://cveawg.mitre.org/api/cve/CVE-2025-3579
+    kind: primary
+    title: "CVE-2025-3579 Code Injection Vulnerability in AiDex record"
+cve:
+  - CVE-2025-3579
+last_verified: "2026-10-04"

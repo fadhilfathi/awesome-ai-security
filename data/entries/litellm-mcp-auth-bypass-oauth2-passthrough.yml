@@ -3,7 +3,7 @@ title: "LiteLLM MCP endpoint authentication bypass via OAuth2 passthrough fallba
 tier: 1
 attack_class: CREDENTIAL_EXPOSURE
 target: "BerriAI LiteLLM, versions before 1.84.0 (pip package litellm)"
-date: "2026-06-30"
+date: "2026-07-08"
 summary: >-
   LiteLLM is a proxy that fronts several model providers behind one
   OpenAI-compatible interface, and it also brokers Model Context Protocol

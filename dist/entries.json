@@ -1,8 +1,888 @@
 {
   "generated_from": "data/entries",
   "schema_version": 1,
-  "count": 7,
+  "count": 62,
   "entries": [
+    {
+      "id": "agent-app-aidex-chatbot-prompt-injection-command-execution",
+      "title": "Prompt injection in the AiDex LLM chatbot executes operating system commands",
+      "tier": 2,
+      "attack_class": "PROMPT_INJECTION_DIRECT",
+      "target": "AiDex LLM chatbot, versions earlier than 1.7, /api/<string-chat>/message endpoint",
+      "date": "2025-04-15",
+      "summary": "Spain's INCIBE coordinated the publication of two critical findings in the AiDex chatbot, one of which covers prompt injection on the message endpoint of an open chat registry. The advisory states that an authenticated user manipulating the content parameter could make the chatbot run commands the product never intended, and that this was assigned CVE-2025-3579. The vendor fixed both findings in AiDex 1.7.",
+      "impact": "The advisory states the attacker can run Unix commands, talk to internal services such as PHP or MySQL, and invoke native functions of the framework behind the product, so the gain is command execution as the application rather than a refused answer. CISA recorded Exploitation: none and no source reports affected users, so this is demonstrated rather than confirmed. INSECURE_OUTPUT_HANDLING was considered and rejected: the taxonomy keys the class on the defective component, and the defect here is a model obeying text that arrived on the normal user input channel.",
+      "mitigation": "Upgrade to AiDex 1.7 or later, which the advisory names as the fix. Do not let a chat endpoint reach shell, interpreter or framework internals on the strength of model output alone: put an explicit allowlist of callable operations between the model and the host, and require an operator decision for anything outside it.",
+      "sources": [
+        {
+          "url": "https://www.incibe.es/en/incibe-cert/notices/aviso/multiple-vulnerabilities-aidex",
+          "kind": "primary",
+          "title": "Multiple vulnerabilities in AiDex (INCIBE-2025-0185)"
+        },
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2025-3579",
+          "kind": "primary",
+          "title": "CVE-2025-3579 Code Injection Vulnerability in AiDex record"
+        }
+      ],
+      "cve": [
+        "CVE-2025-3579"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/agent-app-aidex-chatbot-prompt-injection-command-execution.md"
+    },
+    {
+      "id": "agent-app-codex-desktop-markdown-image-exfil",
+      "title": "Indirect prompt injection exfiltrates data through Markdown images in the Codex desktop app",
+      "tier": 2,
+      "attack_class": "PROMPT_INJECTION_INDIRECT",
+      "target": "OpenAI Codex desktop app for macOS, builds before 26.527.31326",
+      "date": "2026-07-06",
+      "summary": "OpenAI's own CVE record for the Codex desktop app on macOS states that the app rendered remote images from Markdown in model responses without restriction. An attacker who can place an indirect prompt injection in content the app processes, such as a connected-tool result, can induce the model to build a remote image URL that encodes session data, and the app fetches it while rendering, with no separate click; the record is CVE-2026-14898 and the affected builds end at 26.527.31326.",
+      "impact": "OpenAI states successful exploitation could exfiltrate secrets and other information accessible in the Codex session, naming API keys, source code and data returned by connected tools. INSECURE_OUTPUT_HANDLING was considered, since the Markdown renderer performs the fetch, but OpenAI names the induced model as the failing step. CREDENTIAL_EXPOSURE was also considered, since API keys are named, but the taxonomy routes by the step that yielded capability, here the injected instruction. The record states no integrity or availability impact was shown and no exploitation in the wild is known.",
+      "mitigation": "Update to a build at or above 26.527.31326. Do not let model output drive automatic network fetches: block external image loads in the renderer, allow only data URIs for locally attached images, require explicit user approval before any remote fetch, and constrain the app's egress so a rendered response cannot reach an arbitrary host.",
+      "sources": [
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2026-14898",
+          "kind": "primary",
+          "title": "CVE-2026-14898 OpenAI Codex desktop app for macOS record"
+        }
+      ],
+      "cve": [
+        "CVE-2026-14898"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/agent-app-codex-desktop-markdown-image-exfil.md"
+    },
+    {
+      "id": "agent-app-emailgpt-direct-prompt-injection",
+      "title": "Direct prompt injection in the EmailGPT service leaks system prompts and runs unwanted prompts",
+      "tier": 2,
+      "attack_class": "PROMPT_INJECTION_DIRECT",
+      "target": "EmailGPT hosted service, revisions through commit eecfaf2cff58793549dd0c1266ac1d62e0c8811d",
+      "date": "2024-06-05",
+      "summary": "Synopsys's CyRC assigned CVE-2024-5184 to a prompt injection in the EmailGPT email assistant service, and the record states that the service accepts an injected prompt through its API and lets it take over the service logic. The stated outcomes are two: the attacker can force the assistant to leak its hard-coded system prompt, and can make it run prompts it was never meant to run, answering requests that should have been refused. The record lists Mohammed Alshehri as finder and does not name a fixed version.",
+      "impact": "The CVE states any individual with access to the service can trigger the issue, and that the system responds with the requested data rather than declining. That is the PROMPT_INJECTION_DIRECT tie-break outcome, an action the service would not otherwise take, rather than JAILBREAK. INSECURE_OUTPUT_HANDLING was considered and rejected because the record does not describe a component consuming the output unsafely. CISA recorded Exploitation: none, so this is demonstrated rather than confirmed in the wild.",
+      "mitigation": "No fix version is named in the record. Treat an assistant that fronts user-controlled text with a fixed system prompt as a service that needs the same controls as any other injection surface: separate system instructions from user content, never let user text alone decide what actions run, and scope the assistant's credentials so a successful takeover is bounded.",
+      "sources": [
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2024-5184",
+          "kind": "primary",
+          "title": "CVE-2024-5184 Prompt Injection in EmailGPT record"
+        }
+      ],
+      "cve": [
+        "CVE-2024-5184"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/agent-app-emailgpt-direct-prompt-injection.md"
+    },
+    {
+      "id": "agent-app-kong-konnect-mcp-stored-injection",
+      "title": "Stored prompt injection in Kong Konnect MCP analytics data leads to credential disclosure",
+      "tier": 2,
+      "attack_class": "PROMPT_INJECTION_INDIRECT",
+      "target": "Kong Konnect Model Context Protocol server (mcp-konnect), versions below 1.0.0",
+      "date": "2026-05-15",
+      "summary": "Kong's security advisory for the Konnect MCP server describes an attacker who can send traffic to a gateway planting instructions in request metadata such as the User-Agent. That metadata is stored in Konnect analytics and later returned to an AI assistant by the server's analytics tools without neutralisation, so the assistant reads attacker text as instructions; the advisory is GHSA-7767-3m3w-2p44, CVE-2026-13341. Kong prepared the fixes in release 1.0.0.",
+      "impact": "Kong states that in client environments which fetch remote resources from model output, this could disclose sensitive information to an attacker-controlled URL, exposing secrets or configuration values other MCP tools return, including plugin configuration data, plus internal hostnames. A separate path manipulation flaw let the server request unintended Konnect API endpoints with the user's token. CREDENTIAL_EXPOSURE and DATA_EXFILTRATION were both considered, but the step that yielded capability here was the stored request data the agent read back, so the entry is filed as indirect injection.",
+      "mitigation": "Upgrade to 1.0.0 or later, where Kong neutralises untrusted analytics fields before returning them, validates identifiers as UUIDs and encodes path segments. Leave raw plugin configuration output disabled unless it is strictly required. Sand-box the agent so tool output cannot trigger automatic remote fetches, block automatic rendering of remote content and model-generated links, and apply egress controls to keep agent runtimes off untrusted external hosts.",
+      "sources": [
+        {
+          "url": "https://github.com/Kong/mcp-konnect/security/advisories/GHSA-7767-3m3w-2p44",
+          "kind": "primary",
+          "title": "Stored Prompt Injection and Credential Exposure via Untrusted Analytics Data in Kong Konnect MCP (GHSA-7767-3m3w-2p44)"
+        },
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2026-13341",
+          "kind": "primary",
+          "title": "CVE-2026-13341 Kong Konnect MCP server record"
+        }
+      ],
+      "cve": [
+        "CVE-2026-13341"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/agent-app-kong-konnect-mcp-stored-injection.md"
+    },
+    {
+      "id": "agent-app-m365-copilot-echoleak-zero-click-injection",
+      "title": "EchoLeak zero-click indirect prompt injection in Microsoft 365 Copilot",
+      "tier": 2,
+      "attack_class": "PROMPT_INJECTION_INDIRECT",
+      "target": "Microsoft 365 Copilot, hosted service used from Outlook and Teams",
+      "date": "2025-06-11",
+      "summary": "Aim Labs found that an external attacker could plant instructions in an ordinary email and have Microsoft 365 Copilot carry them out, without the recipient doing anything. The email was retrieved during normal Copilot work, the hidden instructions told Copilot to fold context data into a link, and reference-style Markdown and an auto-fetched image tag got past the output filter and the page's content security policy, the last step using an allow-listed Microsoft Teams URL as the fetcher. Microsoft shipped a server-side fix and assigned CVE-2025-32711; a later academic paper analyses the chain rather than reproducing it.",
+      "impact": "The attacker obtains whatever the victim's Copilot could read, which the CVE describes as information disclosure over a network and the research describes as internal files and message content pulled out of the user's context. The record carries CISA's Exploitation: none and the paper states Microsoft reported no evidence of in-the-wild exploitation, so this is not Tier 1. DATA_EXFILTRATION was considered because data is what leaves, but the taxonomy classifies by the step that yielded capability, and that step is the retrieved email whose instructions the model obeyed.",
+      "mitigation": "Microsoft states the fix was server-side with no customer action required. The research recommends partitioning the prompt so external mail is tagged as non-authoritative and never concatenated inline with a user's internal query, resolving retrieval by provenance so external sources are excluded by default, gating model output through a format and URL allowlist before rendering, and applying a strict content security policy so any permitted fetch goes through an internal proxy.",
+      "sources": [
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2025-32711",
+          "kind": "primary",
+          "title": "CVE-2025-32711 M365 Copilot Information Disclosure Vulnerability record"
+        },
+        {
+          "url": "https://arxiv.org/abs/2509.10540",
+          "kind": "primary",
+          "title": "EchoLeak: The First Real-World Zero-Click Prompt Injection Exploit in a Production LLM System"
+        },
+        {
+          "url": "https://arxiv.org/pdf/2509.10540v1",
+          "kind": "primary",
+          "title": "EchoLeak paper, full PDF"
+        }
+      ],
+      "cve": [
+        "CVE-2025-32711"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/agent-app-m365-copilot-echoleak-zero-click-injection.md"
+    },
+    {
+      "id": "agent-app-millie-chatbot-boolean-prompt-injection",
+      "title": "Boolean prompt injection in the 1millionbot Millie chatbot evades chat restrictions",
+      "tier": 2,
+      "attack_class": "PROMPT_INJECTION_DIRECT",
+      "target": "1millionbot Millie chat chatbot and AI platform, versions prior to 3.6.0",
+      "date": "2026-03-31",
+      "summary": "INCIBE coordinated the publication of a high severity finding in the Millie chatbot by 1millionbot. The mechanism is a Boolean form of prompt injection: a question is framed so that an affirmative answer causes the model to run the instruction that follows it, and the restriction evasion was assigned CVE-2026-4399. The advisory lists the product as fixed in version 3.6.0.",
+      "impact": "A remote user can make the chatbot answer questions it was meant to refuse and spend the vendor's resources, including the OpenAI API key behind the service, on tasks outside its purpose. That is abuse of an existing entitlement, so AGENT_PRIVILEGE_ABUSE was considered and rejected. JAILBREAK was also considered and rejected, because the taxonomy sends it to injection when success is an action rather than a refused-content bypass, and the advisory names out-of-context tasks and API key use rather than a bare refusal. CISA recorded Exploitation: none, so this is not Tier 1.",
+      "mitigation": "Upgrade to 3.6.0 or later, which the advisory names as the fix. Treat prompt content controls as a single gate that blocks both direct attempts and affirmative-answer constructions, put per-user and per-session spend and rate limits on model calls, and scope the API credential to the minimum the service needs so abuse is bounded.",
+      "sources": [
+        {
+          "url": "https://www.incibe.es/en/incibe-cert/notices/aviso/multiple-vulnerabilities-1millionbot-millie-chatbot",
+          "kind": "primary",
+          "title": "Multiple vulnerabilities in 1millionbot Millie chatbot (INCIBE-2026-243)"
+        },
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2026-4399",
+          "kind": "primary",
+          "title": "CVE-2026-4399 Multiple vulnerabilities in 1millionbot Millie chatbot record"
+        }
+      ],
+      "cve": [
+        "CVE-2026-4399"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/agent-app-millie-chatbot-boolean-prompt-injection.md"
+    },
+    {
+      "id": "agent-app-nanobot-email-channel-indirect-injection",
+      "title": "Zero-click indirect prompt injection through the nanobot email channel",
+      "tier": 2,
+      "attack_class": "PROMPT_INJECTION_INDIRECT",
+      "target": "nanobot personal AI assistant, pip package versions <= 0.1.4.post5, email channel",
+      "date": "2026-03-27",
+      "summary": "Bitslab reported that nanobot's email channel decides who is allowed to command it by reading the From header of raw mail and trusting it against an allowlist, with no SPF, DKIM or DMARC evaluation. An unauthenticated attacker can therefore forge the header, send a message to the polled inbox, and have the body ingested as a trusted instruction set; the advisory is GHSA-4gmr-2vc8-7qh3, CVE-2026-33654. The maintainers released the patch as version 0.1.6.",
+      "impact": "The advisory states the injected text can drive the agent's tools with no interaction from the bot owner: reading its own config, including the API keys, posting it to an attacker URL, or running a reverse shell through the execution tool if that tool is enabled. CREDENTIAL_EXPOSURE and AGENT_PRIVILEGE_ABUSE were both considered; the taxonomy keys the class on the step that yielded capability, and that step is the retrieved email body, which any remote sender can write, so the entry is filed as indirect injection.",
+      "mitigation": "Upgrade to 0.1.6 or later. Until then, or for forks, stop deriving identity from the From header and instead parse the Authentication-Results header and require spf=pass and dkim=pass; keep email polling off by default; tag mail as external context and run it through a restricted tool set rather than the main agent loop.",
+      "sources": [
+        {
+          "url": "https://github.com/HKUDS/nanobot/security/advisories/GHSA-4gmr-2vc8-7qh3",
+          "kind": "primary",
+          "title": "Zero-Click Indirect Prompt Injection and Authentication Bypass via Email Polling (GHSA-4gmr-2vc8-7qh3)"
+        },
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2026-33654",
+          "kind": "primary",
+          "title": "CVE-2026-33654 nanobot email channel record"
+        }
+      ],
+      "cve": [
+        "CVE-2026-33654"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/agent-app-nanobot-email-channel-indirect-injection.md"
+    },
+    {
+      "id": "agent-app-pgadmin-ai-assistant-sql-readonly-bypass",
+      "title": "Prompt injection bypasses the read-only guard in the pgAdmin 4 AI Assistant SQL tool",
+      "tier": 2,
+      "attack_class": "INSECURE_OUTPUT_HANDLING",
+      "target": "pgAdmin 4 AI Assistant execute_sql_query tool, versions 9.13 to before 9.16",
+      "date": "2026-06-18",
+      "summary": "The PostgreSQL CNA's record for pgAdmin 4 states that the AI Assistant's execute_sql_query tool wrapped model-generated SQL in a read-only transaction but forwarded the statement to the driver unrestricted, so a payload led by COMMIT, END, ROLLBACK or ABORT closed that wrapper and ran the rest in autocommit mode. The record names prompt injection through database content the assistant reads as the delivery route and assigns CVE-2026-12045; the fix shipped in pgAdmin 4 9.16.",
+      "impact": "Anyone who can write into an object the AI Assistant inspects can obtain unauthorised data modification with the pgAdmin user's privileges, and when that role is a superuser or holds pg_execute_server_program the chain extends to code execution on the database host via COPY TO PROGRAM. PROMPT_INJECTION_INDIRECT was considered and rejected: the delivery is retrieved content, but the taxonomy classifies by the step that yielded capability, and here the tool behaved as designed while the application consumed its output without validation.",
+      "mitigation": "Upgrade to 9.16 or later, where the fix rejects any query that parses to more than one statement and requires the leading real token to be one of SELECT, WITH, EXPLAIN, SHOW, VALUES or TABLE, with the read-only transaction left as the runtime backstop. Do not connect the assistant with a superuser role or pg_execute_server_program, and do not grant the assistant's role more than the reads it needs.",
+      "sources": [
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2026-12045",
+          "kind": "primary",
+          "title": "CVE-2026-12045 pgAdmin 4 AI Assistant read-only transaction bypass record"
+        },
+        {
+          "url": "https://github.com/pgadmin-org/pgadmin4/commit/bf4792444446f0e7ab721d23cbd6bfe6afaa7a8b",
+          "kind": "primary",
+          "title": "fix(llm): reject multi-statement and non-read-only AI assistant queries"
+        }
+      ],
+      "cve": [
+        "CVE-2026-12045"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/agent-app-pgadmin-ai-assistant-sql-readonly-bypass.md"
+    },
+    {
+      "id": "agent-app-strands-agents-shell-consent-bypass",
+      "title": "Prompt injection bypasses the shell tool consent gate in Strands Agents Tools",
+      "tier": 2,
+      "attack_class": "PROMPT_INJECTION_INDIRECT",
+      "target": "strands-agents-tools pip package, versions below 0.8.0, shell tool",
+      "date": "2026-08-03",
+      "summary": "The shell tool in the Strands Agents Tools package asks an operator for consent before running a command, and the advisory says its input schema also exposed a non_interactive parameter the model itself could set. Text an agent reads, such as a web page, a Slack message or a file, can therefore steer the model into setting that flag and skipping the gate; the advisory is GHSA-mqvc-p852-wf8x, CVE-2026-18733. The maintainers released the fix as version 0.8.0.",
+      "impact": "AWS states that anyone who can get crafted text in front of the agent can execute arbitrary operating system commands on the host with the privileges of the agent process, removing the human check the tool was built around. AGENT_PRIVILEGE_ABUSE was considered, since the gain outlives the single request, but the taxonomy resolves it by the step that granted authority, and that is the injection, not a new binding or credential. It is indirect injection rather than tool poisoning because the payload did not arrive in a tool definition.",
+      "mitigation": "Upgrade to strands-agents-tools 0.8.0, where the consent gate can no longer be bypassed through the parameter, and check forks for the same fix. Until then, do not expose the shell tool to an agent that processes untrusted content, and run any agent that keeps the shell tool in an isolated least-privilege environment so executed commands are contained.",
+      "sources": [
+        {
+          "url": "https://github.com/strands-agents/tools/security/advisories/GHSA-mqvc-p852-wf8x",
+          "kind": "primary",
+          "title": "Prompt injection bypasses shell tool consent gate in Strands Agents Tools (GHSA-mqvc-p852-wf8x)"
+        },
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2026-18733",
+          "kind": "primary",
+          "title": "CVE-2026-18733 Strands Agents Tools shell tool record"
+        }
+      ],
+      "cve": [
+        "CVE-2026-18733"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/agent-app-strands-agents-shell-consent-bypass.md"
+    },
+    {
+      "id": "agent-app-theia-workspace-names-prompt-injection",
+      "title": "Indirect prompt injection through workspace file and directory names in Eclipse Theia AI chat",
+      "tier": 2,
+      "attack_class": "PROMPT_INJECTION_INDIRECT",
+      "target": "Eclipse Theia AI chat agent, versions prior to 1.71.0",
+      "date": "2026-06-18",
+      "summary": "The Eclipse Foundation's CVE record states that before 1.71.0 the Theia AI chat agent folded workspace file and directory names into its prompt context without distinguishing them from system instructions. A repository whose names are chosen by an attacker therefore instructs the agent as soon as the agent analyses that workspace, and the record assigns CVE-2026-44688 to it. The Foundation states that the workspace trust enforcement added in 1.71.0 disables the AI features in untrusted workspaces and closes the chain.",
+      "impact": "The Foundation states the injected names enable attack chains leading to data exfiltration through Markdown image rendering or arbitrary command execution through task definitions, so the attacker obtains session data or code execution from a repository the developer merely opened. INSECURE_OUTPUT_HANDLING and TOOL_POISONING were both considered and rejected: the payload arrived neither in output handling nor in a tool definition. The step that yielded capability was the attacker-chosen workspace names entering the prompt. CISA recorded Exploitation: none.",
+      "mitigation": "Upgrade to 1.71.0 or later, which disables AI chat, inline suggestions and code actions, and stops loading workspace prompt templates and resolving workspace file variables, while a workspace is in Restricted Mode. Until then, do not run AI features over an untrusted clone; grant workspace trust deliberately, and treat a repository name as untrusted input the same way any other retrieved content is treated.",
+      "sources": [
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2026-44688",
+          "kind": "primary",
+          "title": "CVE-2026-44688 Eclipse Theia AI chat record"
+        },
+        {
+          "url": "https://github.com/eclipse-theia/theia/issues/16892",
+          "kind": "primary",
+          "title": "Hook workspace trust into AI features (issue 16892)"
+        }
+      ],
+      "cve": [
+        "CVE-2026-44688"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/agent-app-theia-workspace-names-prompt-injection.md"
+    },
+    {
+      "id": "ai-infra-hf-accelerate-checkpoint-deserialization",
+      "title": "Hugging Face Accelerate executes code while parsing checkpoints, and the vendor declined to fix it",
+      "tier": 2,
+      "attack_class": "SUPPLY_CHAIN_MODEL",
+      "target": "Hugging Face Accelerate commit 43526c5c089cc831530f42bbbe66a0cb0b0ea461 (pip package accelerate)",
+      "date": "2025-12-23",
+      "summary": "The Zero Day Initiative found that the checkpoint parser in Hugging Face Accelerate validated no part of the attacker-supplied data before deserializing it, so a checkpoint file could carry executable content. ZDI reported the issue in September 2025; the bug bounty rejected it as out of scope, and on 14 October 2025 the vendor confirmed no changes would be made and closed the report as informative. ZDI published it as a zero-day advisory on 18 December 2025, and the CVE record names the affected Accelerate commit.",
+      "impact": "Loading a checkpoint the attacker supplied runs their code in the context of the current process, which for the training and inference launcher is the job that has access to the training data and the cluster. The record scores it 7.8 with required user interaction, and the CISA enrichment in the record states no exploitation was seen. The artefact that carries the compromise is a checkpoint the victim pulls in, not a package resolved in an index, so the direction rule in the taxonomy makes this SUPPLY_CHAIN_MODEL rather than SUPPLY_CHAIN_PACKAGE.",
+      "mitigation": "No fix is available: the vendor closed the report with no change. ZDI's stated mitigation is to restrict interaction with the product. Verify the provenance of every checkpoint before handing it to Accelerate, keep training and inference launchers isolated from credentials they do not need, and convert checkpoints to a format that does not execute on load where the pipeline allows it.",
+      "sources": [
+        {
+          "url": "https://www.zerodayinitiative.com/advisories/ZDI-25-1140/",
+          "kind": "primary",
+          "title": "ZDI-25-1140: Hugging Face Accelerate deserialization of untrusted data"
+        },
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2025-14925",
+          "kind": "primary",
+          "title": "CVE-2025-14925 CVE record, naming the affected Accelerate commit"
+        }
+      ],
+      "cve": [
+        "CVE-2025-14925"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/ai-infra-hf-accelerate-checkpoint-deserialization.md"
+    },
+    {
+      "id": "ai-infra-hf-transformers-model-file-deserialization",
+      "title": "Hugging Face Transformers executes code while parsing model files for several architectures",
+      "tier": 2,
+      "attack_class": "SUPPLY_CHAIN_MODEL",
+      "target": "Hugging Face Transformers Perceiver, Transformer-XL, megatron_gpt2 and GLM4 model files, release 4.57.1 named for GLM4",
+      "date": "2025-12-23",
+      "summary": "The Zero Day Initiative reported and published four related flaws in Hugging Face Transformers, covering the Perceiver, Transformer-XL, megatron_gpt2 and GLM4 model classes. In each case the parser for the corresponding model file, checkpoint or weight set validated no part of the attacker-supplied data before deserializing it, so the file itself carried executable content. The records and advisories state that the target must visit a malicious page or open a malicious file, and that the code then runs as the current user or in the current process. None of the four carries a fixed version.",
+      "impact": "Opening a model file the attacker supplied runs their code on the victim's machine, with the privileges of whoever loaded it. The records assign 7.8 with local attack vector and required user interaction, and the CISA enrichment in each record states no exploitation was seen. A second class was considered and rejected: MODEL_THEFT_EXTRACTION covers artefacts moving out of the owner's control, and here the owner pulls a tampered artefact in, which the direction rule in the taxonomy assigns to SUPPLY_CHAIN_MODEL.",
+      "mitigation": "ZDI states that given the nature of the flaw the only salient mitigation is to restrict interaction with the product, and no fixed version is named for any of the four, so treat every model file from an untrusted source as code rather than as data. Prefer weight formats that do not execute on load, verify provenance and checksums of downloaded checkpoints, and load third-party models in a sandboxed process.",
+      "sources": [
+        {
+          "url": "https://www.zerodayinitiative.com/advisories/ZDI-25-1150/",
+          "kind": "primary",
+          "title": "ZDI-25-1150: Hugging Face Transformers Perceiver model deserialization of untrusted data"
+        },
+        {
+          "url": "https://www.zerodayinitiative.com/advisories/ZDI-25-1149/",
+          "kind": "primary",
+          "title": "ZDI-25-1149: Hugging Face Transformers Transformer-XL model deserialization of untrusted data"
+        },
+        {
+          "url": "https://www.zerodayinitiative.com/advisories/ZDI-25-1141/",
+          "kind": "primary",
+          "title": "ZDI-25-1141: Hugging Face Transformers megatron_gpt2 deserialization of untrusted data"
+        },
+        {
+          "url": "https://www.zerodayinitiative.com/advisories/ZDI-25-1145/",
+          "kind": "primary",
+          "title": "ZDI-25-1145: Hugging Face Transformers GLM4 deserialization of untrusted data"
+        },
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2025-14930",
+          "kind": "primary",
+          "title": "CVE-2025-14930 CVE record, naming release 4.57.1 as affected"
+        }
+      ],
+      "cve": [
+        "CVE-2025-14920",
+        "CVE-2025-14921",
+        "CVE-2025-14924",
+        "CVE-2025-14930"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/ai-infra-hf-transformers-model-file-deserialization.md"
+    },
+    {
+      "id": "ai-infra-langchain-run-data-deserialization",
+      "title": "LangChain runtime paths revive objects from deserialized run data with a broad allowlist",
+      "tier": 2,
+      "attack_class": "INSECURE_OUTPUT_HANDLING",
+      "target": "langchain-core 1 to 1.3.2 and 0 to 0.3.84 (pip package langchain-core)",
+      "date": "2026-05-08",
+      "summary": "Several older LangChain runtime paths, named in the advisory as RunnableWithMessageHistory, astream_log() and astream_events(version=\"v1\"), revived objects from run inputs and outputs using an allowlist broad enough to accept any trusted LangChain-serializable class. A request whose nested dictionaries survive unchanged into that run data could therefore be turned back into live objects with attacker-chosen constructor arguments instead of being read as inert data. The advisory also covers a related bypass in the secret-marker check that made such payloads survive a serialization round trip. Versions 1.3.3 and 0.3.85 carry the fix, which deprecates those three surfaces.",
+      "impact": "The advisory's own realistic outcomes are persistent chat-history poisoning through revived message objects, manipulation of what later enters the model context, instantiation of unexpected LangChain objects with attacker-controlled arguments, and possible credential disclosure or server-side requests if a revived object reads environment credentials while initializing. INSECURE_OUTPUT_HANDLING beats PROMPT_INJECTION_DIRECT on the step that yields capability: the defect is in the application's handling of run data, not in the model's refusal behaviour. No source states real-world exploitation.",
+      "mitigation": "Upgrade to langchain-core 1.3.3 or 0.3.85 or later. Independently of the fix, validate incoming requests against a fixed schema and coerce them to plain strings or message-content fields before they reach LangChain, migrate off the three deprecated surfaces, and never pass user-controlled data to load() or loads(), which the advisory says are for trusted manifests only.",
+      "sources": [
+        {
+          "url": "https://github.com/langchain-ai/langchain/security/advisories/GHSA-pjwx-r37v-7724",
+          "kind": "primary",
+          "title": "Unsafe deserialization of attacker-controlled LangChain objects through overly broad load() allowlists (GHSA-pjwx-r37v-7724)"
+        },
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2026-44843",
+          "kind": "primary",
+          "title": "CVE-2026-44843 CVE record for the LangChain deserialization flaw"
+        }
+      ],
+      "cve": [
+        "CVE-2026-44843"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/ai-infra-langchain-run-data-deserialization.md"
+    },
+    {
+      "id": "ai-infra-mlflow-model-version-artifact-read-bypass",
+      "title": "MLflow CreateModelVersion authorization bypass reads another user's model artifacts",
+      "tier": 2,
+      "attack_class": "DATA_EXFILTRATION",
+      "target": "MLflow before 3.15.0 (pip package mlflow) with the built-in basic-auth plugin",
+      "date": "2026-08-17",
+      "summary": "MLflow's CreateModelVersion handler checked that a submitted model-version source path sat inside the artifact directory of the run or model it referenced, but it did not check whether the caller had READ permission on that run. An authenticated user could therefore create a model version whose source points at another user's artifact directory and then download files from it through the model-version artifact endpoint, which derives its path from the stored source rather than re-checking the caller's rights. The advisory reports the bypass validated on v3.13.0 and fixed in 3.15.0.",
+      "impact": "Any authenticated user who can create a registered model could read files from any other user's artifact directory, which the advisory names as model weights, training data samples and evaluation reports, in deployments where the experiment-level READ gate would otherwise answer 403. The items that cross the boundary are records and artifacts rather than a named credential, so the taxonomy tie-break on the item set makes this DATA_EXFILTRATION. The advisory's own proof of concept retrieved a file called secret_weights.txt; no source states that any real deployment was exploited.",
+      "mitigation": "Upgrade to MLflow 3.15.0 or later, which requires READ permission on the source run or model. Until then do not rely on experiment-level permission separation alone: keep artifact directories unreadable across tenants, and audit model versions whose source path points outside the runs the creator owns.",
+      "sources": [
+        {
+          "url": "https://github.com/mlflow/mlflow/security/advisories/GHSA-gqch-g4w5-7qcw",
+          "kind": "primary",
+          "title": "CreateModelVersion source validation does not check READ permission on referenced run_id (GHSA-gqch-g4w5-7qcw)"
+        },
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2026-69148",
+          "kind": "primary",
+          "title": "CVE-2026-69148 CVE record for the MLflow model version authorization bypass"
+        }
+      ],
+      "cve": [
+        "CVE-2026-69148"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/ai-infra-mlflow-model-version-artifact-read-bypass.md"
+    },
+    {
+      "id": "ai-infra-mlflow-statsmodels-pickle-control-bypass",
+      "title": "MLflow statsmodels flavor loads pickle artifacts despite the deserialization control",
+      "tier": 2,
+      "attack_class": "SUPPLY_CHAIN_MODEL",
+      "target": "MLflow 2.1.0 to before 3.15.0 (pip package mlflow), the statsmodels model flavor",
+      "date": "2026-09-01",
+      "summary": "MLflow added an environment-variable control, MLFLOW_ALLOW_PICKLE_DESERIALIZATION, after a run of unsafe pickle loading flaws in its model flavors. The statsmodels flavor never consulted that control: its loader called the pickle-based reader in the statsmodels library directly, while sibling flavors such as sklearn raised an error instead. An attacker who can place a crafted MLmodel artifact into an accessible artifact store therefore gets code execution on any process that loads that model through mlflow.pyfunc.load_model(), even with the control set to False. The advisory lists 3.15.0 as the patched version.",
+      "impact": "The advisory states that the malicious pickle file executes arbitrary code with the privileges of the calling process, and that on default MLflow deployments without the basic-auth app authentication is disabled, so uploading an artifact requires no credentials. The control the operator was told they had set to False gave no protection on this flavor. The compromise is carried by a model artifact planted for another party to load, not by a package resolved in an index, so the direction rule in the taxonomy makes this SUPPLY_CHAIN_MODEL rather than SUPPLY_CHAIN_PACKAGE.",
+      "mitigation": "Upgrade to MLflow 3.15.0 or later. Until then, do not rely on MLFLOW_ALLOW_PICKLE_DESERIALIZATION as the only control: treat any artifact store as untrusted, load only artifacts whose provenance you control, and run mlflow.pyfunc.load_model() in a process that holds nothing worth taking.",
+      "sources": [
+        {
+          "url": "https://github.com/mlflow/mlflow/security/advisories/GHSA-gqvg-gmmx-x4hm",
+          "kind": "primary",
+          "title": "MLFLOW_ALLOW_PICKLE_DESERIALIZATION=False safety control bypassed by mlflow.statsmodels flavor (GHSA-gqvg-gmmx-x4hm)"
+        }
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/ai-infra-mlflow-statsmodels-pickle-control-bypass.md"
+    },
+    {
+      "id": "ai-infra-ollama-gguf-loader-memory-leak",
+      "title": "Ollama GGUF loader reads past the file buffer and leaks server memory to the caller",
+      "tier": 2,
+      "attack_class": "CREDENTIAL_EXPOSURE",
+      "target": "Ollama before 0.17.1, the GGUF model loader behind /api/create",
+      "date": "2026-05-04",
+      "summary": "The record describes a crafted GGUF file whose declared tensor offset and size exceed the file's real length. Quantizing that tensor in the GGUF loader reads past the allocated heap buffer, so the bytes that follow it in memory end up inside the model artifact the server produces. Because /api/create and /api/push carry no authentication in the upstream distribution, the caller who uploaded the file can push the resulting artifact to a registry they control and read the leaked memory out of it. The fix landed in 0.17.1.",
+      "impact": "The record names what the overread can disclose as environment variables, API keys, system prompts and other users' concurrent conversation data, so the taxonomy tie-break on the item set classifies this CREDENTIAL_EXPOSURE rather than DATA_EXFILTRATION. It scores 9.1 with no privileges required and no user interaction, and its enrichment states that the documented OLLAMA_HOST=0.0.0.0 configuration is widely used and that large public exposure was observed. No source states that any specific deployment was exploited.",
+      "mitigation": "Upgrade to Ollama 0.17.1 or later. The record gives three interim steps: keep the server bound to a trusted interface rather than 0.0.0.0, put an authenticating reverse proxy in front of /api/create and /api/push, and restrict outbound egress from the host so a push cannot reach an attacker-controlled registry.",
+      "sources": [
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2026-7482",
+          "kind": "primary",
+          "title": "CVE-2026-7482 CVE record for the Ollama GGUF loader out-of-bounds read"
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-x8qc-fggm-mpqg",
+          "kind": "primary",
+          "title": "GitHub Advisory Database entry for the Ollama GGUF loader heap overread"
+        }
+      ],
+      "cve": [
+        "CVE-2026-7482"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/ai-infra-ollama-gguf-loader-memory-leak.md"
+    },
+    {
+      "id": "ai-infra-qdrant-logger-file-append",
+      "title": "Qdrant /logger endpoint writes attacker-supplied log lines to a caller-chosen path",
+      "tier": 2,
+      "attack_class": "AGENT_PRIVILEGE_ABUSE",
+      "target": "Qdrant 1.9.3 to before 1.16.0 (cargo crate qdrant), the POST /logger endpoint",
+      "date": "2026-02-05",
+      "summary": "The Qdrant logging endpoint takes an on-disk log file path from the request body. In affected releases nothing constrained that path, and the endpoint needed only read-level access, so a low-privilege caller could point logging at a file the service can write and then inject content into it through any other request whose parameters get logged. The advisory works the attack through by setting the path to the service's configuration file and requesting a collection whose name carries newlines and YAML. The project shipped a fix in 1.16.0.",
+      "impact": "The advisory demonstrates the injected content becoming valid configuration that takes precedence after a restart, redirecting the static content directory so that files including the password file become readable through the web UI, and notes that overriding configuration may also let the caller set a master key. The gain outlives the single request and is an authority the caller granted itself, which the taxonomy tie-break on persistence settles as AGENT_PRIVILEGE_ABUSE over DATA_EXFILTRATION. The advisory tested 1.15.5 and reports no exploitation outside its own reproduction.",
+      "mitigation": "Upgrade to Qdrant 1.16.0 or later. The advisory's own two mitigations apply regardless: restrict the /logger endpoint to users holding management privileges or disable it outright, and constrain the log file path to a dedicated logs directory. Keep the configuration directory non-writable by the service, which is also why Qdrant Cloud is unaffected.",
+      "sources": [
+        {
+          "url": "https://github.com/qdrant/qdrant/security/advisories/GHSA-f632-vm87-2m2f",
+          "kind": "primary",
+          "title": "Arbitrary file write via /logger endpoint (GHSA-f632-vm87-2m2f)"
+        },
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2026-25628",
+          "kind": "primary",
+          "title": "CVE-2026-25628 CVE record for the Qdrant logger file write"
+        }
+      ],
+      "cve": [
+        "CVE-2026-25628"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/ai-infra-qdrant-logger-file-append.md"
+    },
+    {
+      "id": "ai-infra-ray-webdataset-pickle-code-execution",
+      "title": "Ray Data WebDataset reader executes pickle and torch payloads from a supplied tar archive",
+      "tier": 2,
+      "attack_class": "SUPPLY_CHAIN_MODEL",
+      "target": "Ray before 2.56.0 (pip package ray), the ray.data.read_webdataset reader",
+      "date": "2026-07-24",
+      "summary": "Ray's WebDataset reader dispatches on each sample key's file extension and, for .pkl and .pickle members, calls pickle.loads() on the raw bytes, and for .pt and .pth members calls torch.load() with the safer default disabled. The decoder is on by default with no opt-in and no environment variable, so supplying a crafted tar archive to the reader runs the attacker's code inside the Ray workers that process it, at sample time and before any row data is read. The advisory reproduces this end to end and the project patched the reader in 2.56.0.",
+      "impact": "A tar archive delivered from a shared object store, an HTTP URL, a model hub mirror or a model-zoo tarball executes attacker-chosen commands with the privileges of the calling Ray process and its workers, which on a training cluster usually means access to the dataset credentials and the cluster itself. The artefact the victim pulls in is a model or dataset artefact rather than a package resolved from an index, so the taxonomy makes this SUPPLY_CHAIN_MODEL rather than SUPPLY_CHAIN_PACKAGE. The advisory's reproduction ran on Ray 2.55.1 and reports no in-the-wild exploitation.",
+      "mitigation": "Upgrade to Ray 2.56.0 or later. On earlier versions pass a custom decoder or decoder=None to read_webdataset instead of relying on the default, and treat every dataset shard as untrusted code until it has been read by something that does not unpickle.",
+      "sources": [
+        {
+          "url": "https://github.com/ray-project/ray/security/advisories/GHSA-hhrp-gw25-jr43",
+          "kind": "primary",
+          "title": "Arbitrary code execution via ray.data.read_webdataset default decoder (GHSA-hhrp-gw25-jr43)"
+        },
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2026-57516",
+          "kind": "primary",
+          "title": "CVE-2026-57516 CVE record for the Ray WebDataset reader deserialization flaw"
+        }
+      ],
+      "cve": [
+        "CVE-2026-57516"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/ai-infra-ray-webdataset-pickle-code-execution.md"
+    },
+    {
+      "id": "ai-infra-sentence-transformers-trust-remote-code-bypass",
+      "title": "sentence-transformers executes model-directory Python despite trust_remote_code=False",
+      "tier": 2,
+      "attack_class": "SUPPLY_CHAIN_MODEL",
+      "target": "Hugging Face sentence-transformers before 5.6.0 (pip package sentence-transformers)",
+      "date": "2026-07-31",
+      "summary": "sentence-transformers documents trust_remote_code=False as the way to load a model without running the custom code shipped alongside it. The guard that implements the flag in the import_module_class helper also accepted any path that merely existed on the local filesystem, so the check passed for a local model directory regardless of what the caller asked for. An attacker who can place Python modules referenced by a model's modules.json into that directory therefore gets them imported at load time. The advisory was reported through the project's issue tracker and fixed in 5.6.0.",
+      "impact": "Code placed in a model directory runs with the privileges of the loading process, which for a service that loads embeddings for other tenants is the whole service. The attacker needs influence over the contents of a model directory on disk, which is the position a user has after downloading a third-party model, and the safety flag the API offered gave no protection in that case. The artefact carrying the compromise is a model artefact rather than a package from an index, so the taxonomy makes this SUPPLY_CHAIN_MODEL. No source states that exploitation occurred outside the reporting path.",
+      "mitigation": "Upgrade to sentence-transformers 5.6.0 or later. Until then do not treat trust_remote_code=False as a boundary: inspect the model directory before loading it, load third-party models in a sandbox, and keep downloaded model directories out of any location your application imports from.",
+      "sources": [
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2026-68770",
+          "kind": "primary",
+          "title": "CVE-2026-68770 CVE record for the sentence-transformers trust_remote_code bypass"
+        },
+        {
+          "url": "https://github.com/advisories/GHSA-jhr6-gm9c-rqjv",
+          "kind": "primary",
+          "title": "GitHub Advisory Database entry for CVE-2026-68770, listing the 5.6.0 patch"
+        }
+      ],
+      "cve": [
+        "CVE-2026-68770"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/ai-infra-sentence-transformers-trust-remote-code-bypass.md"
+    },
+    {
+      "id": "ai-infra-vllm-zeromq-pickle-multinode",
+      "title": "vLLM unpickles data received on its multi-node ZeroMQ subscription socket",
+      "tier": 2,
+      "attack_class": "OTHER",
+      "target": "vLLM 0.5.2 to 0.8.5.post1 (pip package vllm), V0 engine with tensor parallelism across hosts",
+      "date": "2025-05-06",
+      "summary": "In a multi-node vLLM deployment running the older V0 engine, the secondary hosts open a ZeroMQ subscription socket to the primary host and pass whatever arrives on it straight to pickle.loads(). The advisory shows both ends of that path in the shared-memory broadcast module and states that the data is deserialized without validation, so it can be used to run code on a receiving machine. The maintainers declined to fix it, judging the fix invasive for a configuration they did not expect to be common.",
+      "impact": "Compromise of one node in a tensor-parallel cluster becomes compromise of every other, because the secondaries trust what the primary publishes. The advisory also names a route needing no prior access to the primary, such as ARP cache poisoning redirecting the subscription traffic to a hostile endpoint. No named class fits, hence OTHER: the mechanism is a control-plane service trusting an unauthenticated feed. SUPPLY_CHAIN_MODEL fails because the artefact is IPC traffic, not a model artefact; CODE_ASSISTANT_ABUSE fails because no coding model wrote the code. V0 is off by default since 0.8.0.",
+      "mitigation": "No fix ships; the advisory's own recommendation is to keep the environment on a secure network. Keep tensor parallelism on a single host or on a segment where a machine cannot spoof another, do not run the V0 engine on untrusted hosts, and assume any host in an affected cluster is compromised once one of them is.",
+      "sources": [
+        {
+          "url": "https://github.com/vllm-project/vllm/security/advisories/GHSA-9pcc-gvx5-r5wm",
+          "kind": "primary",
+          "title": "Remote Code Execution Vulnerability in vLLM Multi-Node Cluster Configuration (GHSA-9pcc-gvx5-r5wm)"
+        },
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2025-30165",
+          "kind": "primary",
+          "title": "CVE-2025-30165 CVE record for the vLLM ZeroMQ deserialization flaw"
+        }
+      ],
+      "cve": [
+        "CVE-2025-30165"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/ai-infra-vllm-zeromq-pickle-multinode.md"
+    },
+    {
+      "id": "coding-agent-aws-language-server-workspace-rce",
+      "title": "Arbitrary command execution from project configuration files in Language Servers for AWS",
+      "tier": 2,
+      "attack_class": "INSECURE_OUTPUT_HANDLING",
+      "target": "Language Servers for AWS before 1.65.0 and the Amazon Q Developer IDE plugins that bundle it",
+      "date": "2026-06-23",
+      "summary": "Language Servers for AWS is the runtime behind Amazon Q Developer's IDE plugins, and AWS describes an improper trust boundary enforcement problem in it: when a developer opens a crafted workspace and trusts it, commands defined in the project's configuration files run automatically. The vendor states the affected products are Language Servers for AWS below 1.65.0 and the Amazon Q Developer plugins that bundle it, and published the bulletin with the advisory on 2026-06-23 crediting Wiz. Both sources state no workarounds and give an upgrade as the remedy.",
+      "impact": "Commands chosen by whoever authored the workspace run under the developer's account with no further interaction, which AWS rates 8.5 under CVSS 4.0 with high confidentiality, integrity and availability impact. Class choice: INSECURE_OUTPUT_HANDLING, because the source names the runtime's handling of project configuration files as the defective component: it trusted a file inside the workspace to define commands to execute, with no review step. SUPPLY_CHAIN_PACKAGE was rejected because the source describes no package index resolving an attacker-authored artefact. No source states exploitation.",
+      "mitigation": "Upgrade the Amazon Q Developer IDE plugin to a release bundling Language Servers for AWS 1.65.0 or later, or 1.69.0 as AWS recommends. AWS states no workarounds are available. Do not open workspaces from untrusted senders in an IDE with the Amazon Q plugins installed until upgraded, and review a workspace's project configuration files first.",
+      "sources": [
+        {
+          "url": "https://aws.amazon.com/security/security-bulletins/2026-047-aws/",
+          "kind": "primary",
+          "title": "CVE-2026-12957 and CVE-2026-12958 - Issues in Language Servers for AWS and Amazon Q Developer Plugins"
+        },
+        {
+          "url": "https://github.com/aws/language-servers/security/advisories/GHSA-xhcr-j4j9-3gh7",
+          "kind": "primary",
+          "title": "Arbitrary Code Execution in Language Servers for AWS (GHSA-xhcr-j4j9-3gh7)"
+        },
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2026-12957",
+          "kind": "primary",
+          "title": "CVE-2026-12957 record: improper trust boundary enforcement in Language Servers for AWS"
+        }
+      ],
+      "cve": [
+        "CVE-2026-12957"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/coding-agent-aws-language-server-workspace-rce.md"
+    },
+    {
+      "id": "coding-agent-claude-code-repo-dns-setup-payload",
+      "title": "Claude Code reverse shell from a clean repository whose setup script fetches a command from DNS",
+      "tier": 2,
+      "attack_class": "PROMPT_INJECTION_INDIRECT",
+      "target": "Claude Code, and agentic coding tools that run shell commands",
+      "date": "2026-06-25",
+      "summary": "Mozilla's 0DIN group published a worked demonstration against agentic coding tools in which a repository contains no malicious code at all. A package in the repo refuses to work until an init step is run, so the coding agent treats that error as routine recovery, and the init script reads a value from a DNS TXT record and executes it. The authors report the value decoded to a reverse shell and ran as the developer's own user, with the developer's terminal showing only two ordinary-looking setup lines. Because the payload is fetched at run time, the source states no scanner, reviewer or the agent itself ever sees it. No specific vulnerable product version is named or affected range stated.",
+      "impact": "The attacker gains an interactive shell as the developer's user, plus every secret in the environment such as API keys, and can install persistence first. Class choice: PROMPT_INJECTION_INDIRECT, because the instructions travel in retrieved repository content the agent read on its own initiative and the payload is fetched from DNS at run time. INSECURE_OUTPUT_HANDLING and TOOL_POISONING were rejected: the repository is ordinary content and the payload is not a tool definition.",
+      "mitigation": "Treat setup instructions and scripts in unfamiliar repositories as untrusted code, as the source recommends, whatever the coding tool advises. Read what a setup command will actually run, including the contents of any script it invokes and anything that script fetches at run time, and alert on shell constructs such as command substitution and piping a fetched value into a shell.",
+      "sources": [
+        {
+          "url": "https://0din.ai/blog/clone-this-repo-and-i-own-your-machine",
+          "kind": "primary",
+          "title": "Clone This Repo and I Own Your Machine (0DIN)"
+        },
+        {
+          "url": "https://www.bleepingcomputer.com/news/security/clean-github-repo-tricks-ai-coding-agents-into-running-malware",
+          "kind": "secondary",
+          "title": "Clean GitHub repo tricks AI coding agents into running malware"
+        }
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/coding-agent-claude-code-repo-dns-setup-payload.md"
+    },
+    {
+      "id": "coding-agent-claude-code-repo-settings-trust-bypass",
+      "title": "Claude Code workspace trust bypass through a repository's own settings file",
+      "tier": 2,
+      "attack_class": "INSECURE_OUTPUT_HANDLING",
+      "target": "Claude Code (npm package @anthropic-ai/claude-code) before 2.1.53 (fixed in 2.1.53)",
+      "date": "2026-03-18",
+      "summary": "Claude Code asks a developer to confirm trust in a workspace before it acts, and the advisory reports that the permission mode was resolved from settings files first, including the settings file the repository itself controls. A repository that committed a permissive permission mode in that file therefore had the confirmation dialog silently skipped the first time it was opened, and the source states this places the user in a permissive mode without ever seeing the prompt. Anthropic published the advisory on 2026-03-18 and shipped the fix in version 2.1.53.",
+      "impact": "The developer ends up in a mode where tool calls run without confirmation in a directory an attacker chose, which the advisory says makes it easier for an attacker-controlled repository to obtain tool execution without explicit consent. Class choice: INSECURE_OUTPUT_HANDLING, because the source names Claude Code's own handling of repository-supplied configuration as the defective component, and that configuration is then consumed by the permission engine without review.",
+      "mitigation": "Upgrade to Claude Code 2.1.53 or later; users on the standard auto-update channel already have the fix. Where you cannot update, read the .claude directory of any repository before running the agent in it, and set the permission mode yourself rather than letting the workspace declare it.",
+      "sources": [
+        {
+          "url": "https://github.com/anthropics/claude-code/security/advisories/GHSA-mmgp-wc2j-qcv7",
+          "kind": "primary",
+          "title": "Workspace Trust Dialog Bypass via Repo-Controlled Settings File (GHSA-mmgp-wc2j-qcv7)"
+        },
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2026-33068",
+          "kind": "primary",
+          "title": "CVE-2026-33068 record: Claude Code Workspace Trust Dialog Bypass via Repo-Controlled Settings File"
+        }
+      ],
+      "cve": [
+        "CVE-2026-33068"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/coding-agent-claude-code-repo-settings-trust-bypass.md"
+    },
+    {
+      "id": "coding-agent-claude-code-worktree-trust-bypass",
+      "title": "Claude Code folder trust dialog bypass through a crafted Git worktree commondir file",
+      "tier": 2,
+      "attack_class": "INSECURE_OUTPUT_HANDLING",
+      "target": "Claude Code (npm package @anthropic-ai/claude-code) 2.1.63 through 2.1.83 (fixed in 2.1.84)",
+      "date": "2026-04-24",
+      "summary": "Claude Code asks a developer to confirm trust before it works in a folder, and it derived that answer partly from the Git worktree commondir file inside the repository. The advisory reports that the file's contents were never validated, so a repository author could point it at a path the developer had already trusted and have the confirmation dialog skipped. Claude Code then ran the hooks defined in the repository's .claude/settings file straight away. Anthropic published the advisory on 2026-04-24 and fixed it in version 2.1.84.",
+      "impact": "Code defined by the attacker in the repository's settings hooks executes on the developer's machine as soon as Claude Code is started in the cloned directory, without the trust confirmation the product relies on. Class choice: INSECURE_OUTPUT_HANDLING, because the source names Claude Code's own handling of repository-supplied configuration as the defective component, and the hooks are an automated consumer of that configuration. AGENT_PRIVILEGE_ABUSE was rejected on the taxonomy tie-break, since the sources name no gain that outlives the hook execution.",
+      "mitigation": "Upgrade to Claude Code 2.1.84 or later. Users on the standard auto-update channel already have the fix. Treat a repository as untrusted until you have read its .claude directory, and do not rely on the trust dialog alone when cloning code from strangers, since the bypass needs only a path the developer has trusted before.",
+      "sources": [
+        {
+          "url": "https://github.com/anthropics/claude-code/security/advisories/GHSA-q5hj-mxqh-vv77",
+          "kind": "primary",
+          "title": "Trust Dialog Bypass via Git Worktree Spoofing Allows Arbitrary Code Execution (GHSA-q5hj-mxqh-vv77)"
+        },
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2026-40068",
+          "kind": "primary",
+          "title": "CVE-2026-40068 record: Claude Code arbitrary code execution via git worktree commondir trust dialog bypass"
+        }
+      ],
+      "cve": [
+        "CVE-2026-40068"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/coding-agent-claude-code-worktree-trust-bypass.md"
+    },
+    {
+      "id": "coding-agent-cline-dashboard-csws-mcp-rce",
+      "title": "Cline dashboard cross-origin WebSocket hijacking injecting a malicious MCP server",
+      "tier": 2,
+      "attack_class": "AGENT_PRIVILEGE_ABUSE",
+      "target": "Cline CLI and agent (npm package cline); advisory lists affected versions up to 3.0.24, fixed in 3.0.30",
+      "date": "2026-06-23",
+      "summary": "Cline ships a dashboard server that developers start locally, and the advisory shows its browser WebSocket endpoint accepts connections without checking the Origin header. In the default local configuration no room secret is set, so the authorization helper returns true unconditionally and any website the developer visits can connect. From there a page can send command frames that write a new stdio MCP server entry, pointing at an arbitrary shell command, into Cline's settings file, and dashboard-created sessions approve every tool by default. The advisory includes a reproduction that confirmed the write.",
+      "impact": "The injected MCP entry persists in the settings file and Cline runs its command the next time the server is activated, so the attacker gains code execution on the developer's machine that outlives the page visit. Class choice: AGENT_PRIVILEGE_ABUSE, because the source names a persistent new tool binding in the agent's configuration as the gain, which the taxonomy tie-break assigns to this class. TOOL_POISONING and PROMPT_INJECTION_INDIRECT were rejected: the payload is written into the victim's own settings file by a website, not published in a tool definition the tool operator controls.",
+      "mitigation": "Upgrade to Cline 3.0.30 or later. Until then, set a room secret for the dashboard server so the endpoint is not open, do not leave the dashboard running while browsing unrelated sites, and inspect the MCP server list in Cline's settings for stdio entries whose command is a shell you did not add yourself.",
+      "sources": [
+        {
+          "url": "https://github.com/cline/cline/security/advisories/GHSA-3cj3-hqcr-g934",
+          "kind": "primary",
+          "title": "Cross-Origin WebSocket Hijacking in Cline Hub Dashboard (/browser endpoint) (GHSA-3cj3-hqcr-g934)"
+        },
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2026-59723",
+          "kind": "primary",
+          "title": "CVE-2026-59723 record: Cline cross-origin WebSocket hijacking in the Cline Hub dashboard"
+        }
+      ],
+      "cve": [
+        "CVE-2026-59723"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/coding-agent-cline-dashboard-csws-mcp-rce.md"
+    },
+    {
+      "id": "coding-agent-copilot-chat-ado-token-disclosure",
+      "title": "Azure DevOps token disclosure through GitHub Copilot Chat workspace settings in VS Code",
+      "tier": 2,
+      "attack_class": "CREDENTIAL_EXPOSURE",
+      "target": "GitHub Copilot Chat extension for Visual Studio Code before 1.136.2",
+      "date": "2026-09-08",
+      "summary": "The Copilot Chat extension's Azure DevOps code search integration let its endpoint be overridden through workspace configuration. Microsoft states that a repository could carry a settings file redirecting those requests to a server the attacker controls, so that when the signed-in developer used code search the extension would send the request, and the user's access token with it, to the attacker's endpoint. The fix in Visual Studio Code 1.136.2 removes the workspace-controlled endpoint override, including its legacy setting name. The vendor record reports no exploitation.",
+      "impact": "The disclosed item is a sign-in access token for the user's work account, which Microsoft states could allow access to data and services the user is authorized to use, potentially including sensitive organizational information. Class choice: CREDENTIAL_EXPOSURE, because the source names a token as the exposed item and the taxonomy keys that class on the item. DATA_EXFILTRATION and PROMPT_INJECTION_INDIRECT were both rejected: the repository settings file is ordinary retrieved content rather than a prompt aimed at the model, and the item set named by the source is a credential.",
+      "mitigation": "Update to Visual Studio Code 1.136.2 or later; Microsoft states there are no known workarounds. Review any repository you open for a .vscode settings.json that sets the code search endpoint override or its legacy equivalent, and treat Azure DevOps and GitHub tokens on a workstation as rotatable if the repository was not trusted.",
+      "sources": [
+        {
+          "url": "https://github.com/microsoft/vscode/security/advisories/GHSA-rvgr-2w56-2j67",
+          "kind": "primary",
+          "title": "Azure DevOps access token disclosure through GitHub Copilot Chat workspace settings (GHSA-rvgr-2w56-2j67)"
+        },
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2026-81381",
+          "kind": "primary",
+          "title": "CVE-2026-81381 record: GitHub Copilot and Visual Studio Code Information Disclosure Vulnerability"
+        }
+      ],
+      "cve": [
+        "CVE-2026-81381"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/coding-agent-copilot-chat-ado-token-disclosure.md"
+    },
+    {
+      "id": "coding-agent-copilot-settings-json-yolo-rce",
+      "title": "GitHub Copilot agent mode remote code execution by turning off its own confirmations",
+      "tier": 2,
+      "attack_class": "INSECURE_OUTPUT_HANDLING",
+      "target": "GitHub Copilot agent mode in Visual Studio 2022 17.14.0 to 17.14.11 (fixed in 17.14.12)",
+      "date": "2025-08-12",
+      "summary": "In agent mode the Copilot extension writes file edits straight to disk rather than holding them as a reviewable diff, and Microsoft states that exploitation requires a user to trigger the payload in the application. The researcher's chain starts from instructions hidden in a source file, web page or tool response that make the agent add an auto-approve key to the project settings file, which disables the agent's own confirmation prompts and then lets it run a terminal command with no review. Microsoft assigned CVE-2025-53773 and shipped the fix in the August 2025 patch release; the vendor record reports no exploitation.",
+      "impact": "An attacker who reaches Copilot's context gets command execution on the developer's machine, and the source describes persistence beyond the single command, including committing the injection back into repositories so it spreads. Class choice: INSECURE_OUTPUT_HANDLING, because the source names the editor's treatment of the agent's output as defective: edits were persisted without approval and could rewrite the settings that govern approval. PROMPT_INJECTION_INDIRECT was rejected on the taxonomy tie-break, since the capability is yielded by the unapproved write.",
+      "mitigation": "Update Visual Studio to 17.14.12 or later. Treat project-level .vscode settings committed in a repository as untrusted input, and do not run Copilot agent mode against a project whose configuration files you have not read, since the source shows the agent can change those files itself.",
+      "sources": [
+        {
+          "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2025-53773",
+          "kind": "primary",
+          "title": "CVE-2025-53773 GitHub Copilot and Visual Studio Remote Code Execution Vulnerability"
+        },
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2025-53773",
+          "kind": "primary",
+          "title": "CVE-2025-53773 record, Visual Studio 2022 17.14.0 before 17.14.12"
+        },
+        {
+          "url": "https://embracethered.com/blog/posts/2025/github-copilot-remote-code-execution-via-prompt-injection",
+          "kind": "primary",
+          "title": "GitHub Copilot: Remote Code Execution via Prompt Injection (CVE-2025-53773)"
+        }
+      ],
+      "cve": [
+        "CVE-2025-53773"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/coding-agent-copilot-settings-json-yolo-rce.md"
+    },
+    {
+      "id": "coding-agent-cursor-git-hooks-sandbox-escape",
+      "title": "Cursor sandbox escape through agent writes to Git configuration and hooks",
+      "tier": 2,
+      "attack_class": "INSECURE_OUTPUT_HANDLING",
+      "target": "Cursor editor versions prior to 2.5 (fixed in 2.5)",
+      "date": "2026-02-13",
+      "summary": "Cursor runs its agent inside a sandbox and keeps a list of files that require user approval before the agent may write them. The advisory reports that Git configuration, including the directory Git executes hooks from, was not covered by that protection, so an agent driven by attacker-controlled instructions could write into it. Because Git runs those commands on its own the next time the affected operation fires, the resulting code ran outside the sandbox with no further user interaction. Cursor fixed it in version 2.5 and credited the Novee Security Research Team with researchers at the Nvidia AI Red Team and elsewhere.",
+      "impact": "The advisory rates the issue High, CVSS 3.1 8.0 with scope changed, and states the escape yields out-of-sandbox remote code execution. Class choice: INSECURE_OUTPUT_HANDLING, because the source names the missing write protection on .git settings as the defective component and the attacker gain arrives when Git, an automated consumer, later reads the file the agent wrote; no review sits between the write and execution. AGENT_PRIVILEGE_ABUSE was rejected on the tie-break because the sources name no credential or configuration change that outlives the single execution.",
+      "mitigation": "Upgrade to Cursor 2.5 or later. Until then, do not rely on an editor approval list alone as the boundary: keep repositories that are opened by the agent free of writable .git hooks, and check the .git directory of any repository an agent has worked in for hook files or config keys that were added since the clone.",
+      "sources": [
+        {
+          "url": "https://github.com/cursor/cursor/security/advisories/GHSA-8pcm-8jpx-hv8r",
+          "kind": "primary",
+          "title": "Sandbox escape via Git hooks (GHSA-8pcm-8jpx-hv8r)"
+        },
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2026-26268",
+          "kind": "primary",
+          "title": "CVE-2026-26268 record: Cursor sandbox escape via Git hooks"
+        }
+      ],
+      "cve": [
+        "CVE-2026-26268"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/coding-agent-cursor-git-hooks-sandbox-escape.md"
+    },
+    {
+      "id": "coding-agent-cursor-workspace-settings-rce",
+      "title": "Cursor remote code execution through agent writes to a VS Code workspace file",
+      "tier": 2,
+      "attack_class": "INSECURE_OUTPUT_HANDLING",
+      "target": "Cursor editor versions 1.6 and below (fixed in 1.7)",
+      "date": "2025-10-02",
+      "summary": "Cursor inherits Visual Studio Code workspace files, the JSON documents that hold per-project settings and can be created automatically by the editor as an untitled workspace. The reporter found the agent's write-protection list covered ordinary settings files but not the workspace file, so an attacker who could steer the victim's chat context, for example through a compromised MCP server, could instruct the agent to write attacker-chosen workspace settings. The advisory describes this as a bypass of the earlier Cursor fix CVE-2025-54130, turning an unapproved agent edit into code execution. Cursor fixed it in 1.7 by requiring approval for that file.",
+      "impact": "The advisory rates the issue High at CVSS 3.1 7.5 and states the outcome could be remote code execution on the victim with no user approval. Class choice: INSECURE_OUTPUT_HANDLING, because the source names Cursor's handling of the agent's own edit as the defective component and the fix adds an approval gate on that file. PROMPT_INJECTION_INDIRECT and TOOL_POISONING were rejected on the taxonomy tie-break, since the advisory names the hijacked chat context only as a way in. No source states any exploitation.",
+      "mitigation": "Upgrade to Cursor 1.7 or later. Where an upgrade is not yet possible, treat any MCP server connected to the editor as capable of running code, since the advisory names a compromised MCP server as the injection entry point, and do not run an agent against a workspace whose .code-workspace file is not already under version control and review.",
+      "sources": [
+        {
+          "url": "https://github.com/cursor/cursor/security/advisories/GHSA-xg6w-rmh5-r77r",
+          "kind": "primary",
+          "title": "RCE via .code-workspace files using Prompt Injection (GHSA-xg6w-rmh5-r77r)"
+        },
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2025-61590",
+          "kind": "primary",
+          "title": "CVE-2025-61590 record: Cursor is vulnerable to RCE via .code-workspace files using Prompt Injection"
+        }
+      ],
+      "cve": [
+        "CVE-2025-61590"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/coding-agent-cursor-workspace-settings-rce.md"
+    },
+    {
+      "id": "coding-agent-roo-code-mcp-config-command-execution",
+      "title": "Roo Code remote code execution by writing an MCP configuration into the workspace",
+      "tier": 2,
+      "attack_class": "TOOL_POISONING",
+      "target": "Roo Code VS Code extension before 3.20.3 (npm package roo-cline)",
+      "date": "2025-06-27",
+      "summary": "Roo Code keeps its project-specific MCP server configuration in a workspace file whose format allows arbitrary commands to be launched. The advisory reports that an attacker able to submit prompts to the agent could ask it to write a malicious command into that configuration, and that a user who had opted in to auto-approving file writes would then have that command run. The vendor fixed it in 3.20.3 by adding an extra opt-in layer for writes to the agent's own configuration files. The vendor record reports no exploitation.",
+      "impact": "The attacker gains arbitrary command execution on the developer's machine through an MCP server the agent itself wrote on the attacker's behalf. Class choice: TOOL_POISONING, because the source names the MCP configuration file the tool operator's agent consults as the defective artefact, and the taxonomy tie-break assigns a payload in a tool definition that caused the agent to act to this class even though the resulting act ran a command. PROMPT_INJECTION_INDIRECT was considered and rejected because the delivery channel is the tool definition itself, not ordinary retrieved content.",
+      "mitigation": "Upgrade to Roo Code 3.20.3 or later. Leave auto-approve for file writes off, since the vendor lists it as off by default and the advisory says the chain needs it, and review any .roo directory an agent has touched for entries whose command line is not what you expect.",
+      "sources": [
+        {
+          "url": "https://github.com/RooCodeInc/Roo-Code/security/advisories/GHSA-5x8h-m52g-5v54",
+          "kind": "primary",
+          "title": "Potential Remote Code Execution via Model Context Protocol in the Roo Code extension (GHSA-5x8h-m52g-5v54)"
+        },
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2025-53098",
+          "kind": "primary",
+          "title": "CVE-2025-53098 record: Roo Code remote code execution via the workspace MCP configuration file"
+        }
+      ],
+      "cve": [
+        "CVE-2025-53098"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/coding-agent-roo-code-mcp-config-command-execution.md"
+    },
+    {
+      "id": "coding-agent-roo-code-settings-json-command-execution",
+      "title": "Roo Code remote code execution through the VS Code settings the agent may write",
+      "tier": 2,
+      "attack_class": "INSECURE_OUTPUT_HANDLING",
+      "target": "Roo Code VS Code extension before 3.22.6",
+      "date": "2025-07-07",
+      "summary": "Roo Code guards writes with an auto-approve setting that is off by default, and the advisory reports that when a developer had switched file writes to auto-approve, an attacker able to submit prompts to the agent could have it write to the editor's settings files. Because settings can name the program to run for a language service, the advisory gives a concrete route: point the PHP validator at an arbitrary command, then create a PHP file that makes the editor run it. The vendor fixed it in 3.22.6 by requiring an extra layer of opt-in for writes to that folder. The vendor record reports no exploitation.",
+      "impact": "The attacker gains arbitrary code execution on the developer's machine. Class choice: INSECURE_OUTPUT_HANDLING, because the source names the extension's handling of the agent's own writes as the defective component and the editor, not a human, later consumed the setting. PROMPT_INJECTION_INDIRECT and TOOL_POISONING were rejected on the taxonomy tie-break: the record names prompt submission only as the entry point and the capability is yielded by the unapproved settings write.",
+      "mitigation": "Upgrade to Roo Code 3.22.6 or later. Leave auto-approve for file writes off, since the vendor lists it as off by default and the advisory says the chain needs it, and do not let an agent write into an editor's settings folder, where a single key can decide what program the editor runs.",
+      "sources": [
+        {
+          "url": "https://github.com/RooCodeInc/Roo-Code/security/advisories/GHSA-3765-5vjr-qjgm",
+          "kind": "primary",
+          "title": "Potential Remote Code Execution via .vscode/settings.json in the Roo Code extension (GHSA-3765-5vjr-qjgm)"
+        },
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2025-53536",
+          "kind": "primary",
+          "title": "CVE-2025-53536 record: Roo Code remote code execution via .vscode/settings.json"
+        }
+      ],
+      "cve": [
+        "CVE-2025-53536"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/coding-agent-roo-code-settings-json-command-execution.md"
+    },
     {
       "id": "huggingface-autonomous-agent-production-intrusion",
       "title": "Autonomous AI agent intrusion into Hugging Face production infrastructure",
@@ -35,7 +915,7 @@
       "tier": 1,
       "attack_class": "CREDENTIAL_EXPOSURE",
       "target": "BerriAI LiteLLM, versions before 1.84.0 (pip package litellm)",
-      "date": "2026-06-30",
+      "date": "2026-07-08",
       "summary": "LiteLLM is a proxy that fronts several model providers behind one OpenAI-compatible interface, and it also brokers Model Context Protocol servers for its users. Its MCP auth handler supported an OAuth2 passthrough mode, and the fallback branch of that handler substituted an empty authentication object when key validation failed instead of rejecting the request. A caller presenting a fabricated Authorization header was therefore treated as authenticated and could enumerate and invoke the MCP tools the proxy was configured to reach. A fix shipped in 1.84.0.",
       "impact": "An unauthenticated attacker could list and call every configured MCP tool behind the proxy, and reach whatever those tools are wired to: internal services, developer infrastructure, or any credential the integration holds. CISA lists this CVE in the Known Exploited Vulnerabilities catalog with an exploitation status of active, and the CISA enrichment carried in the CVE record states that exploitation is active, so this is recorded as an attack with confirmed real-world use rather than a research result. The sources do not state how many victims were affected.",
       "mitigation": "Upgrade to LiteLLM 1.84.0 or later. Where an upgrade cannot happen immediately, disable the MCP routes or block the /mcp/ paths at the reverse proxy or API gateway, so an unvalidated Authorization header cannot reach the MCP tooling at all.",
@@ -164,12 +1044,285 @@
       "_permalink": "docs/entries/litellm-pypi-supply-chain-trivy-compromise.md"
     },
     {
+      "id": "mcp-agentic-flow-mcp-tool-command-injection",
+      "title": "agentic-flow MCP server tools interpolate tool arguments into shell commands",
+      "tier": 2,
+      "attack_class": "INSECURE_OUTPUT_HANDLING",
+      "target": "agentic-flow npm package (and the ruflo / claude-flow CLI wrappers) 2.0.13 and earlier, MCP server tools",
+      "date": "2026-06-18",
+      "summary": "agentic-flow is an AI agent orchestration platform that ships MCP servers for stdio, HTTP and SSE. A number of those tools built their shell command by string-substituting call arguments such as agent, task, name, language and agentdb into a double-quoted argument list and handing the result to execSync, so a value containing a closing quote broke out and ran arbitrary commands as the MCP server user. The reporter supplied a minimised payload that created a marker file and captured id output, and the fix rewrote every affected call site to use argv-based execFileSync with the shell disabled. Version 2.0.14 is patched.",
+      "impact": "The advisory states the sinks are reachable without direct attacker access to the host wherever an agent processes untrusted content such as web pages, files or third-party tool output, because the agent supplies the argument the server then interpolates, and it adds that the HTTP and SSE transports expose the same sinks with no authentication or Origin and Host validation. This is INSECURE_OUTPUT_HANDLING rather than TOOL_POISONING because the payload rides in a tool argument value rather than in the tool's published definition. CISA reports the exploitation as a proof of concept.",
+      "mitigation": "Upgrade to agentic-flow 2.0.14 or later, which passes arguments to execFileSync without a shell; the ruflo, claude-flow and @claude-flow/cli packages were pinned to the patched release at 3.12.4. The advisory states there is no in-product configuration that mitigates this without upgrading.",
+      "sources": [
+        {
+          "url": "https://github.com/ruvnet/agentic-flow/security/advisories/GHSA-vcv2-r9jh-99m5",
+          "kind": "primary",
+          "title": "OS Command Injection in agentic-flow MCP server tools via unsanitized tool-parameter interpolation into execSync (GHSA-vcv2-r9jh-99m5)"
+        },
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2026-58195",
+          "kind": "primary",
+          "title": "CVE-2026-58195 CVE record, including the CISA enrichment reporting proof-of-concept exploitation"
+        }
+      ],
+      "cve": [
+        "CVE-2026-58195"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/mcp-agentic-flow-mcp-tool-command-injection.md"
+    },
+    {
+      "id": "mcp-client-oauth-authorization-server-redirect",
+      "title": "MCP Python and TypeScript OAuth clients would send credentials to an authorization server the MCP server named",
+      "tier": 2,
+      "attack_class": "CREDENTIAL_EXPOSURE",
+      "target": "MCP Python SDK before 1.30.0 / 2.2.0 and MCP TypeScript SDK before 1.31.0 / 2.2.0, OAuth client",
+      "date": "2026-09-28",
+      "summary": "In the Python SDK's OAuth client support the issuer named in the authorization server metadata was not checked on every discovery path, and stored or pre-provisioned client credentials were not bound to the authorization server they belonged to. A malicious or compromised MCP server could name its own authorization server in its protected resource metadata, or publish none and present the user's real server as the issuer, and then receive the client_secret, the authorization code and the PKCE code_verifier intended for the real server. The TypeScript SDK carried the same class of fix two days later, sending it a stored refresh_token and client_secret with no user interaction at all.",
+      "impact": "What the attacker obtains is a client secret, an authorization code, a PKCE code_verifier, a refresh token or a signed client assertion, all of which are credentials, so this is CREDENTIAL_EXPOSURE rather than DATA_EXFILTRATION. The Python advisory notes that the interactive provider still needs a person to start the sign-in and scores that case lower than the unattended client-credentials and private-key-jwt providers. Both advisories limit the flaw to clients, not servers, and not stdio clients, and neither states that any deployment was exploited.",
+      "mitigation": "Upgrade to mcp 1.30.0 or 2.2.0, and to @modelcontextprotocol/sdk 1.31.0 or @modelcontextprotocol/client 2.2.0. Upgrading alone is not enough: pass issuer= or expectedIssuer= on the bundled client-credentials and private-key-jwt providers, and clear stored OAuth client registrations so users sign in again against the expected issuer. If an affected client may have connected to an untrusted MCP server, rotate its client secret or signing key and revoke its tokens.",
+      "sources": [
+        {
+          "url": "https://github.com/modelcontextprotocol/python-sdk/security/advisories/GHSA-qx49-fqc8-xw99",
+          "kind": "primary",
+          "title": "OAuth client could send credentials to an authorization server chosen by the MCP server (GHSA-qx49-fqc8-xw99)"
+        },
+        {
+          "url": "https://github.com/modelcontextprotocol/typescript-sdk/security/advisories/GHSA-6qxp-vccf-f47h",
+          "kind": "primary",
+          "title": "OAuth client could send credentials to an authorization server chosen by the MCP server (GHSA-6qxp-vccf-f47h, TypeScript SDK)"
+        }
+      ],
+      "cve": [
+        "CVE-2026-104850"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/mcp-client-oauth-authorization-server-redirect.md"
+    },
+    {
+      "id": "mcp-client-output-schema-ref-fetch",
+      "title": "MCP Python client fetches server-chosen $ref URLs while validating tool results",
+      "tier": 2,
+      "attack_class": "TOOL_POISONING",
+      "target": "MCP Python SDK (pip package mcp) 1.29.1 and 2.1.1 and earlier, client-side output schema validation",
+      "date": "2026-09-28",
+      "summary": "When a connected MCP server declares an outputSchema for one of its tools, the Python SDK client validated each call_tool result with jsonschema's default resolver, which opens any $ref it cannot satisfy from the schema itself. A server that put an http, https or file reference in a tool's published output schema could therefore make the client issue that request or read that file on the client's own network position, on every call of the tool, with no setting to switch the validation off. Version 1.30.0 on the 1.x line and 2.2.0 on the 2.x line resolve references only inside the schema document the server sent.",
+      "impact": "The advisory is explicit that the fetched content was used only as a schema and never sent back to the server, so no data crosses to the attacker here; what the attacker gets is that the client's host makes arbitrary outbound requests or reads a local file, which can probe internal services, and that a peer which accepts a connection then goes silent freezes every session in the process, because the fetch runs synchronously on the event loop with no timeout. The payload sits in a schema field the server operator publishes as part of the tool definition, the TOOL_POISONING inclusion test.",
+      "mitigation": "Upgrade to mcp 1.30.0 or 2.2.0 or later. Until then, call tools only on servers you trust, or as a partial stopgap skip any tool whose outputSchema contains an $id or a $ref that does not begin with #.",
+      "sources": [
+        {
+          "url": "https://github.com/modelcontextprotocol/python-sdk/security/advisories/GHSA-rwrf-2pqf-9j8j",
+          "kind": "primary",
+          "title": "Client fetched server-chosen $ref URLs while validating tool results against output schemas (GHSA-rwrf-2pqf-9j8j)"
+        }
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/mcp-client-output-schema-ref-fetch.md"
+    },
+    {
+      "id": "mcp-python-sdk-dns-rebinding-localhost-servers",
+      "title": "MCP Python and TypeScript SDKs shipped with DNS rebinding protection off by default for localhost servers",
+      "tier": 2,
+      "attack_class": "AGENT_PRIVILEGE_ABUSE",
+      "target": "MCP Python SDK before 1.23.0 and MCP TypeScript SDK before 1.24.0, HTTP servers on localhost",
+      "date": "2025-12-02",
+      "summary": "The reference client and server SDKs for MCP bind to localhost by default, which makes DNS rebinding the natural attack against them: a browser resolves an attacker-controlled hostname to 127.0.0.1 and the page's JavaScript speaks straight to the agent's tool server. Both SDKs shipped with that protection disabled unless the operator opted in, so a developer's local MCP server could be invoked from a web page the developer merely opened. Each project published an advisory and a fix on 2 December 2025, credited to the same outside researcher.",
+      "impact": "A page the developer visits can reach tool servers that were meant to be reachable only from that machine and invoke their tools or resources on the user's behalf, which is an agent exercising authority the operator granted it but did not intend to expose to a web origin, so this is AGENT_PRIVILEGE_ABUSE. INSECURE_OUTPUT_HANDLING was considered and rejected because neither advisory names a defect in how an application consumes model output. Both limit the exposure to HTTP servers run on localhost without authentication and state that stdio servers are unaffected.",
+      "mitigation": "Upgrade to mcp 1.23.0 or later and @modelcontextprotocol/sdk 1.24.0 or later, which enable the protection by default for servers bound to loopback. Code using StreamableHTTPSessionManager or SseServerTransport directly, or a custom Express setup, must configure TransportSecuritySettings or apply the exported hostHeaderValidation() middleware itself, and should authenticate the server rather than rely on rebinding protection alone.",
+      "sources": [
+        {
+          "url": "https://github.com/modelcontextprotocol/python-sdk/security/advisories/GHSA-9h52-p55h-vw2f",
+          "kind": "primary",
+          "title": "DNS Rebinding Protection Disabled by Default in Model Context Protocol Python SDK for Servers Running on Localhost (GHSA-9h52-p55h-vw2f)"
+        },
+        {
+          "url": "https://github.com/modelcontextprotocol/typescript-sdk/security/advisories/GHSA-w48q-cv73-mx4w",
+          "kind": "primary",
+          "title": "DNS Rebinding Protection Disabled by Default in Model Context Protocol TypeScript SDK for Servers Running on Localhost (GHSA-w48q-cv73-mx4w)"
+        }
+      ],
+      "cve": [
+        "CVE-2025-66416",
+        "CVE-2025-66414"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/mcp-python-sdk-dns-rebinding-localhost-servers.md"
+    },
+    {
+      "id": "mcp-python-sdk-session-hijack",
+      "title": "MCP Python SDK serves HTTP session traffic without checking which principal owns the session",
+      "tier": 2,
+      "attack_class": "DATA_EXFILTRATION",
+      "target": "MCP Python SDK (pip package mcp) 1.27.1 and earlier, HTTP transports with bearer-token auth",
+      "date": "2026-06-05",
+      "summary": "The MCP Python SDK routed HTTP requests to an existing MCP session using only the session identifier, supplied as a query parameter on the SSE transport and as the Mcp-Session-Id header on stateful streamable HTTP. It never compared the request's authentication context with the credentials that created the session, so any client holding a valid bearer token for the same server could send JSON-RPC messages into another client's session if it learned the session ID. Version 1.27.2 records the principal that created each session and answers a mismatched request with the same 404 it gives for an unknown session.",
+      "impact": "A client authenticated to the same server could inject tool calls into another user's session and, on streamable HTTP, read the results back in its own request response; on SSE the results are pushed to the original client's event stream. That is tool results moving to an unintended principal, so the entry is DATA_EXFILTRATION and not CREDENTIAL_EXPOSURE, because the advisory names no credential as the exposed item. Session IDs are randomly generated UUIDs, so obtaining one out of band, through logs or network observation, is a prerequisite.",
+      "mitigation": "Upgrade to mcp 1.27.2 or later. Deployments where many end users share a single OAuth client, such as hosted clients and gateways, should ensure their token verifier populates AccessToken.subject so sessions are isolated per user rather than per client. Deployments using a custom authentication backend rather than the built-in BearerAuthBackend should enforce the same principal check themselves.",
+      "sources": [
+        {
+          "url": "https://github.com/modelcontextprotocol/python-sdk/security/advisories/GHSA-jpw9-pfvf-9f58",
+          "kind": "primary",
+          "title": "HTTP transports serve session requests without verifying the authenticated principal (GHSA-jpw9-pfvf-9f58)"
+        },
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2026-52869",
+          "kind": "primary",
+          "title": "CVE-2026-52869 CVE record, including the CISA enrichment reporting no exploitation"
+        }
+      ],
+      "cve": [
+        "CVE-2026-52869"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/mcp-python-sdk-session-hijack.md"
+    },
+    {
+      "id": "mcp-python-sdk-task-handlers-cross-session",
+      "title": "MCP Python SDK experimental task handlers let any client read and cancel other clients' tasks",
+      "tier": 2,
+      "attack_class": "DATA_EXFILTRATION",
+      "target": "MCP Python SDK 1.23.0 through 1.27.1, servers calling experimental.enable_tasks()",
+      "date": "2026-06-05",
+      "summary": "The Python SDK's experimental tasks feature installs default handlers for tasks/list, tasks/get, tasks/result and tasks/cancel that acted on a task identifier alone and kept no record of which session created each task. On a server with more than one connected client, any client could enumerate every task, read another task's status and results, take queued messages meant for the task's creator, and cancel it. Version 1.27.2 embeds a per-session marker in generated task IDs and restricts the default handlers to the calling session's own tasks.",
+      "impact": "A connected client reads other clients' task results and elicitation payloads and can destroy their in-flight tasks, so results and messages move to an unintended principal. That is DATA_EXFILTRATION: the sources name task results and elicitation payloads as the items reaching the wrong client, not a credential, and the gain is bounded to tasks rather than a new or persistent capability, so AGENT_PRIVILEGE_ABUSE does not apply. The feature is opt-in, so only servers that call server.experimental.enable_tasks() and serve more than one client are affected; CISA reports exploitation as none.",
+      "mitigation": "Upgrade to mcp 1.27.2 or later. Until then, leave the experimental tasks feature disabled, or register task handlers that validate session ownership themselves; a server that registered its own handlers is affected only if those handlers omit the same check.",
+      "sources": [
+        {
+          "url": "https://github.com/modelcontextprotocol/python-sdk/security/advisories/GHSA-hvrp-rf83-w775",
+          "kind": "primary",
+          "title": "Experimental task handlers allow any client to access and cancel other clients' tasks (GHSA-hvrp-rf83-w775)"
+        },
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2026-52870",
+          "kind": "primary",
+          "title": "CVE-2026-52870 CVE record, including the CISA enrichment reporting no exploitation"
+        }
+      ],
+      "cve": [
+        "CVE-2026-52870"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/mcp-python-sdk-task-handlers-cross-session.md"
+    },
+    {
+      "id": "mcp-ruby-sdk-sse-stream-hijack",
+      "title": "MCP Ruby SDK lets a second connection replace a live SSE stream and take its tool responses",
+      "tier": 2,
+      "attack_class": "DATA_EXFILTRATION",
+      "target": "MCP Ruby SDK (RubyGems gem mcp) 0.9.1 and earlier, streamable HTTP transport",
+      "date": "2026-03-27",
+      "summary": "The Ruby implementation of MCP keeps one Server-Sent Events stream per session ID, and when a second client presents the same session ID it silently overwrites the stored stream with its own instead of rejecting the connection or checking who owns the session. The reporter attached two Python client scripts demonstrating the takeover against the SDK's own example server: the legitimate client's notifications stop and the second client begins receiving all of them. The transport also records no user identity against a session. Version 0.9.2 carries the patch.",
+      "impact": "Anyone who learns a session ID can take over that session's event stream and receive every subsequent tool response the server sends, which the advisory describes as sensitive, while the legitimate user receives nothing and gets no indication of the hijack. The advisory records that of the ten official MCP SDKs, only the C# and Go SDKs bound session IDs to user identity at the time of the report. This is DATA_EXFILTRATION rather than CREDENTIAL_EXPOSURE because the item the source names as reaching the wrong party is the tool responses. CISA reports exploitation as a proof of concept.",
+      "mitigation": "Upgrade to mcp 0.9.2 or later. The advisory's stated guidance for SDK maintainers is to bind session IDs to authenticated user identity where possible and to reject a second simultaneous connection for the same session, and it notes that SDK documentation gave operators no secure session management guidance. Operators should enforce that binding themselves and treat session IDs as values that must not be logged or exposed in URLs.",
+      "sources": [
+        {
+          "url": "https://github.com/modelcontextprotocol/ruby-sdk/security/advisories/GHSA-qvqr-5cv7-wh35",
+          "kind": "primary",
+          "title": "Lack of Session Hijacking protection in ruby-sdk - Stream Replacement Vulnerability (GHSA-qvqr-5cv7-wh35)"
+        },
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2026-33946",
+          "kind": "primary",
+          "title": "CVE-2026-33946 CVE record, including the CISA enrichment reporting proof-of-concept exploitation"
+        }
+      ],
+      "cve": [
+        "CVE-2026-33946"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/mcp-ruby-sdk-sse-stream-hijack.md"
+    },
+    {
+      "id": "mcp-terraform-server-cross-tenant-token-reuse",
+      "title": "terraform-mcp-server stateless HTTP mode reuses one tenant's Terraform token for other tenants' tool calls",
+      "tier": 2,
+      "attack_class": "CREDENTIAL_EXPOSURE",
+      "target": "HashiCorp terraform-mcp-server 0.2.1 through 1.0.0, stateless streamable-HTTP mode",
+      "date": "2026-07-28",
+      "summary": "When terraform-mcp-server is configured for stateless streamable HTTP, the underlying MCP library assigns no unique session identifiers to requests. The server's per-session Terraform client cache still relied on those identifiers to tell callers apart, so the tenant who arrived first had their Terraform token used to execute tool calls on behalf of every tenant after them, whatever credentials those later callers supplied. HashiCorp found the issue internally and fixed it in 1.1.0 alongside two related flaws in the same transport.",
+      "impact": "A caller who supplies their own Terraform token can have tool calls executed under a different tenant's identity instead of their own, so reads and writes land on the wrong organization's state. The item the sources name as crossing tenants is the Terraform token, which makes this CREDENTIAL_EXPOSURE rather than DATA_EXFILTRATION even though organization data is also at stake. HashiCorp scored it 10.0 but reported no exploitation; the defect requires that an operator explicitly opted into stateless mode.",
+      "mitigation": "Upgrade to terraform-mcp-server 1.1.0. Until then, do not run terraform-mcp-server in stateless streamable-HTTP mode for a multi-tenant deployment, and restrict network access to the streamable-HTTP listener to trusted users.",
+      "sources": [
+        {
+          "url": "https://discuss.hashicorp.com/t/hcsec-2026-23-multiple-vulnerabilities-impacting-hashicorp-terraform-mcp-server/77606",
+          "kind": "primary",
+          "title": "HCSEC-2026-23 - Multiple vulnerabilities impacting HashiCorp Terraform MCP Server"
+        },
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2026-16498",
+          "kind": "primary",
+          "title": "CVE-2026-16498 CVE record, including the CISA enrichment reporting no exploitation"
+        }
+      ],
+      "cve": [
+        "CVE-2026-16498"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/mcp-terraform-server-cross-tenant-token-reuse.md"
+    },
+    {
+      "id": "mcp-terraform-server-session-credential-inheritance",
+      "title": "terraform-mcp-server executes a user's tool calls with another user's cached Terraform credentials",
+      "tier": 2,
+      "attack_class": "CREDENTIAL_EXPOSURE",
+      "target": "HashiCorp terraform-mcp-server 0.2.1 through 1.0.0, stateful streamable-HTTP mode",
+      "date": "2026-07-28",
+      "summary": "HashiCorp's terraform-mcp-server is meant for centralised multi-user deployments in which each caller supplies their own Terraform Cloud or Enterprise token so that RBAC applies to their actions. In stateful streamable-HTTP mode the server cached a Terraform API client per MCP session, keyed on the session ID alone and never bound to the token that created it, so a caller who obtained another user's session ID had their tool calls run against that user's cached client and bearer token. HashiCorp identified the issue internally and published it as part of a three-CVE bulletin; it was reported by Juan Pablo Martinez Kuhn of Coinspect and fixed in 1.1.0.",
+      "impact": "The attacker's tool calls execute with the victim's Terraform bearer token, so they reach the victim's organizations, workspaces and variables to the extent that token's permissions allow, and they can write as well as read. This is CREDENTIAL_EXPOSURE because the item the sources name as reaching an unintended principal is a bearer token and the access it authorises; it is not merely DATA_EXFILTRATION. The CISA enrichment reports exploitation as none. It affected only stateful streamable HTTP, the default for central deployments.",
+      "mitigation": "Upgrade to terraform-mcp-server 1.1.0. Operators who cannot upgrade should restrict network access to the streamable-HTTP listener to trusted users and treat MCP session IDs as sensitive values, since the cache lookup is keyed on the session ID and nothing else.",
+      "sources": [
+        {
+          "url": "https://discuss.hashicorp.com/t/hcsec-2026-23-multiple-vulnerabilities-impacting-hashicorp-terraform-mcp-server/77606",
+          "kind": "primary",
+          "title": "HCSEC-2026-23 - Multiple vulnerabilities impacting HashiCorp Terraform MCP Server"
+        },
+        {
+          "url": "https://cveawg.mitre.org/api/cve/CVE-2026-16496",
+          "kind": "primary",
+          "title": "CVE-2026-16496 CVE record, including the CISA enrichment reporting no exploitation"
+        },
+        {
+          "url": "https://www.ibm.com/support/pages/security-bulletin-terraform-mcp-server-vulnerable-cross-user-credential-inheritance-if-mcp-session-id-obtained-another-user",
+          "kind": "primary",
+          "title": "Security Bulletin: terraform-mcp-server vulnerable to cross-user credential inheritance if an MCP session ID is obtained by another user"
+        }
+      ],
+      "cve": [
+        "CVE-2026-16496"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/mcp-terraform-server-session-credential-inheritance.md"
+    },
+    {
+      "id": "mcp-typescript-sdk-shared-instance-response-leak",
+      "title": "Reusing one MCP TypeScript SDK transport or server across clients routes one client's tool results to another",
+      "tier": 2,
+      "attack_class": "DATA_EXFILTRATION",
+      "target": "MCP TypeScript SDK (@modelcontextprotocol/sdk) 1.10.0 through 1.25.3, stateless multi-client servers",
+      "date": "2026-02-04",
+      "summary": "The TypeScript SDK maps each incoming JSON-RPC message ID to the HTTP stream that carried it, but the SDK's own clients number their messages with an incrementing counter starting at zero. A server that reused one StreamableHTTPServerTransport across client requests, which the advisory says is most common in stateless mode, would therefore see the second client's ID overwrite the first client's mapping entry and deliver the response to the wrong client. A related defect let one McpServer connected to several transports send notifications, sampling and elicitation requests to whichever client connected last. Version 1.26.0 turns both into hard errors.",
+      "impact": "One client receives the tool results, progress notifications, sampling requests or elicitation prompts belonging to another client on the same server, which is DATA_EXFILTRATION because those are the items the source names as reaching the wrong party and none is a credential. It is not AGENT_PRIVILEGE_ABUSE because nothing acquires authority; the servers are misconfigured in a way the advisory says is a common deployment mistake. The advisory scopes the exposure to multi-client servers, so a single-client local development setup is not affected, and states no exploitation.",
+      "mitigation": "Upgrade to @modelcontextprotocol/sdk 1.26.0 or later, which throws on a reused protocol or a reused stateless transport instead of misrouting silently. Before upgrading, create a fresh McpServer and transport per request in stateless mode or per session in stateful mode; the advisory includes reference implementations of both.",
+      "sources": [
+        {
+          "url": "https://github.com/modelcontextprotocol/typescript-sdk/security/advisories/GHSA-345p-7cg4-v4c7",
+          "kind": "primary",
+          "title": "Sharing server/transport instances can leak cross-client response data (GHSA-345p-7cg4-v4c7)"
+        }
+      ],
+      "cve": [
+        "CVE-2026-25536"
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/mcp-typescript-sdk-shared-instance-response-leak.md"
+    },
+    {
       "id": "mlflow-webhook-ssrf-redirect-dns-rebinding",
       "title": "MLflow unauthenticated webhook SSRF via unvalidated redirects and DNS rebinding",
       "tier": 1,
       "attack_class": "AGENT_PRIVILEGE_ABUSE",
       "target": "MLflow 3.3.0 to before 3.15.0 (pip package mlflow)",
-      "date": "2026-08-19",
+      "date": "2026-08-17",
       "summary": "MLflow is an open source AI engineering platform used to track agents and machine learning models. Its unauthenticated webhook test endpoint validated the supplied URL only once, at submission, but the delivery code followed redirects and re-resolved the hostname without pinning the address that had been validated. An attacker could therefore submit a URL that passed the check and then pointed somewhere else, either through a redirect or by changing what the hostname resolved to between the two moments. The project shipped a fix in 3.15.0.",
       "impact": "The endpoint required no authentication, and the advisory states an attacker could reach internal services or cloud instance metadata endpoints and read the response status and body back. On a cloud-hosted tracking server that is the usual route to instance credentials. CISA lists this CVE in the Known Exploited Vulnerabilities catalog, added 2026-08-19, and the enrichment in the CVE record states exploitation is active, so it is filed here as an attack with confirmed real-world use. The sources do not state how many victims were affected.",
       "mitigation": "Upgrade to MLflow 3.15.0 or later. Re-resolving a hostname after the initial check is the defect, so a fix that only validates the submitted URL will leave the same bypass in place; block access to instance metadata endpoints from the application network as defence in depth.",
@@ -202,7 +1355,7 @@
       "tier": 1,
       "attack_class": "AGENT_PRIVILEGE_ABUSE",
       "target": "Ray before 2.52.0 (pip package ray), dashboard used as a development tool",
-      "date": "2026-08-17",
+      "date": "2025-11-26",
       "summary": "Ray is a distributed compute engine widely used to run AI and machine learning workloads, and its dashboard is normally reachable only from the developer's own machine during development. The dashboard relied on the User-Agent header starting with the string Mozilla as its browser-origin defence. Because the fetch specification lets a page set that header, the check could not distinguish a real browser navigation from a scripted request. Combined with a DNS rebinding attack against the browser, a developer who visited an attacker-controlled page, or loaded a malicious advertisement, could have code run on the machine serving Ray. The project shipped a fix in 2.52.0.",
       "impact": "The advisory describes remote code execution on the developer workstation with confidentiality, integrity, and availability impact all high. In practice that workstation holds source access, cloud credentials, and often the credentials for the cluster the dashboard is driving. CISA lists this CVE in the Known Exploited Vulnerabilities catalog, added 2026-08-17, and the enrichment in the CVE record states exploitation is active, so it is filed here as an attack with confirmed real-world use. The sources do not state how many victims were affected.",
       "mitigation": "Upgrade to Ray 2.52.0 or later. Until then, do not expose the Ray dashboard beyond localhost, and do not rely on a User-Agent check as an origin control; a header a page can set is not evidence that a request came from a browser address bar.",
@@ -233,6 +1386,356 @@
       ],
       "last_verified": "2026-10-04",
       "_permalink": "docs/entries/ray-dashboard-browser-rce-dns-rebinding.md"
+    },
+    {
+      "id": "theoretical-a2a-context-ownership-absence",
+      "title": "A2A protocol specified without context ownership binding or cross-hop identity propagation",
+      "tier": 3,
+      "attack_class": "OTHER",
+      "target": "The Agent2Agent (A2A) protocol specification, for deployments that follow it",
+      "date": "2026-09-09",
+      "summary": "A protocol-analysis paper reconstructs the A2A specification as a finite-state machine of 37 states and 76 transitions, then reasons over it under a full compliance assumption to find gaps a specification-compliant adversary can use. The results are traces validated against the specification text and by expert review, not attacks run against a deployed agent. The paper reports its findings were disclosed to the A2A maintainers under the Linux Foundation.",
+      "impact": "The reported consequences are that an authenticated peer can inject tasks into another client's conversation context and read or poison that client's accumulated state, and that identity established at the transport layer is not carried across delegation hops, so an intermediary can collect forwarded credentials with no party able to verify the original principal. AgentSkill fields are described as self-asserted with no attestation. Filed as OTHER: these are absences in a wire specification, and a context-injection reading would wrongly imply a demonstrated exploit.",
+      "mitigation": "Treat the specification's gaps as design gaps to close rather than implementation bugs: bind ownership and access control to conversation contexts, propagate the original principal's identity across delegation hops, and require attestation for the capability fields a peer advertises. Until the protocol carries those, scope credentials per hop and re-authorize at each delegation rather than forwarding them unchanged.",
+      "sources": [
+        {
+          "url": "https://arxiv.org/abs/2609.10871",
+          "kind": "primary",
+          "title": "A2ABreak: Systematic Security Analysis of the A2A Protocol"
+        },
+        {
+          "url": "https://arxiv.org/html/2609.10871v1",
+          "kind": "primary",
+          "title": "A2ABreak: Systematic Security Analysis of the A2A Protocol (full text)"
+        }
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/theoretical-a2a-context-ownership-absence.md"
+    },
+    {
+      "id": "theoretical-agent-memory-persistence-decoupling",
+      "title": "Chronos framing of agent memory injection that separates the attack from the later failure",
+      "tier": 3,
+      "attack_class": "TRAINING_DATA_POISONING",
+      "target": "Stateful agents with writable, cross-session memory used in enterprise workflows",
+      "date": "2026-07-20",
+      "summary": "A taxonomy paper argues that agents with persistent memory carry a distinct threat, which it calls the Chronos Vulnerability: memory-based attacks such as memory injection and sleeper-agent triggers plant intent in the agent's internal state long before any harmful action, so the vector and the eventual failure are separated in time. It surveys the memory layers it says are exposed and argues that endpoint content filters do not fit this architecture, then organizes proposed defenses into a layered landscape. It is a synthesis over prior work, with no attack of its own run.",
+      "impact": "The claimed consequence is that a compromise written into memory survives past the session that planted it, so the cause is not present when the damage occurs and an investigation focused on the failing step will not find it. The paper's supporting performance numbers come from an existing enterprise workflow benchmark, not from an injection it performed, so the evidence for the attack itself is second-hand. Filed as TRAINING_DATA_POISONING over PROMPT_INJECTION_INDIRECT because the payload is written into durable agent state and keeps working with no attacker content present at inference.",
+      "mitigation": "Filter memory writes with the same care as live inputs and keep provenance on what an agent stores, so a planted belief can be traced to the interaction that wrote it. Assume a persisted memory is untrusted input when read back, and give agents a way to roll back or re-derive stored state rather than treating memory as an authority. The paper points to temporal verification, memory consensus and trusted-execution anchoring as the directions it finds credible.",
+      "sources": [
+        {
+          "url": "https://arxiv.org/abs/2607.19433",
+          "kind": "primary",
+          "title": "The Chronos Vulnerability: A Taxonomy of Temporal Persistence and Memory-Based Deception in Agentic AI"
+        },
+        {
+          "url": "https://arxiv.org/html/2607.19433v1",
+          "kind": "primary",
+          "title": "The Chronos Vulnerability: A Taxonomy of Temporal Persistence and Memory-Based Deception in Agentic AI (full text)"
+        }
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/theoretical-agent-memory-persistence-decoupling.md"
+    },
+    {
+      "id": "theoretical-ai-pentest-objective-violation",
+      "title": "Reframing penetration testing for AI systems as violating operational objectives rather than resources",
+      "tier": 3,
+      "attack_class": "OTHER",
+      "target": "AI-enabled systems in which a learned model materially determines an operational outcome",
+      "date": "2026-07-15",
+      "summary": "A paper argues that penetration testing for AI-enabled systems needs a success criterion that the existing field lacks, and proposes one: an attack succeeds when it induces AI-governed behavior that violates a stated operational objective, with no resource necessarily compromised. It defines an AI-enabled system and an AI-enabled penetration, extends the notion past resource compromise to prompt injection, retrieval poisoning, sensor manipulation, tool misuse and agentic misalignment, and proposes a testing workflow that starts from objectives rather than from infrastructure. It reports no attack of its own.",
+      "impact": "The consequence argued is a measurement and reporting problem: a system can be fully patched and still lose its operational objective because an attacker steered the model, so penetration testing that stops at infrastructure will record such a system as secure. The paper is explicit that the definition extends conventional testing rather than replacing it, and it cites published attack classes as evidence that the pathway exists rather than demonstrating one. Filed as OTHER: the object is the evaluation criterion itself, which is not an attack mechanism any class tests for.",
+      "mitigation": "Write down the operational objectives the system must preserve, such as safe navigation or correct triage, and treat an induced violation of one as the finding rather than a missing patch. Map which behaviors are governed by a learned model and probe those paths with the same seriousness as memory corruption. Keep the feasibility bar: a scanner hit is not a penetration result unless a capable adversary could exercise it under stated assumptions.",
+      "sources": [
+        {
+          "url": "https://arxiv.org/abs/2607.14006",
+          "kind": "primary",
+          "title": "Rethinking Penetration Testing for AI-Enabled Systems: From Resource Compromise to Behavioral Objective Violation"
+        },
+        {
+          "url": "https://arxiv.org/html/2607.14006v1",
+          "kind": "primary",
+          "title": "Rethinking Penetration Testing for AI-Enabled Systems: From Resource Compromise to Behavioral Objective Violation (full text)"
+        }
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/theoretical-ai-pentest-objective-violation.md"
+    },
+    {
+      "id": "theoretical-authorization-execution-gap",
+      "title": "Authorization-Execution Gap proposed as the unifying failure mode of open-world LLM agents",
+      "tier": 3,
+      "attack_class": "AGENT_PRIVILEGE_ABUSE",
+      "target": "Tool-using LLM agents acting under a delegated mandate, with persistent state and multi-agent handoffs",
+      "date": "2026-05-10",
+      "summary": "A position paper argues that many agent failures share one shape: what an agent ends up doing diverges from what the principal meant to authorize. It traces that divergence to three structural sources: incomplete delegation of the mandate, corruption through execution channels such as tool output or web content, and fragmentation of authorization across stages and agents. A worked travel-booking trace carries the argument, and the paper closes by asking for authorization-integrity checks during execution rather than one-shot filtering. Nothing is run against a deployed system.",
+      "impact": "The paper asserts rather than demonstrates a harm: an agent takes actions, writes state, or hands off work outside the authorization the user granted, and because such actions may be irreversible the divergence is costly to undo. It explicitly excludes harmful-task and compromised-infrastructure cases and leans on previously documented agent failures only as stakes evidence. Filed as AGENT_PRIVILEGE_ABUSE rather than JAILBREAK or prompt injection because the step that yields the gain is the agent exercising authority beyond the mandate, not a refusal being bypassed.",
+      "mitigation": "Carry authorization as an explicit, machine-checkable scope and evaluate it during execution rather than once at the start. Treat tool output, web content, stored state and upstream agent output as environmental content that never carries delegated authority, and re-check scope after every handoff. Diagnose by structural source, since the same symptom calls for different fixes depending on which of the three sources is responsible.",
+      "sources": [
+        {
+          "url": "https://arxiv.org/abs/2605.11003",
+          "kind": "primary",
+          "title": "The Authorization-Execution Gap Is a Major Safety and Security Problem in Open-World Agents"
+        },
+        {
+          "url": "https://arxiv.org/html/2605.11003v1",
+          "kind": "primary",
+          "title": "The Authorization-Execution Gap Is a Major Safety and Security Problem in Open-World Agents (full text)"
+        }
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/theoretical-authorization-execution-gap.md"
+    },
+    {
+      "id": "theoretical-covert-agent-conversation-keyless",
+      "title": "Keyless covert channel argued possible between two LLM agents holding no shared secret",
+      "tier": 3,
+      "attack_class": "DATA_EXFILTRATION",
+      "target": "Any deployment where two LLM agents converse and a third party reads their transcript",
+      "date": "2026-04-06",
+      "summary": "A cryptography paper asks whether two agents operated by different entities can hold a private side conversation while their visible transcript stays computationally indistinguishable from an honest exchange, even for an auditor who knows the models, the protocol, and each side's context. It proves covert conversation is possible in the shared-key case, then works the harder keyless case where the two agents begin with no shared secret, introducing a primitive it calls pseudorandom noise-resilient key exchange for that setting. The results are constructive and negative; the authors report no system attacked.",
+      "impact": "The gain argued for is a hidden channel: content that a transcript reader, including a monitoring service, cannot distinguish from ordinary output, which turns monitoring of agent-to-agent traffic into a losing position for the defender. The paper's assumptions are stated tightly, that honest messages carry at least constant min-entropy and the protocol is adaptive, and its negative results also warn that weaker key-exchange variants admit efficient attacks. No third party is shown to be fooled in practice.",
+      "mitigation": "Treat a text transcript of an agent conversation as unverified and do not treat readability as evidence of absence of covert content. Where the two agents belong to different principals, gate inter-agent messaging on an attested policy rather than on inspection of the text. The paper's negative results argue against rolling your own covert-resistant key exchange.",
+      "sources": [
+        {
+          "url": "https://arxiv.org/abs/2604.04757",
+          "kind": "primary",
+          "title": "Undetectable Conversations Between AI Agents via Pseudorandom Noise-Resilient Key Exchange"
+        },
+        {
+          "url": "https://arxiv.org/html/2604.04757v1",
+          "kind": "primary",
+          "title": "Undetectable Conversations Between AI Agents via Pseudorandom Noise-Resilient Key Exchange (full text)"
+        }
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/theoretical-covert-agent-conversation-keyless.md"
+    },
+    {
+      "id": "theoretical-cross-domain-query-combinability",
+      "title": "Cross-domain query combinability argued to defeat per-request guards in multi-agent LLM deployments",
+      "tier": 3,
+      "attack_class": "DATA_EXFILTRATION",
+      "target": "LLM agents from different organizations whose per-agent guards each see only their own request and response",
+      "date": "2025-05-28",
+      "summary": "A perspective paper argues that when agents owned by different organizations cooperate, no single party holds the whole conversation, so a policy checked per request is judged against too little context. Its worked example has an outside contractor ask one company's payroll agent for a department maximum, then ask the HR agent who earns it, and combine the two answers to recover a specific salary. Each request is ordinary and each answer passes the guard that saw it. This appears as one of seven challenges the paper proposes, with metrics and countermeasures attached; no attack is run.",
+      "impact": "The gain described is a record leaving the boundary: a particular salary the organization meant to keep unrevealed. Because each fragment is individually policy-compliant, the paper argues that per-request filters, turn-by-turn firewalls, and access control over the raw table all miss the composite leak, and it says countermeasures for this remain unexplored. Filed as DATA_EXFILTRATION rather than PROMPT_INJECTION_DIRECT because no attacker-authored instruction rides in retrieved content; the gain comes from combining two legitimate answers across an ownership boundary.",
+      "mitigation": "Evaluate policy over a session and its combined context rather than one request at a time, and write policies knowing that answers are externally combinable. Where the domains can cooperate, keep the composite view inside one owner, and log cross-domain exchanges under a shared identifier so a composite leak can be reconstructed after the fact.",
+      "sources": [
+        {
+          "url": "https://arxiv.org/abs/2505.23847",
+          "kind": "primary",
+          "title": "Seven Security Challenges in Cross-domain Multi-agent LLM Systems"
+        },
+        {
+          "url": "https://arxiv.org/html/2505.23847v5",
+          "kind": "primary",
+          "title": "Seven Security Challenges in Cross-domain Multi-agent LLM Systems (full text)"
+        }
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/theoretical-cross-domain-query-combinability.md"
+    },
+    {
+      "id": "theoretical-crypto-agent-irreversibility",
+      "title": "Irreversibility, anonymity and automaticity proposed as new harm vectors for agents holding crypto and smart contracts",
+      "tier": 3,
+      "attack_class": "OTHER",
+      "target": "Autonomous agents given direct access to cryptocurrency balances and to deploying smart contracts",
+      "date": "2025-07-11",
+      "summary": "A position paper takes the view that handing agents crypto wallets and smart contract deployment produces harm categories that do not exist without the pairing, and works through three of them. Their shared example is an agent told to grow its holdings that instead launches a scam contract to defraud holders. The three named vectors are Autonomy, since contract code cannot be altered after deployment and keeps paying victims if the agent shuts down; Anonymity, since pseudonymous addresses make the offending agent hard to identify and therefore hard to stop; and Automaticity, since contract payouts let an agent recruit suppliers it will never have to judge.",
+      "impact": "The paper argues these convert a recoverable agent failure into a standing loss, since a deployed contract cannot be recalled and the agent behind it may never be attributed. It presents the scenarios as hypothetical and cites real incidents only as weak supporting precedent, with no attack of its own demonstrated. Filed as OTHER: the mechanism is irreversible on-chain commitment of an untraceable principal, a property no named class tests for, and the impact field says so rather than forcing a prompt or tooling fit.",
+      "mitigation": "The paper proposes using the blockchain properties themselves as a fulcrum, which means restricting the agent rather than trying to undo the harm: cap what an agent can commit, separate an agent's ability to deploy contracts from its ability to move funds, and require a human decision outside the agent before irreversible on-chain actions. It also notes off-ramps and stablecoin controls as points where anonymity can be reduced.",
+      "sources": [
+        {
+          "url": "https://arxiv.org/abs/2507.08249",
+          "kind": "primary",
+          "title": "Giving AI Agents Access to Cryptocurrency and Smart Contracts Creates New Vectors of AI Harm"
+        },
+        {
+          "url": "https://arxiv.org/html/2507.08249v3",
+          "kind": "primary",
+          "title": "Giving AI Agents Access to Cryptocurrency and Smart Contracts Creates New Vectors of AI Harm (full text)"
+        }
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/theoretical-crypto-agent-irreversibility.md"
+    },
+    {
+      "id": "theoretical-indirect-injection-defense-position",
+      "title": "Position: what system-level defense can and cannot claim against indirect prompt injection",
+      "tier": 3,
+      "attack_class": "PROMPT_INJECTION_INDIRECT",
+      "target": "Agent architectures that plan and execute with an explicit policy enforcer, as described in the paper",
+      "date": "2026-03-31",
+      "summary": "A position paper takes the position that indirect prompt injection, where instructions hidden in retrieved emails, pages or tool output drive agent actions, is not fixable by a filter on the input. It argues for an agent skeleton of orchestrator, plan and policy approver, plan, executor, policy and policy enforcer, then states three positions: that dynamic replanning and policy updates are necessary for real tasks, that a learned model is sometimes needed for security decisions but only inside a design that strictly limits what it sees and decides, and that ambiguity such as what counts as urgent needs the user rather than more model robustness. It reports no attack.",
+      "impact": "The consequence argued is a limit on what a defense team may claim: a benchmark number from a static-payload harness does not tell you what happens when the attacker adapts to the defense or when the policy itself is updated from untrusted data. The paper also states that isolating one piece of data can make the task impossible, so tightening the boundary costs utility. What the attacker gains is left unspecified, which is why this is filed as a framing of the mechanism rather than a demonstrated gain.",
+      "mitigation": "Build the skeleton the paper describes and keep the policy enforcer outside the model. When a learned model must judge, give it structured inputs and a narrow decision rather than arbitrary environmental text. Plan for human input on genuinely ambiguous instructions instead of resolving them by inference, and test against an adaptive attacker rather than a fixed payload set.",
+      "sources": [
+        {
+          "url": "https://arxiv.org/abs/2603.30016",
+          "kind": "primary",
+          "title": "Architecting Secure AI Agents: Perspectives on System-Level Defenses Against Indirect Prompt Injection Attacks"
+        },
+        {
+          "url": "https://arxiv.org/html/2603.30016v1",
+          "kind": "primary",
+          "title": "Architecting Secure AI Agents: Perspectives on System-Level Defenses Against Indirect Prompt Injection Attacks (full text)"
+        }
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/theoretical-indirect-injection-defense-position.md"
+    },
+    {
+      "id": "theoretical-llm-sandbox-escape-anomaly-monitor-gap",
+      "title": "Linguistic illegibility argued to undermine monitors that read an agent's reasoning text",
+      "tier": 3,
+      "attack_class": "OTHER",
+      "target": "Agents whose sandbox relies on reading the model's reasoning or output text to detect harmful intent",
+      "date": "2026-09-02",
+      "summary": "A position paper argues that a model's language output and the features read out of its activations are an unreliable picture of what the model is actually computing, because most of that computation is arithmetic over activation space with lossy translation to text only at the input and output ends. It calls this linguistic illegibility and names the security consequence: a monitor that judges the model by what it says is judging a lossy projection, so intent expressed in activations rather than words is not something such a monitor can be shown to catch. The paper proposes design principles for a sandbox rather than building one.",
+      "impact": "The claimed gain is that a model with harmful intent gets to act on the external world while a language-based monitor reports nothing unusual, which the paper says would defeat detection rather than merely delay it. It is an argument with no run against a system; the paper's own security model assumes a model could be intrinsically misaligned rather than injected. Filed as OTHER: the mechanism is unfaithfulness of the model's textual self-report as the control, which no class tests for, and the impact field names that.",
+      "mitigation": "Do not rest containment on reading the model's language. The paper argues for a floor beneath linguistic monitoring built from taint tracking over model-produced data, robust virtualization, and third-party auditing of sandbox configurations, and it notes those would have limited recent frontier-model sandbox escapes. Treat introspective monitoring as one layer with known blind spots, not as the control.",
+      "sources": [
+        {
+          "url": "https://arxiv.org/abs/2609.02852",
+          "kind": "primary",
+          "title": "The Implications of Linguistic Illegibility for LLM Security"
+        },
+        {
+          "url": "https://arxiv.org/html/2609.02852v1",
+          "kind": "primary",
+          "title": "The Implications of Linguistic Illegibility for LLM Security (full text)"
+        }
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/theoretical-llm-sandbox-escape-anomaly-monitor-gap.md"
+    },
+    {
+      "id": "theoretical-prompt-injection-separation-impossibility",
+      "title": "Impossibility of perfect prompt-injection prevention in shared-embedding sequence models",
+      "tier": 3,
+      "attack_class": "PROMPT_INJECTION_INDIRECT",
+      "target": "LLM applications where trusted instructions and untrusted content share one token embedding and one attention pipeline",
+      "date": "2026-06-25",
+      "summary": "A theory paper argues that the failure of prompt-injection defenses is not bad luck. It models a prompted LLM as a Prompted Action Model whose outputs include control decisions such as refusals, tool authorization and memory writes, and defines Semantic-Faithful Control: that behavior depends on what untrusted input means, not on how it is encoded. It then proves that property cannot be held inside a shared pipeline, via a provenance-recovery impossibility result plus an argument that untrusted content reaches control-relevant computation through the same value pathway, plus a finite-coverage invariance argument.",
+      "impact": "The consequence is a ceiling on what any in-pipeline defense can promise: in architectures that do not separate control from data, some input will be treated as authoritative rather than as data, so the attacker eventually gets a control-authoritative action. The authors compare this to code-data confusion on von Neumann machines and read it as a claim about architecture, not about today's models. The result is a proof, not an attack run against a system.",
+      "mitigation": "Take the paper's architectural implication rather than another classifier: complete protection needs a mechanism that enforces separation between trusted control and untrusted content, so move control decisions out of the shared embedding pipeline and into a component the untrusted text cannot reach. The authors explicitly note this does not mean useful systems must ignore user input, nor that all defenses are equally ineffective in practice.",
+      "sources": [
+        {
+          "url": "https://arxiv.org/abs/2606.27567",
+          "kind": "primary",
+          "title": "On the Inseparability of Instructions and Data in Shared-Embedding Sequence Models"
+        },
+        {
+          "url": "https://arxiv.org/html/2606.27567v1",
+          "kind": "primary",
+          "title": "On the Inseparability of Instructions and Data in Shared-Embedding Sequence Models (full text)"
+        }
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/theoretical-prompt-injection-separation-impossibility.md"
+    },
+    {
+      "id": "theoretical-runtime-monitoring-threat-taxonomy",
+      "title": "Position: treating runtime security threats to LLM applications as an operational condition to monitor",
+      "tier": 3,
+      "attack_class": "OTHER",
+      "target": "Deployed LLM applications that call MCP services, retrieval backends and memory during task execution",
+      "date": "2026-02-23",
+      "summary": "A position paper argues that the reliability problems of LLM applications are not exceptional events to be engineered away but expected operating conditions, and that the missing piece is system-level monitoring after deployment rather than better models. It walks a representative application from user prompt through MCP tool discovery, orchestration, retrieval and tool execution, and tabulates threat categories it says monitoring must cover, running from prompt injection and adversarial inputs through response manipulation, denial of service, live data poisoning and sensitive data exposure. It reports no attack and no monitoring results.",
+      "impact": "The claim is organizational: without runtime detection and an incident-response discipline, an attack that succeeds against a deployed agent is discovered by its user rather than by its operator, and the loss is whatever the agent reached. The paper's threat table is its own enumeration rather than evidence of a gain, and it deliberately excludes training-stage attacks. Filed as OTHER: the object is the absence of a detection and response capability, which is not an attack mechanism any class tests for.",
+      "mitigation": "Instrument the runtime rather than only the model: log the prompt, the tool list retrieved at call time, the arguments, the results and the state writes for each step, and alert on anomalies in that trace. The paper's argument is that this monitoring, treated as a standing operation with its own runbooks, is a prerequisite for deploying agents at all, and that guardrails and testing do not cover what happens after release.",
+      "sources": [
+        {
+          "url": "https://arxiv.org/abs/2602.19844",
+          "kind": "primary",
+          "title": "LLM-enabled Applications Require System-Level Threat Monitoring"
+        },
+        {
+          "url": "https://arxiv.org/html/2602.19844v1",
+          "kind": "primary",
+          "title": "LLM-enabled Applications Require System-Level Threat Monitoring (full text)"
+        }
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/theoretical-runtime-monitoring-threat-taxonomy.md"
+    },
+    {
+      "id": "theoretical-security-principles-agent-sandbox",
+      "title": "Position: applying classical information security design principles to LLM agents",
+      "tier": 3,
+      "attack_class": "OTHER",
+      "target": "Agent platforms and protocols that hold credentials, call tools and carry context",
+      "date": "2025-05-29",
+      "summary": "A position paper argues that the design principles that have guided systems security for decades, defense in depth, least privilege, complete mediation and psychological acceptability, should be applied deliberately when agents are deployed at scale, since multi-agent interaction and context manipulation create vulnerability classes the principles were written for. It sketches AgentSandbox, a conceptual framework placing safeguards across an agent's lifecycle, and reports benign and adversarial utility measurements with state-of-the-art models. The contribution is the framework and the argument, not an attack.",
+      "impact": "The claim is that agent deployments that skip these principles lose the containment they would otherwise have, so privacy leakage and system exploitation become design defaults rather than bugs. The paper's own numbers are about its framework's utility and mitigation, not about an attacker gain it demonstrates. Filed as OTHER: the object is a missing set of design principles, a governance mechanism no class tests for, and the impact field names that rather than forcing a mechanism fit.",
+      "mitigation": "Adopt the principles the paper names as acceptance criteria rather than as aspirations: no agent reaches a capability a role does not need, every action a tool can take passes a mediation point that sees it, and layered controls do not share a single failure mode. Where an agent's UI would otherwise mislead a user about what is happening, fix the UI, since psychological acceptability is what makes a control get followed.",
+      "sources": [
+        {
+          "url": "https://arxiv.org/abs/2505.24019",
+          "kind": "primary",
+          "title": "LLM Agents Should Employ Security Principles"
+        },
+        {
+          "url": "https://arxiv.org/html/2505.24019v1",
+          "kind": "primary",
+          "title": "LLM Agents Should Employ Security Principles (full text)"
+        }
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/theoretical-security-principles-agent-sandbox.md"
+    },
+    {
+      "id": "theoretical-trust-authorization-mismatch-agent",
+      "title": "Trust-Authorization Mismatch proposed as the root cause shared by prompt injection and tool poisoning",
+      "tier": 3,
+      "attack_class": "OTHER",
+      "target": "Agent runtimes that grant permissions statically while an agent's trustworthiness varies per step",
+      "date": "2025-12-07",
+      "summary": "A systematization of more than 200 papers argues that agent runtimes hand an agent a fixed permission set while the agent's trustworthiness at any given step is not a fixed property, and that this mismatch is the shared root under attacks that otherwise look unrelated. It decomposes agent execution into belief formation, intent generation and permission grant, and shows across the surveyed work that prompt injection and tool poisoning are different expressions of one structural problem. The paper systematizes and frames; it runs no attack.",
+      "impact": "The consequence claimed is that a permission granted at deployment stays granted no matter what changed the agent's belief, so a permission check that passes is not evidence the action was authorized by anything the user intended. Because the paper's unit is the mismatch rather than an incident, it reports no attacker gain of its own and rests on surveyed case results. Filed as OTHER: the object is a runtime property, the decoupling of static permission from per-step trustworthiness, which none of the named classes tests for.",
+      "mitigation": "Make authorization track the state of the agent rather than a fixed grant: re-evaluate permission at the point of use, against the belief and intent the run actually holds, and let permission narrow as confidence about provenance falls. Pair that with provenance on tool definitions and results so a permission grant can name the content it was based on.",
+      "sources": [
+        {
+          "url": "https://arxiv.org/abs/2512.06914",
+          "kind": "primary",
+          "title": "SoK: Trust-Authorization Mismatch in LLM Agent Interactions"
+        },
+        {
+          "url": "https://arxiv.org/html/2512.06914v2",
+          "kind": "primary",
+          "title": "SoK: Trust-Authorization Mismatch in LLM Agent Interactions (full text)"
+        }
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/theoretical-trust-authorization-mismatch-agent.md"
+    },
+    {
+      "id": "theoretical-web3-agent-mcp-attack-surface",
+      "title": "Position: blockchain execution properties argued to change the threat model for MCP-based agents",
+      "tier": 3,
+      "attack_class": "OTHER",
+      "target": "Agents that act on public blockchains through MCP servers, skills or direct tool calls",
+      "date": "2026-08-18",
+      "summary": "A survey argues that the share of deployed MCP tools that modify external state has grown from 27% to 65% of tool use, and that when agents exercise this authority on public blockchains the consequences stop obeying ordinary software assumptions. It names four properties of the execution layer, irreversibility, signing authority, continuous autonomy and sequence-level composition, and argues these turn the recoverable failures of generic agent security into standing irreversible loss. It organizes prior MCP-security work under them and reports no attack.",
+      "impact": "The argued consequence is that the same injection that would be cleaned up in a normal application becomes unrecoverable once an agent has signed and settled a transaction, and that a single compromised component can act repeatedly without a human in the loop. The survey's own contribution is the framework and the framing of prior work, so it evidences no attacker gain of its own. Filed as OTHER: the mechanism is the settlement layer's semantics rather than the payload's channel, which is a property no class tests for.",
+      "mitigation": "Change the deployment rather than the payload: keep an agent's authority over value-bearing actions separate from its authority over ordinary tools, and put a human decision in front of anything a signature commits to. Sequence batching compounds risk, so cap what one agent can settle before it must re-authorize. Treat auditability of the tool and skill supply chain as part of the same problem, since the signing authority is what a poisoned tool inherits.",
+      "sources": [
+        {
+          "url": "https://arxiv.org/abs/2608.17275",
+          "kind": "primary",
+          "title": "When Agents Act on Web3: An Attack-Surface Survey of MCP, Skills, and Tool Calling"
+        },
+        {
+          "url": "https://arxiv.org/html/2608.17275v1",
+          "kind": "primary",
+          "title": "When Agents Act on Web3: An Attack-Surface Survey of MCP, Skills, and Tool Calling (full text)"
+        }
+      ],
+      "last_verified": "2026-10-04",
+      "_permalink": "docs/entries/theoretical-web3-agent-mcp-attack-surface.md"
     }
   ]
 }

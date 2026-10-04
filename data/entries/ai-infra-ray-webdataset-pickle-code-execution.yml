@@ -1,0 +1,35 @@
+id: ai-infra-ray-webdataset-pickle-code-execution
+title: "Ray Data WebDataset reader executes pickle and torch payloads from a supplied tar archive"
+tier: 2
+attack_class: SUPPLY_CHAIN_MODEL
+target: "Ray before 2.56.0 (pip package ray), the ray.data.read_webdataset reader"
+date: "2026-07-24"
+summary: >-
+  Ray's WebDataset reader dispatches on each sample key's file extension and, for .pkl and
+  .pickle members, calls pickle.loads() on the raw bytes, and for .pt and .pth members calls
+  torch.load() with the safer default disabled. The decoder is on by default with no opt-in and
+  no environment variable, so supplying a crafted tar archive to the reader runs the attacker's
+  code inside the Ray workers that process it, at sample time and before any row data is read.
+  The advisory reproduces this end to end and the project patched the reader in 2.56.0.
+impact: >-
+  A tar archive delivered from a shared object store, an HTTP URL, a model hub mirror or a
+  model-zoo tarball executes attacker-chosen commands with the privileges of the calling Ray
+  process and its workers, which on a training cluster usually means access to the dataset
+  credentials and the cluster itself. The artefact the victim pulls in is a model or dataset
+  artefact rather than a package resolved from an index, so the taxonomy makes this
+  SUPPLY_CHAIN_MODEL rather than SUPPLY_CHAIN_PACKAGE. The advisory's reproduction ran on Ray
+  2.55.1 and reports no in-the-wild exploitation.
+mitigation: >-
+  Upgrade to Ray 2.56.0 or later. On earlier versions pass a custom decoder or decoder=None to
+  read_webdataset instead of relying on the default, and treat every dataset shard as
+  untrusted code until it has been read by something that does not unpickle.
+sources:
+  - url: https://github.com/ray-project/ray/security/advisories/GHSA-hhrp-gw25-jr43
+    kind: primary
+    title: "Arbitrary code execution via ray.data.read_webdataset default decoder (GHSA-hhrp-gw25-jr43)"
+  - url: https://cveawg.mitre.org/api/cve/CVE-2026-57516
+    kind: primary
+    title: "CVE-2026-57516 CVE record for the Ray WebDataset reader deserialization flaw"
+cve:
+  - CVE-2026-57516
+last_verified: "2026-10-04"

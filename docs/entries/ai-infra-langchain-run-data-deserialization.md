@@ -1,0 +1,34 @@
+# LangChain runtime paths revive objects from deserialized run data with a broad allowlist
+
+`T2 [==-]` **Tier 2 - Demonstrated**
+
+| Field | Value |
+| --- | --- |
+| Id | `ai-infra-langchain-run-data-deserialization` |
+| Tier | `T2 [==-]` **Tier 2 - Demonstrated** |
+| Attack class | Insecure output handling |
+| Target | langchain-core 1 to 1.3.2 and 0 to 0.3.84 (pip package langchain-core) |
+| Disclosure date | 2026-05-08 |
+| Last verified | 2026-10-04 |
+| CVE | CVE-2026-44843 |
+
+## Summary
+
+Several older LangChain runtime paths, named in the advisory as RunnableWithMessageHistory, astream_log() and astream_events(version="v1"), revived objects from run inputs and outputs using an allowlist broad enough to accept any trusted LangChain-serializable class. A request whose nested dictionaries survive unchanged into that run data could therefore be turned back into live objects with attacker-chosen constructor arguments instead of being read as inert data. The advisory also covers a related bypass in the secret-marker check that made such payloads survive a serialization round trip. Versions 1.3.3 and 0.3.85 carry the fix, which deprecates those three surfaces.
+
+## Impact
+
+The advisory's own realistic outcomes are persistent chat-history poisoning through revived message objects, manipulation of what later enters the model context, instantiation of unexpected LangChain objects with attacker-controlled arguments, and possible credential disclosure or server-side requests if a revived object reads environment credentials while initializing. INSECURE_OUTPUT_HANDLING beats PROMPT_INJECTION_DIRECT on the step that yields capability: the defect is in the application's handling of run data, not in the model's refusal behaviour. No source states real-world exploitation.
+
+## Mitigation
+
+Upgrade to langchain-core 1.3.3 or 0.3.85 or later. Independently of the fix, validate incoming requests against a fixed schema and coerce them to plain strings or message-content fields before they reach LangChain, migrate off the three deprecated surfaces, and never pass user-controlled data to load() or loads(), which the advisory says are for trusted manifests only.
+
+## Sources
+
+- **PRIMARY** - [Unsafe deserialization of attacker-controlled LangChain objects through overly broad load() allowlists (GHSA-pjwx-r37v-7724)](https://github.com/langchain-ai/langchain/security/advisories/GHSA-pjwx-r37v-7724)
+- **PRIMARY** - [CVE-2026-44843 CVE record for the LangChain deserialization flaw](https://cveawg.mitre.org/api/cve/CVE-2026-44843)
+
+Generated from `data/entries/ai-infra-langchain-run-data-deserialization.yml` by `scripts/build.py`. Never hand-edit this page: change the entry file and rebuild.
+
+Back to the [catalogue](../../README.md#full-catalogue), to [what the tiers mean](../TIERS.md), or to the [entry file](../../data/entries/ai-infra-langchain-run-data-deserialization.yml).

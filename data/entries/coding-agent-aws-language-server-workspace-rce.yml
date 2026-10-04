@@ -1,0 +1,43 @@
+id: coding-agent-aws-language-server-workspace-rce
+title: "Arbitrary command execution from project configuration files in Language Servers for AWS"
+tier: 2
+attack_class: INSECURE_OUTPUT_HANDLING
+target: "Language Servers for AWS before 1.65.0 and the Amazon Q Developer IDE plugins that bundle it"
+date: "2026-06-23"
+summary: >-
+  Language Servers for AWS is the runtime behind Amazon Q Developer's IDE
+  plugins, and AWS describes an improper trust boundary enforcement problem in
+  it: when a developer opens a crafted workspace and trusts it, commands
+  defined in the project's configuration files run automatically. The vendor
+  states the affected products are Language Servers for AWS below 1.65.0 and
+  the Amazon Q Developer plugins that bundle it, and published the bulletin
+  with the advisory on 2026-06-23 crediting Wiz. Both sources state no
+  workarounds and give an upgrade as the remedy.
+impact: >-
+  Commands chosen by whoever authored the workspace run under the developer's
+  account with no further interaction, which AWS rates 8.5 under CVSS 4.0 with
+  high confidentiality, integrity and availability impact. Class choice:
+  INSECURE_OUTPUT_HANDLING, because the source names the runtime's handling of
+  project configuration files as the defective component: it trusted a file
+  inside the workspace to define commands to execute, with no review step.
+  SUPPLY_CHAIN_PACKAGE was rejected because the source describes no package
+  index resolving an attacker-authored artefact. No source states exploitation.
+mitigation: >-
+  Upgrade the Amazon Q Developer IDE plugin to a release bundling Language
+  Servers for AWS 1.65.0 or later, or 1.69.0 as AWS recommends. AWS states
+  no workarounds are available. Do not open workspaces from untrusted senders
+  in an IDE with the Amazon Q plugins installed until upgraded, and review a
+  workspace's project configuration files first.
+sources:
+  - url: https://aws.amazon.com/security/security-bulletins/2026-047-aws/
+    kind: primary
+    title: "CVE-2026-12957 and CVE-2026-12958 - Issues in Language Servers for AWS and Amazon Q Developer Plugins"
+  - url: https://github.com/aws/language-servers/security/advisories/GHSA-xhcr-j4j9-3gh7
+    kind: primary
+    title: "Arbitrary Code Execution in Language Servers for AWS (GHSA-xhcr-j4j9-3gh7)"
+  - url: https://cveawg.mitre.org/api/cve/CVE-2026-12957
+    kind: primary
+    title: "CVE-2026-12957 record: improper trust boundary enforcement in Language Servers for AWS"
+cve:
+  - CVE-2026-12957
+last_verified: "2026-10-04"

@@ -1,0 +1,42 @@
+id: coding-agent-cline-dashboard-csws-mcp-rce
+title: "Cline dashboard cross-origin WebSocket hijacking injecting a malicious MCP server"
+tier: 2
+attack_class: AGENT_PRIVILEGE_ABUSE
+target: "Cline CLI and agent (npm package cline); advisory lists affected versions up to 3.0.24, fixed in 3.0.30"
+date: "2026-06-23"
+summary: >-
+  Cline ships a dashboard server that developers start locally, and the
+  advisory shows its browser WebSocket endpoint accepts connections without
+  checking the Origin header. In the default local configuration no room
+  secret is set, so the authorization helper returns true unconditionally and
+  any website the developer visits can connect. From there a page can send
+  command frames that write a new stdio MCP server entry, pointing at an
+  arbitrary shell command, into Cline's settings file, and dashboard-created
+  sessions approve every tool by default. The advisory includes a
+  reproduction that confirmed the write.
+impact: >-
+  The injected MCP entry persists in the settings file and Cline runs its
+  command the next time the server is activated, so the attacker gains code
+  execution on the developer's machine that outlives the page visit. Class
+  choice: AGENT_PRIVILEGE_ABUSE, because the source names a persistent new
+  tool binding in the agent's configuration as the gain, which the taxonomy
+  tie-break assigns to this class. TOOL_POISONING and
+  PROMPT_INJECTION_INDIRECT were rejected: the payload is written into the
+  victim's own settings file by a website, not published in a tool definition
+  the tool operator controls.
+mitigation: >-
+  Upgrade to Cline 3.0.30 or later. Until then, set a room secret for the
+  dashboard server so the endpoint is not open, do not leave the dashboard
+  running while browsing unrelated sites, and inspect the MCP server list in
+  Cline's settings for stdio entries whose command is a shell you did not add
+  yourself.
+sources:
+  - url: https://github.com/cline/cline/security/advisories/GHSA-3cj3-hqcr-g934
+    kind: primary
+    title: "Cross-Origin WebSocket Hijacking in Cline Hub Dashboard (/browser endpoint) (GHSA-3cj3-hqcr-g934)"
+  - url: https://cveawg.mitre.org/api/cve/CVE-2026-59723
+    kind: primary
+    title: "CVE-2026-59723 record: Cline cross-origin WebSocket hijacking in the Cline Hub dashboard"
+cve:
+  - CVE-2026-59723
+last_verified: "2026-10-04"

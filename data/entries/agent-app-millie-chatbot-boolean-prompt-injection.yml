@@ -1,0 +1,39 @@
+id: agent-app-millie-chatbot-boolean-prompt-injection
+title: "Boolean prompt injection in the 1millionbot Millie chatbot evades chat restrictions"
+tier: 2
+attack_class: PROMPT_INJECTION_DIRECT
+target: "1millionbot Millie chat chatbot and AI platform, versions prior to 3.6.0"
+date: "2026-03-31"
+summary: >-
+  INCIBE coordinated the publication of a high severity finding in the
+  Millie chatbot by 1millionbot. The mechanism is a Boolean form of
+  prompt injection: a question is framed so that an affirmative answer
+  causes the model to run the instruction that follows it, and the
+  restriction evasion was assigned CVE-2026-4399. The advisory lists the
+  product as fixed in version 3.6.0.
+impact: >-
+  A remote user can make the chatbot answer questions it was meant to
+  refuse and spend the vendor's resources, including the OpenAI API key
+  behind the service, on tasks outside its purpose. That is abuse of an
+  existing entitlement, so AGENT_PRIVILEGE_ABUSE was considered and
+  rejected. JAILBREAK was also considered and rejected, because the
+  taxonomy sends it to injection when success is an action rather than a
+  refused-content bypass, and the advisory names out-of-context tasks and
+  API key use rather than a bare refusal. CISA recorded Exploitation:
+  none, so this is not Tier 1.
+mitigation: >-
+  Upgrade to 3.6.0 or later, which the advisory names as the fix. Treat
+  prompt content controls as a single gate that blocks both direct
+  attempts and affirmative-answer constructions, put per-user and
+  per-session spend and rate limits on model calls, and scope the API
+  credential to the minimum the service needs so abuse is bounded.
+sources:
+  - url: https://www.incibe.es/en/incibe-cert/notices/aviso/multiple-vulnerabilities-1millionbot-millie-chatbot
+    kind: primary
+    title: "Multiple vulnerabilities in 1millionbot Millie chatbot (INCIBE-2026-243)"
+  - url: https://cveawg.mitre.org/api/cve/CVE-2026-4399
+    kind: primary
+    title: "CVE-2026-4399 Multiple vulnerabilities in 1millionbot Millie chatbot record"
+cve:
+  - CVE-2026-4399
+last_verified: "2026-10-04"

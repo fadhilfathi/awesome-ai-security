@@ -1,0 +1,39 @@
+id: coding-agent-roo-code-settings-json-command-execution
+title: "Roo Code remote code execution through the VS Code settings the agent may write"
+tier: 2
+attack_class: INSECURE_OUTPUT_HANDLING
+target: "Roo Code VS Code extension before 3.22.6"
+date: "2025-07-07"
+summary: >-
+  Roo Code guards writes with an auto-approve setting that is off by default,
+  and the advisory reports that when a developer had switched file writes to
+  auto-approve, an attacker able to submit prompts to the agent could have it
+  write to the editor's settings files. Because settings can name the program
+  to run for a language service, the advisory gives a concrete route: point
+  the PHP validator at an arbitrary command, then create a PHP file that
+  makes the editor run it. The vendor fixed it in 3.22.6 by requiring an
+  extra layer of opt-in for writes to that folder. The vendor record reports
+  no exploitation.
+impact: >-
+  The attacker gains arbitrary code execution on the developer's machine. Class
+  choice: INSECURE_OUTPUT_HANDLING, because the source names the extension's
+  handling of the agent's own writes as the defective component and the
+  editor, not a human, later consumed the setting. PROMPT_INJECTION_INDIRECT
+  and TOOL_POISONING were rejected on the taxonomy tie-break: the record names
+  prompt submission only as the entry point and the capability is yielded by
+  the unapproved settings write.
+mitigation: >-
+  Upgrade to Roo Code 3.22.6 or later. Leave auto-approve for file writes off,
+  since the vendor lists it as off by default and the advisory says the chain
+  needs it, and do not let an agent write into an editor's settings folder,
+  where a single key can decide what program the editor runs.
+sources:
+  - url: https://github.com/RooCodeInc/Roo-Code/security/advisories/GHSA-3765-5vjr-qjgm
+    kind: primary
+    title: "Potential Remote Code Execution via .vscode/settings.json in the Roo Code extension (GHSA-3765-5vjr-qjgm)"
+  - url: https://cveawg.mitre.org/api/cve/CVE-2025-53536
+    kind: primary
+    title: "CVE-2025-53536 record: Roo Code remote code execution via .vscode/settings.json"
+cve:
+  - CVE-2025-53536
+last_verified: "2026-10-04"

@@ -1,0 +1,48 @@
+id: agent-app-m365-copilot-echoleak-zero-click-injection
+title: "EchoLeak zero-click indirect prompt injection in Microsoft 365 Copilot"
+tier: 2
+attack_class: PROMPT_INJECTION_INDIRECT
+target: "Microsoft 365 Copilot, hosted service used from Outlook and Teams"
+date: "2025-06-11"
+summary: >-
+  Aim Labs found that an external attacker could plant instructions in an
+  ordinary email and have Microsoft 365 Copilot carry them out, without
+  the recipient doing anything. The email was retrieved during normal
+  Copilot work, the hidden instructions told Copilot to fold context
+  data into a link, and reference-style Markdown and an auto-fetched
+  image tag got past the output filter and the page's content security
+  policy, the last step using an allow-listed Microsoft Teams URL as the
+  fetcher. Microsoft shipped a server-side fix and assigned
+  CVE-2025-32711; a later academic paper analyses the chain rather than
+  reproducing it.
+impact: >-
+  The attacker obtains whatever the victim's Copilot could read, which
+  the CVE describes as information disclosure over a network and the
+  research describes as internal files and message content pulled out of
+  the user's context. The record carries CISA's Exploitation: none and
+  the paper states Microsoft reported no evidence of in-the-wild
+  exploitation, so this is not Tier 1. DATA_EXFILTRATION was considered
+  because data is what leaves, but the taxonomy classifies by the step
+  that yielded capability, and that step is the retrieved email whose
+  instructions the model obeyed.
+mitigation: >-
+  Microsoft states the fix was server-side with no customer action
+  required. The research recommends partitioning the prompt so external
+  mail is tagged as non-authoritative and never concatenated inline with
+  a user's internal query, resolving retrieval by provenance so external
+  sources are excluded by default, gating model output through a format
+  and URL allowlist before rendering, and applying a strict content
+  security policy so any permitted fetch goes through an internal proxy.
+sources:
+  - url: https://cveawg.mitre.org/api/cve/CVE-2025-32711
+    kind: primary
+    title: "CVE-2025-32711 M365 Copilot Information Disclosure Vulnerability record"
+  - url: https://arxiv.org/abs/2509.10540
+    kind: primary
+    title: "EchoLeak: The First Real-World Zero-Click Prompt Injection Exploit in a Production LLM System"
+  - url: https://arxiv.org/pdf/2509.10540v1
+    kind: primary
+    title: "EchoLeak paper, full PDF"
+cve:
+  - CVE-2025-32711
+last_verified: "2026-10-04"

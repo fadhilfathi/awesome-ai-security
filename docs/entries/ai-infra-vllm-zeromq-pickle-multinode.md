@@ -1,0 +1,34 @@
+# vLLM unpickles data received on its multi-node ZeroMQ subscription socket
+
+`T2 [==-]` **Tier 2 - Demonstrated**
+
+| Field | Value |
+| --- | --- |
+| Id | `ai-infra-vllm-zeromq-pickle-multinode` |
+| Tier | `T2 [==-]` **Tier 2 - Demonstrated** |
+| Attack class | Other |
+| Target | vLLM 0.5.2 to 0.8.5.post1 (pip package vllm), V0 engine with tensor parallelism across hosts |
+| Disclosure date | 2025-05-06 |
+| Last verified | 2026-10-04 |
+| CVE | CVE-2025-30165 |
+
+## Summary
+
+In a multi-node vLLM deployment running the older V0 engine, the secondary hosts open a ZeroMQ subscription socket to the primary host and pass whatever arrives on it straight to pickle.loads(). The advisory shows both ends of that path in the shared-memory broadcast module and states that the data is deserialized without validation, so it can be used to run code on a receiving machine. The maintainers declined to fix it, judging the fix invasive for a configuration they did not expect to be common.
+
+## Impact
+
+Compromise of one node in a tensor-parallel cluster becomes compromise of every other, because the secondaries trust what the primary publishes. The advisory also names a route needing no prior access to the primary, such as ARP cache poisoning redirecting the subscription traffic to a hostile endpoint. No named class fits, hence OTHER: the mechanism is a control-plane service trusting an unauthenticated feed. SUPPLY_CHAIN_MODEL fails because the artefact is IPC traffic, not a model artefact; CODE_ASSISTANT_ABUSE fails because no coding model wrote the code. V0 is off by default since 0.8.0.
+
+## Mitigation
+
+No fix ships; the advisory's own recommendation is to keep the environment on a secure network. Keep tensor parallelism on a single host or on a segment where a machine cannot spoof another, do not run the V0 engine on untrusted hosts, and assume any host in an affected cluster is compromised once one of them is.
+
+## Sources
+
+- **PRIMARY** - [Remote Code Execution Vulnerability in vLLM Multi-Node Cluster Configuration (GHSA-9pcc-gvx5-r5wm)](https://github.com/vllm-project/vllm/security/advisories/GHSA-9pcc-gvx5-r5wm)
+- **PRIMARY** - [CVE-2025-30165 CVE record for the vLLM ZeroMQ deserialization flaw](https://cveawg.mitre.org/api/cve/CVE-2025-30165)
+
+Generated from `data/entries/ai-infra-vllm-zeromq-pickle-multinode.yml` by `scripts/build.py`. Never hand-edit this page: change the entry file and rebuild.
+
+Back to the [catalogue](../../README.md#full-catalogue), to [what the tiers mean](../TIERS.md), or to the [entry file](../../data/entries/ai-infra-vllm-zeromq-pickle-multinode.yml).

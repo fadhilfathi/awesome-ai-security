@@ -3,7 +3,7 @@ title: "MLflow unauthenticated webhook SSRF via unvalidated redirects and DNS re
 tier: 1
 attack_class: AGENT_PRIVILEGE_ABUSE
 target: "MLflow 3.3.0 to before 3.15.0 (pip package mlflow)"
-date: "2026-08-19"
+date: "2026-08-17"
 summary: >-
   MLflow is an open source AI engineering platform used to track agents and
   machine learning models. Its unauthenticated webhook test endpoint validated

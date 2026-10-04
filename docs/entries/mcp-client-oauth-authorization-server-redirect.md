@@ -1,0 +1,34 @@
+# MCP Python and TypeScript OAuth clients would send credentials to an authorization server the MCP server named
+
+`T2 [==-]` **Tier 2 - Demonstrated**
+
+| Field | Value |
+| --- | --- |
+| Id | `mcp-client-oauth-authorization-server-redirect` |
+| Tier | `T2 [==-]` **Tier 2 - Demonstrated** |
+| Attack class | Credential exposure |
+| Target | MCP Python SDK before 1.30.0 / 2.2.0 and MCP TypeScript SDK before 1.31.0 / 2.2.0, OAuth client |
+| Disclosure date | 2026-09-28 |
+| Last verified | 2026-10-04 |
+| CVE | CVE-2026-104850 |
+
+## Summary
+
+In the Python SDK's OAuth client support the issuer named in the authorization server metadata was not checked on every discovery path, and stored or pre-provisioned client credentials were not bound to the authorization server they belonged to. A malicious or compromised MCP server could name its own authorization server in its protected resource metadata, or publish none and present the user's real server as the issuer, and then receive the client_secret, the authorization code and the PKCE code_verifier intended for the real server. The TypeScript SDK carried the same class of fix two days later, sending it a stored refresh_token and client_secret with no user interaction at all.
+
+## Impact
+
+What the attacker obtains is a client secret, an authorization code, a PKCE code_verifier, a refresh token or a signed client assertion, all of which are credentials, so this is CREDENTIAL_EXPOSURE rather than DATA_EXFILTRATION. The Python advisory notes that the interactive provider still needs a person to start the sign-in and scores that case lower than the unattended client-credentials and private-key-jwt providers. Both advisories limit the flaw to clients, not servers, and not stdio clients, and neither states that any deployment was exploited.
+
+## Mitigation
+
+Upgrade to mcp 1.30.0 or 2.2.0, and to @modelcontextprotocol/sdk 1.31.0 or @modelcontextprotocol/client 2.2.0. Upgrading alone is not enough: pass issuer= or expectedIssuer= on the bundled client-credentials and private-key-jwt providers, and clear stored OAuth client registrations so users sign in again against the expected issuer. If an affected client may have connected to an untrusted MCP server, rotate its client secret or signing key and revoke its tokens.
+
+## Sources
+
+- **PRIMARY** - [OAuth client could send credentials to an authorization server chosen by the MCP server (GHSA-qx49-fqc8-xw99)](https://github.com/modelcontextprotocol/python-sdk/security/advisories/GHSA-qx49-fqc8-xw99)
+- **PRIMARY** - [OAuth client could send credentials to an authorization server chosen by the MCP server (GHSA-6qxp-vccf-f47h, TypeScript SDK)](https://github.com/modelcontextprotocol/typescript-sdk/security/advisories/GHSA-6qxp-vccf-f47h)
+
+Generated from `data/entries/mcp-client-oauth-authorization-server-redirect.yml` by `scripts/build.py`. Never hand-edit this page: change the entry file and rebuild.
+
+Back to the [catalogue](../../README.md#full-catalogue), to [what the tiers mean](../TIERS.md), or to the [entry file](../../data/entries/mcp-client-oauth-authorization-server-redirect.yml).
