@@ -110,6 +110,20 @@ Link checking (`make links`, that is `uv run python scripts/check_links.py`)
 reaches out to the network, so CI runs it on a schedule rather than on every
 push. Run it yourself when you add or change a source URL.
 
+## Pull requests
+
+`main` is protected. Every change reaches it through a pull request, and three
+checks must pass before a change can merge: `validate entries`,
+`generated output is current`, and `lint and test`. The branch must also be up
+to date with `main`, so merging a second pull request while the first is
+waiting means rebasing or merging `main` into your branch first.
+
+There is no required approving review. This repository has one maintainer, and
+GitHub does not let an author approve their own pull request, so a
+one-approving-review rule would make every change here impossible to merge.
+When a second maintainer is added, requiring one review is a settings change,
+not a code change.
+
 ## Generated files
 
 `dist/entries.json` and every block in `README.md` between
