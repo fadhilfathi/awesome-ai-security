@@ -82,10 +82,14 @@ jobs:
             exit 0
           fi
 
-      # Escalation rule: a URL is escalated only when it is `broken` AND it also
-      # failed on the previous run. One failure is noise; two in a row is a dead
-      # reference. `unknown` never escalates, because by definition we do not
-      # know why it failed.
+      # Escalation rule: a URL is escalated only when it failed on the previous
+      # run as well. One failure is noise; two in a row is a dead reference.
+      #
+      # Both `broken` and `unknown` escalate. `unknown` is what a host that
+      # fails the way a dead one does, or that rate-limits us, looks like. Such
+      # a link is just as useless to a reader as a 404, and the earlier rule
+      # never named it, so it could persist for months unescalated. A `redirect`
+      # is a healthy outcome and never escalates.
       - name: Build tracking issue body
         run: |
           python - <<'PY'
@@ -100,7 +104,11 @@ jobs:
           summary = ", ".join(f"{k}={v}" for k, v in sorted(counts.items()) if v)
           tally = f": {summary}" if summary else ""
           bad = sorted(
-              (r for r in results if r["status"] == "broken" and r.get("repeat_failure")),
+              (
+                  r
+                  for r in results
+                  if r["status"] in {"broken", "unknown"} and r.get("repeat_failure")
+              ),
               key=lambda r: r["url"],
           )
           lines = [
