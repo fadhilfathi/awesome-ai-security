@@ -7,7 +7,7 @@
 | Id | `mcp-client-output-schema-ref-fetch` |
 | Tier | `T2 [==-]` **Tier 2 - Demonstrated** |
 | Attack class | Tool poisoning |
-| Target | MCP Python SDK (pip package mcp) 1.29.1 and 2.1.1 and earlier, client-side output schema validation |
+| Target | MCP Python SDK (pip package mcp) 1.10.0 through 1.29.1 and 2.0.0 through 2.1.1, client-side output schema validation |
 | Disclosure date | 2026-09-28 |
 | Last verified | 2026-10-04 |
 

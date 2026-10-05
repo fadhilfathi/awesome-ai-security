@@ -6,10 +6,10 @@
 | --- | --- |
 | Id | `mlflow-webhook-ssrf-redirect-dns-rebinding` |
 | Tier | `T1 [===]` **Tier 1 - Confirmed in the wild** |
-| Attack class | Agent privilege abuse |
+| Attack class | Data exfiltration |
 | Target | MLflow 3.3.0 to before 3.15.0 (pip package mlflow) |
 | Disclosure date | 2026-08-17 |
-| Last verified | 2026-10-04 |
+| Last verified | 2026-10-05 |
 | CVE | CVE-2026-64849 |
 
 ## Summary
@@ -18,7 +18,7 @@ MLflow is an open source AI engineering platform used to track agents and machin
 
 ## Impact
 
-The endpoint required no authentication, and the advisory states an attacker could reach internal services or cloud instance metadata endpoints and read the response status and body back. On a cloud-hosted tracking server that is the usual route to instance credentials. CISA lists this CVE in the Known Exploited Vulnerabilities catalog, added 2026-08-19, and the enrichment in the CVE record states exploitation is active, so it is filed here as an attack with confirmed real-world use. The sources do not state how many victims were affected.
+The endpoint required no authentication, and the advisory states an attacker could reach internal services or cloud instance metadata endpoints and read the response status and body back. On a cloud-hosted tracking server that is the usual route to instance credentials. This is DATA_EXFILTRATION rather than AGENT_PRIVILEGE_ABUSE: no agent is involved, and the advisory names the response body as the item crossing the boundary. CISA lists this CVE in the Known Exploited Vulnerabilities catalog and the enrichment in the CVE record states exploitation is active.
 
 ## Mitigation
 

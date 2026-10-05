@@ -2,7 +2,7 @@ id: mcp-client-output-schema-ref-fetch
 title: "MCP Python client fetches server-chosen $ref URLs while validating tool results"
 tier: 2
 attack_class: TOOL_POISONING
-target: "MCP Python SDK (pip package mcp) 1.29.1 and 2.1.1 and earlier, client-side output schema validation"
+target: "MCP Python SDK (pip package mcp) 1.10.0 through 1.29.1 and 2.0.0 through 2.1.1, client-side output schema validation"
 date: "2026-09-28"
 summary: >-
   When a connected MCP server declares an outputSchema for one of its tools,

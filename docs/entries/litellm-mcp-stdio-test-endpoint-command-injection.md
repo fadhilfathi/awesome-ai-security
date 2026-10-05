@@ -6,10 +6,10 @@
 | --- | --- |
 | Id | `litellm-mcp-stdio-test-endpoint-command-injection` |
 | Tier | `T1 [===]` **Tier 1 - Confirmed in the wild** |
-| Attack class | Tool poisoning |
+| Attack class | Insecure output handling |
 | Target | BerriAI LiteLLM 1.74.2 to before 1.83.7 (pip package litellm) |
 | Disclosure date | 2026-05-08 |
-| Last verified | 2026-10-04 |
+| Last verified | 2026-10-05 |
 | CVE | CVE-2026-42271 |
 
 ## Summary
@@ -18,7 +18,7 @@ LiteLLM exposes endpoints that let an operator preview an MCP server configurati
 
 ## Impact
 
-An authenticated user with a low-privilege internal key obtained arbitrary command execution on the proxy host, inheriting whatever that process could reach: configuration and credentials for every tenant the proxy fronts, and any network access available to the host. CISA lists this CVE in the Known Exploited Vulnerabilities catalog, added 2026-06-08, and the enrichment in the CVE record states exploitation is active, so it is filed here as an attack with confirmed real-world use. The sources do not state how many victims were affected.
+An authenticated user with a low-privilege internal key obtained arbitrary command execution on the proxy host, inheriting whatever that process could reach: configuration and credentials for every tenant the proxy fronts. This is INSECURE_OUTPUT_HANDLING rather than TOOL_POISONING because the command arrives in the body of a request to a preview endpoint, not in a definition the server operator publishes. CISA lists this CVE in the Known Exploited Vulnerabilities catalog and the enrichment in the CVE record states exploitation is active.
 
 ## Mitigation
 

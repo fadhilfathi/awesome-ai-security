@@ -9,7 +9,7 @@
 | Attack class | Credential exposure |
 | Target | BerriAI LiteLLM, versions before 1.84.0 (pip package litellm) |
 | Disclosure date | 2026-07-08 |
-| Last verified | 2026-10-04 |
+| Last verified | 2026-10-05 |
 | CVE | CVE-2026-59822 |
 
 ## Summary
@@ -18,7 +18,7 @@ LiteLLM is a proxy that fronts several model providers behind one OpenAI-compati
 
 ## Impact
 
-An unauthenticated attacker could list and call every configured MCP tool behind the proxy, and reach whatever those tools are wired to: internal services, developer infrastructure, or any credential the integration holds. CISA lists this CVE in the Known Exploited Vulnerabilities catalog with an exploitation status of active, and the CISA enrichment carried in the CVE record states that exploitation is active, so this is recorded as an attack with confirmed real-world use rather than a research result. The sources do not state how many victims were affected.
+An unauthenticated attacker could list and call every configured MCP tool behind the proxy, reaching whatever those tools are wired to. The advisory names the reachable items as the configured MCP tools and the services exposed through them, and does not name a credential as the item reaching the attacker; this class rests on such integrations typically holding tokens, a judgement about deployment rather than a claim the advisory makes. CISA lists this CVE in the Known Exploited Vulnerabilities catalog and the enrichment in the CVE record states exploitation is active.
 
 ## Mitigation
 

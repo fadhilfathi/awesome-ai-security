@@ -9,7 +9,7 @@
 | Attack class | Agent privilege abuse |
 | Target | Ray before 2.52.0 (pip package ray), dashboard used as a development tool |
 | Disclosure date | 2025-11-26 |
-| Last verified | 2026-10-04 |
+| Last verified | 2026-10-05 |
 | CVE | CVE-2025-62593 |
 
 ## Summary
@@ -18,7 +18,7 @@ Ray is a distributed compute engine widely used to run AI and machine learning w
 
 ## Impact
 
-The advisory describes remote code execution on the developer workstation with confidentiality, integrity, and availability impact all high. In practice that workstation holds source access, cloud credentials, and often the credentials for the cluster the dashboard is driving. CISA lists this CVE in the Known Exploited Vulnerabilities catalog, added 2026-08-17, and the enrichment in the CVE record states exploitation is active, so it is filed here as an attack with confirmed real-world use. The sources do not state how many victims were affected.
+The CVE record scores it 9.4 CRITICAL under CVSS 4.0, with confidentiality, integrity and availability impact all high. In practice the affected machine is the developer workstation, which holds source access, cloud credentials, and often the credentials for the cluster the dashboard is driving. That gain outlives the single request, which is the taxonomy tie-break on persistence that assigns AGENT_PRIVILEGE_ABUSE. CISA lists this CVE in the Known Exploited Vulnerabilities catalog and the enrichment in the CVE record states exploitation is active.
 
 ## Mitigation
 

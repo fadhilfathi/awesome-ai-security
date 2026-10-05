@@ -1,7 +1,7 @@
 id: litellm-mcp-stdio-test-endpoint-command-injection
 title: "LiteLLM command execution through MCP stdio test endpoints"
 tier: 1
-attack_class: TOOL_POISONING
+attack_class: INSECURE_OUTPUT_HANDLING
 target: "BerriAI LiteLLM 1.74.2 to before 1.83.7 (pip package litellm)"
 date: "2026-05-08"
 summary: >-
@@ -15,14 +15,13 @@ summary: >-
   commands with the privileges of the proxy process. The project shipped a
   fix in 1.83.7.
 impact: >-
-  An authenticated user with a low-privilege internal key obtained arbitrary
-  command execution on the proxy host, inheriting whatever that process could
-  reach: configuration and credentials for every tenant the proxy fronts,
-  and any network access available to the host. CISA lists this CVE in the
-  Known Exploited Vulnerabilities catalog, added 2026-06-08, and the
-  enrichment in the CVE record states exploitation is active, so it is filed
-  here as an attack with confirmed real-world use. The sources do not state
-  how many victims were affected.
+  An authenticated user with a low-privilege internal key obtained arbitrary command
+  execution on the proxy host, inheriting whatever that process could reach: configuration
+  and credentials for every tenant the proxy fronts. This is INSECURE_OUTPUT_HANDLING
+  rather than TOOL_POISONING because the command arrives in the body of a request to a
+  preview endpoint, not in a definition the server operator publishes. CISA lists this CVE
+  in the Known Exploited Vulnerabilities catalog and the enrichment in the CVE record
+  states exploitation is active.
 mitigation: >-
   Upgrade to LiteLLM 1.83.7 or later. Restrict the MCP preview endpoints to
   administrative roles so an ordinary internal key cannot reach them, and
@@ -40,4 +39,4 @@ sources:
     title: "CISA Known Exploited Vulnerabilities catalog entry for CVE-2026-42271"
 cve:
   - CVE-2026-42271
-last_verified: "2026-10-04"
+last_verified: "2026-10-05"

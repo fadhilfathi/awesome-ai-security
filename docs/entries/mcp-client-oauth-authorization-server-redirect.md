@@ -9,8 +9,7 @@
 | Attack class | Credential exposure |
 | Target | MCP Python SDK before 1.30.0 / 2.2.0 and MCP TypeScript SDK before 1.31.0 / 2.2.0, OAuth client |
 | Disclosure date | 2026-09-28 |
-| Last verified | 2026-10-04 |
-| CVE | CVE-2026-104850 |
+| Last verified | 2026-10-05 |
 
 ## Summary
 

@@ -39,6 +39,4 @@ sources:
   - url: https://github.com/modelcontextprotocol/typescript-sdk/security/advisories/GHSA-6qxp-vccf-f47h
     kind: primary
     title: "OAuth client could send credentials to an authorization server chosen by the MCP server (GHSA-6qxp-vccf-f47h, TypeScript SDK)"
-cve:
-  - CVE-2026-104850
-last_verified: "2026-10-04"
+last_verified: "2026-10-05"

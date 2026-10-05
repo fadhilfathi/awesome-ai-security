@@ -7,14 +7,14 @@
 | Id | `ai-infra-qdrant-logger-file-append` |
 | Tier | `T2 [==-]` **Tier 2 - Demonstrated** |
 | Attack class | Agent privilege abuse |
-| Target | Qdrant 1.9.3 to before 1.16.0 (cargo crate qdrant), the POST /logger endpoint |
+| Target | Qdrant 1.9.3 to before 1.15.6 (cargo crate qdrant), the POST /logger endpoint |
 | Disclosure date | 2026-02-05 |
-| Last verified | 2026-10-04 |
+| Last verified | 2026-10-05 |
 | CVE | CVE-2026-25628 |
 
 ## Summary
 
-The Qdrant logging endpoint takes an on-disk log file path from the request body. In affected releases nothing constrained that path, and the endpoint needed only read-level access, so a low-privilege caller could point logging at a file the service can write and then inject content into it through any other request whose parameters get logged. The advisory works the attack through by setting the path to the service's configuration file and requesting a collection whose name carries newlines and YAML. The project shipped a fix in 1.16.0.
+The Qdrant logging endpoint takes an on-disk log file path from the request body. In affected releases nothing constrained that path, and the endpoint needed only read-level access, so a low-privilege caller could point logging at a file the service can write and then inject content into it through any other request whose parameters get logged. The advisory works the attack through by setting the path to the service's configuration file and requesting a collection whose name carries newlines and YAML. The advisory shipped a fix in 1.15.6; the CVE record states the affected range as up to but excluding 1.16.0, so the sources differ on the ceiling and both are recorded rather than reconciled.
 
 ## Impact
 
@@ -22,7 +22,7 @@ The advisory demonstrates the injected content becoming valid configuration that
 
 ## Mitigation
 
-Upgrade to Qdrant 1.16.0 or later. The advisory's own two mitigations apply regardless: restrict the /logger endpoint to users holding management privileges or disable it outright, and constrain the log file path to a dedicated logs directory. Keep the configuration directory non-writable by the service, which is also why Qdrant Cloud is unaffected.
+Upgrade to Qdrant 1.15.6 or later, the version the advisory names as patched. The advisory's own two mitigations apply regardless: restrict the /logger endpoint to users holding management privileges or disable it outright, and constrain the log file path to a dedicated logs directory. Keep the configuration directory non-writable by the service, which is also why Qdrant Cloud is unaffected.
 
 ## Sources
 

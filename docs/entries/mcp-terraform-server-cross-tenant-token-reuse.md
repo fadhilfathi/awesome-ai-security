@@ -7,7 +7,7 @@
 | Id | `mcp-terraform-server-cross-tenant-token-reuse` |
 | Tier | `T2 [==-]` **Tier 2 - Demonstrated** |
 | Attack class | Credential exposure |
-| Target | HashiCorp terraform-mcp-server 0.2.1 through 1.0.0, stateless streamable-HTTP mode |
+| Target | HashiCorp terraform-mcp-server 0.3.0 through 1.0.0 per the CVE records, or 0.2.1 per vendor bulletin HCSEC-2026-23, stateless streamable-HTTP mode |
 | Disclosure date | 2026-07-28 |
 | Last verified | 2026-10-04 |
 | CVE | CVE-2026-16498 |

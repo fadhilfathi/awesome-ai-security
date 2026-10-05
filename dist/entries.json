@@ -466,11 +466,11 @@
       "title": "Qdrant /logger endpoint writes attacker-supplied log lines to a caller-chosen path",
       "tier": 2,
       "attack_class": "AGENT_PRIVILEGE_ABUSE",
-      "target": "Qdrant 1.9.3 to before 1.16.0 (cargo crate qdrant), the POST /logger endpoint",
+      "target": "Qdrant 1.9.3 to before 1.15.6 (cargo crate qdrant), the POST /logger endpoint",
       "date": "2026-02-05",
-      "summary": "The Qdrant logging endpoint takes an on-disk log file path from the request body. In affected releases nothing constrained that path, and the endpoint needed only read-level access, so a low-privilege caller could point logging at a file the service can write and then inject content into it through any other request whose parameters get logged. The advisory works the attack through by setting the path to the service's configuration file and requesting a collection whose name carries newlines and YAML. The project shipped a fix in 1.16.0.",
+      "summary": "The Qdrant logging endpoint takes an on-disk log file path from the request body. In affected releases nothing constrained that path, and the endpoint needed only read-level access, so a low-privilege caller could point logging at a file the service can write and then inject content into it through any other request whose parameters get logged. The advisory works the attack through by setting the path to the service's configuration file and requesting a collection whose name carries newlines and YAML. The advisory shipped a fix in 1.15.6; the CVE record states the affected range as up to but excluding 1.16.0, so the sources differ on the ceiling and both are recorded rather than reconciled.",
       "impact": "The advisory demonstrates the injected content becoming valid configuration that takes precedence after a restart, redirecting the static content directory so that files including the password file become readable through the web UI, and notes that overriding configuration may also let the caller set a master key. The gain outlives the single request and is an authority the caller granted itself, which the taxonomy tie-break on persistence settles as AGENT_PRIVILEGE_ABUSE over DATA_EXFILTRATION. The advisory tested 1.15.5 and reports no exploitation outside its own reproduction.",
-      "mitigation": "Upgrade to Qdrant 1.16.0 or later. The advisory's own two mitigations apply regardless: restrict the /logger endpoint to users holding management privileges or disable it outright, and constrain the log file path to a dedicated logs directory. Keep the configuration directory non-writable by the service, which is also why Qdrant Cloud is unaffected.",
+      "mitigation": "Upgrade to Qdrant 1.15.6 or later, the version the advisory names as patched. The advisory's own two mitigations apply regardless: restrict the /logger endpoint to users holding management privileges or disable it outright, and constrain the log file path to a dedicated logs directory. Keep the configuration directory non-writable by the service, which is also why Qdrant Cloud is unaffected.",
       "sources": [
         {
           "url": "https://github.com/qdrant/qdrant/security/advisories/GHSA-f632-vm87-2m2f",
@@ -486,7 +486,7 @@
       "cve": [
         "CVE-2026-25628"
       ],
-      "last_verified": "2026-10-04",
+      "last_verified": "2026-10-05",
       "_permalink": "docs/entries/ai-infra-qdrant-logger-file-append.md"
     },
     {
@@ -922,7 +922,7 @@
       "target": "BerriAI LiteLLM, versions before 1.84.0 (pip package litellm)",
       "date": "2026-07-08",
       "summary": "LiteLLM is a proxy that fronts several model providers behind one OpenAI-compatible interface, and it also brokers Model Context Protocol servers for its users. Its MCP auth handler supported an OAuth2 passthrough mode, and the fallback branch of that handler substituted an empty authentication object when key validation failed instead of rejecting the request. A caller presenting a fabricated Authorization header was therefore treated as authenticated and could enumerate and invoke the MCP tools the proxy was configured to reach. A fix shipped in 1.84.0.",
-      "impact": "An unauthenticated attacker could list and call every configured MCP tool behind the proxy, and reach whatever those tools are wired to: internal services, developer infrastructure, or any credential the integration holds. CISA lists this CVE in the Known Exploited Vulnerabilities catalog with an exploitation status of active, and the CISA enrichment carried in the CVE record states that exploitation is active, so this is recorded as an attack with confirmed real-world use rather than a research result. The sources do not state how many victims were affected.",
+      "impact": "An unauthenticated attacker could list and call every configured MCP tool behind the proxy, reaching whatever those tools are wired to. The advisory names the reachable items as the configured MCP tools and the services exposed through them, and does not name a credential as the item reaching the attacker; this class rests on such integrations typically holding tokens, a judgement about deployment rather than a claim the advisory makes. CISA lists this CVE in the Known Exploited Vulnerabilities catalog and the enrichment in the CVE record states exploitation is active.",
       "mitigation": "Upgrade to LiteLLM 1.84.0 or later. Where an upgrade cannot happen immediately, disable the MCP routes or block the /mcp/ paths at the reverse proxy or API gateway, so an unvalidated Authorization header cannot reach the MCP tooling at all.",
       "sources": [
         {
@@ -949,18 +949,18 @@
       "cve": [
         "CVE-2026-59822"
       ],
-      "last_verified": "2026-10-04",
+      "last_verified": "2026-10-05",
       "_permalink": "docs/entries/litellm-mcp-auth-bypass-oauth2-passthrough.md"
     },
     {
       "id": "litellm-mcp-stdio-test-endpoint-command-injection",
       "title": "LiteLLM command execution through MCP stdio test endpoints",
       "tier": 1,
-      "attack_class": "TOOL_POISONING",
+      "attack_class": "INSECURE_OUTPUT_HANDLING",
       "target": "BerriAI LiteLLM 1.74.2 to before 1.83.7 (pip package litellm)",
       "date": "2026-05-08",
       "summary": "LiteLLM exposes endpoints that let an operator preview an MCP server configuration before saving it. Those endpoints accepted a full server definition in the request body, including the command, arguments, and environment used by the stdio transport, and attempting to connect to the previewed server spawned that command as a subprocess on the proxy host. The endpoints were reachable with any valid proxy API key and performed no role check, so a holder of a low-privilege internal key could run arbitrary commands with the privileges of the proxy process. The project shipped a fix in 1.83.7.",
-      "impact": "An authenticated user with a low-privilege internal key obtained arbitrary command execution on the proxy host, inheriting whatever that process could reach: configuration and credentials for every tenant the proxy fronts, and any network access available to the host. CISA lists this CVE in the Known Exploited Vulnerabilities catalog, added 2026-06-08, and the enrichment in the CVE record states exploitation is active, so it is filed here as an attack with confirmed real-world use. The sources do not state how many victims were affected.",
+      "impact": "An authenticated user with a low-privilege internal key obtained arbitrary command execution on the proxy host, inheriting whatever that process could reach: configuration and credentials for every tenant the proxy fronts. This is INSECURE_OUTPUT_HANDLING rather than TOOL_POISONING because the command arrives in the body of a request to a preview endpoint, not in a definition the server operator publishes. CISA lists this CVE in the Known Exploited Vulnerabilities catalog and the enrichment in the CVE record states exploitation is active.",
       "mitigation": "Upgrade to LiteLLM 1.83.7 or later. Restrict the MCP preview endpoints to administrative roles so an ordinary internal key cannot reach them, and treat any host running an affected proxy as potentially compromised until its credentials are rotated.",
       "sources": [
         {
@@ -982,7 +982,7 @@
       "cve": [
         "CVE-2026-42271"
       ],
-      "last_verified": "2026-10-04",
+      "last_verified": "2026-10-05",
       "_permalink": "docs/entries/litellm-mcp-stdio-test-endpoint-command-injection.md"
     },
     {
@@ -1098,10 +1098,7 @@
           "title": "OAuth client could send credentials to an authorization server chosen by the MCP server (GHSA-6qxp-vccf-f47h, TypeScript SDK)"
         }
       ],
-      "cve": [
-        "CVE-2026-104850"
-      ],
-      "last_verified": "2026-10-04",
+      "last_verified": "2026-10-05",
       "_permalink": "docs/entries/mcp-client-oauth-authorization-server-redirect.md"
     },
     {
@@ -1109,7 +1106,7 @@
       "title": "MCP Python client fetches server-chosen $ref URLs while validating tool results",
       "tier": 2,
       "attack_class": "TOOL_POISONING",
-      "target": "MCP Python SDK (pip package mcp) 1.29.1 and 2.1.1 and earlier, client-side output schema validation",
+      "target": "MCP Python SDK (pip package mcp) 1.10.0 through 1.29.1 and 2.0.0 through 2.1.1, client-side output schema validation",
       "date": "2026-09-28",
       "summary": "When a connected MCP server declares an outputSchema for one of its tools, the Python SDK client validated each call_tool result with jsonschema's default resolver, which opens any $ref it cannot satisfy from the schema itself. A server that put an http, https or file reference in a tool's published output schema could therefore make the client issue that request or read that file on the client's own network position, on every call of the tool, with no setting to switch the validation off. Version 1.30.0 on the 1.x line and 2.2.0 on the 2.x line resolve references only inside the schema document the server sent.",
       "impact": "The advisory is explicit that the fetched content was used only as a schema and never sent back to the server, so no data crosses to the attacker here; what the attacker gets is that the client's host makes arbitrary outbound requests or reads a local file, which can probe internal services, and that a peer which accepts a connection then goes silent freezes every session in the process, because the fetch runs synchronously on the event loop with no timeout. The payload sits in a schema field the server operator publishes as part of the tool definition, the TOOL_POISONING inclusion test.",
@@ -1242,7 +1239,7 @@
       "title": "terraform-mcp-server stateless HTTP mode reuses one tenant's Terraform token for other tenants' tool calls",
       "tier": 2,
       "attack_class": "CREDENTIAL_EXPOSURE",
-      "target": "HashiCorp terraform-mcp-server 0.2.1 through 1.0.0, stateless streamable-HTTP mode",
+      "target": "HashiCorp terraform-mcp-server 0.3.0 through 1.0.0 per the CVE records, or 0.2.1 per vendor bulletin HCSEC-2026-23, stateless streamable-HTTP mode",
       "date": "2026-07-28",
       "summary": "When terraform-mcp-server is configured for stateless streamable HTTP, the underlying MCP library assigns no unique session identifiers to requests. The server's per-session Terraform client cache still relied on those identifiers to tell callers apart, so the tenant who arrived first had their Terraform token used to execute tool calls on behalf of every tenant after them, whatever credentials those later callers supplied. HashiCorp found the issue internally and fixed it in 1.1.0 alongside two related flaws in the same transport.",
       "impact": "A caller who supplies their own Terraform token can have tool calls executed under a different tenant's identity instead of their own, so reads and writes land on the wrong organization's state. The item the sources name as crossing tenants is the Terraform token, which makes this CREDENTIAL_EXPOSURE rather than DATA_EXFILTRATION even though organization data is also at stake. HashiCorp scored it 10.0 but reported no exploitation; the defect requires that an operator explicitly opted into stateless mode.",
@@ -1270,7 +1267,7 @@
       "title": "terraform-mcp-server executes a user's tool calls with another user's cached Terraform credentials",
       "tier": 2,
       "attack_class": "CREDENTIAL_EXPOSURE",
-      "target": "HashiCorp terraform-mcp-server 0.2.1 through 1.0.0, stateful streamable-HTTP mode",
+      "target": "HashiCorp terraform-mcp-server 0.3.0 through 1.0.0 per the CVE records, or 0.2.1 per vendor bulletin HCSEC-2026-23, stateful streamable-HTTP mode",
       "date": "2026-07-28",
       "summary": "HashiCorp's terraform-mcp-server is meant for centralised multi-user deployments in which each caller supplies their own Terraform Cloud or Enterprise token so that RBAC applies to their actions. In stateful streamable-HTTP mode the server cached a Terraform API client per MCP session, keyed on the session ID alone and never bound to the token that created it, so a caller who obtained another user's session ID had their tool calls run against that user's cached client and bearer token. HashiCorp identified the issue internally and published it as part of a three-CVE bulletin; it was reported by Juan Pablo Martinez Kuhn of Coinspect and fixed in 1.1.0.",
       "impact": "The attacker's tool calls execute with the victim's Terraform bearer token, so they reach the victim's organizations, workspaces and variables to the extent that token's permissions allow, and they can write as well as read. This is CREDENTIAL_EXPOSURE because the item the sources name as reaching an unintended principal is a bearer token and the access it authorises; it is not merely DATA_EXFILTRATION. The CISA enrichment reports exploitation as none. It affected only stateful streamable HTTP, the default for central deployments.",
@@ -1325,11 +1322,11 @@
       "id": "mlflow-webhook-ssrf-redirect-dns-rebinding",
       "title": "MLflow unauthenticated webhook SSRF via unvalidated redirects and DNS rebinding",
       "tier": 1,
-      "attack_class": "AGENT_PRIVILEGE_ABUSE",
+      "attack_class": "DATA_EXFILTRATION",
       "target": "MLflow 3.3.0 to before 3.15.0 (pip package mlflow)",
       "date": "2026-08-17",
       "summary": "MLflow is an open source AI engineering platform used to track agents and machine learning models. Its unauthenticated webhook test endpoint validated the supplied URL only once, at submission, but the delivery code followed redirects and re-resolved the hostname without pinning the address that had been validated. An attacker could therefore submit a URL that passed the check and then pointed somewhere else, either through a redirect or by changing what the hostname resolved to between the two moments. The project shipped a fix in 3.15.0.",
-      "impact": "The endpoint required no authentication, and the advisory states an attacker could reach internal services or cloud instance metadata endpoints and read the response status and body back. On a cloud-hosted tracking server that is the usual route to instance credentials. CISA lists this CVE in the Known Exploited Vulnerabilities catalog, added 2026-08-19, and the enrichment in the CVE record states exploitation is active, so it is filed here as an attack with confirmed real-world use. The sources do not state how many victims were affected.",
+      "impact": "The endpoint required no authentication, and the advisory states an attacker could reach internal services or cloud instance metadata endpoints and read the response status and body back. On a cloud-hosted tracking server that is the usual route to instance credentials. This is DATA_EXFILTRATION rather than AGENT_PRIVILEGE_ABUSE: no agent is involved, and the advisory names the response body as the item crossing the boundary. CISA lists this CVE in the Known Exploited Vulnerabilities catalog and the enrichment in the CVE record states exploitation is active.",
       "mitigation": "Upgrade to MLflow 3.15.0 or later. Re-resolving a hostname after the initial check is the defect, so a fix that only validates the submitted URL will leave the same bypass in place; block access to instance metadata endpoints from the application network as defence in depth.",
       "sources": [
         {
@@ -1351,7 +1348,7 @@
       "cve": [
         "CVE-2026-64849"
       ],
-      "last_verified": "2026-10-04",
+      "last_verified": "2026-10-05",
       "_permalink": "docs/entries/mlflow-webhook-ssrf-redirect-dns-rebinding.md"
     },
     {
@@ -1362,7 +1359,7 @@
       "target": "Ray before 2.52.0 (pip package ray), dashboard used as a development tool",
       "date": "2025-11-26",
       "summary": "Ray is a distributed compute engine widely used to run AI and machine learning workloads, and its dashboard is normally reachable only from the developer's own machine during development. The dashboard relied on the User-Agent header starting with the string Mozilla as its browser-origin defence. Because the fetch specification lets a page set that header, the check could not distinguish a real browser navigation from a scripted request. Combined with a DNS rebinding attack against the browser, a developer who visited an attacker-controlled page, or loaded a malicious advertisement, could have code run on the machine serving Ray. The project shipped a fix in 2.52.0.",
-      "impact": "The advisory describes remote code execution on the developer workstation with confidentiality, integrity, and availability impact all high. In practice that workstation holds source access, cloud credentials, and often the credentials for the cluster the dashboard is driving. CISA lists this CVE in the Known Exploited Vulnerabilities catalog, added 2026-08-17, and the enrichment in the CVE record states exploitation is active, so it is filed here as an attack with confirmed real-world use. The sources do not state how many victims were affected.",
+      "impact": "The CVE record scores it 9.4 CRITICAL under CVSS 4.0, with confidentiality, integrity and availability impact all high. In practice the affected machine is the developer workstation, which holds source access, cloud credentials, and often the credentials for the cluster the dashboard is driving. That gain outlives the single request, which is the taxonomy tie-break on persistence that assigns AGENT_PRIVILEGE_ABUSE. CISA lists this CVE in the Known Exploited Vulnerabilities catalog and the enrichment in the CVE record states exploitation is active.",
       "mitigation": "Upgrade to Ray 2.52.0 or later. Until then, do not expose the Ray dashboard beyond localhost, and do not rely on a User-Agent check as an origin control; a header a page can set is not evidence that a request came from a browser address bar.",
       "sources": [
         {
@@ -1389,7 +1386,7 @@
       "cve": [
         "CVE-2025-62593"
       ],
-      "last_verified": "2026-10-04",
+      "last_verified": "2026-10-05",
       "_permalink": "docs/entries/ray-dashboard-browser-rce-dns-rebinding.md"
     },
     {

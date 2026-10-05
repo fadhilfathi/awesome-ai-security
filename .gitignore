@@ -11,6 +11,9 @@ venv/
 
 # Scratch HTML fetched while reading advisories. Local only; never committed.
 *.html
+
+# Findings written by audit subagents while a sweep is in progress.
+audit-*-findings.md
 .pytest_cache/
 .ruff_cache/
 .mypy_cache/

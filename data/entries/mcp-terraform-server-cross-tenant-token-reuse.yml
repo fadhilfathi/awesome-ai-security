@@ -2,7 +2,7 @@ id: mcp-terraform-server-cross-tenant-token-reuse
 title: "terraform-mcp-server stateless HTTP mode reuses one tenant's Terraform token for other tenants' tool calls"
 tier: 2
 attack_class: CREDENTIAL_EXPOSURE
-target: "HashiCorp terraform-mcp-server 0.2.1 through 1.0.0, stateless streamable-HTTP mode"
+target: "HashiCorp terraform-mcp-server 0.3.0 through 1.0.0 per the CVE records, or 0.2.1 per vendor bulletin HCSEC-2026-23, stateless streamable-HTTP mode"
 date: "2026-07-28"
 summary: >-
   When terraform-mcp-server is configured for stateless streamable HTTP, the

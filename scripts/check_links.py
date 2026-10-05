@@ -259,11 +259,22 @@ def was_known_bad(url: str, state: dict[str, Any]) -> bool:
 
     A link that failed before and still fails is a real problem but not news,
     so it is reported as a repeat rather than a fresh break.
+
+    Membership in the previous state is not enough: every checked URL is
+    recorded there, including ones that were healthy. Only a previous
+    non-ok status counts, otherwise a first-time break would be treated as a
+    repeat and escalated on its very first run, which is the opposite of what
+    the two-consecutive-runs rule is for.
     """
     previous = state.get("results", {})
     if not isinstance(previous, dict):
         return False
-    return isinstance(previous.get(url), dict)
+    record = previous.get(url)
+    if not isinstance(record, dict):
+        return False
+    # Mirrors Result.failed: a redirect is a healthy outcome, so only a broken
+    # or unknown status counts as having been failing last run.
+    return record.get("status") in {"broken", "unknown"}
 
 
 # --------------------------------------------------------------------------

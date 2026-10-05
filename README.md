@@ -41,16 +41,16 @@ Cell colour encodes the evidence tier (darkest is Tier 1, confirmed in the wild)
 | --- | --- | --- | --- | --- |
 | Prompt injection (direct) | 0 | 3 | 0 | 3 |
 | Prompt injection (indirect) | 0 | 6 | 2 | 8 |
-| Tool poisoning | 1 | 2 | 0 | 3 |
-| Agent privilege abuse | 3 | 3 | 1 | 7 |
-| Data exfiltration | 0 | 6 | 2 | 8 |
+| Tool poisoning | 0 | 2 | 0 | 2 |
+| Agent privilege abuse | 2 | 3 | 1 | 6 |
+| Data exfiltration | 1 | 6 | 2 | 9 |
 | Supply chain (package) | 1 | 0 | 0 | 1 |
 | Supply chain (model) | 0 | 5 | 0 | 5 |
 | Code assistant abuse | 0 | 0 | 0 | 0 |
 | Training data poisoning | 0 | 0 | 1 | 1 |
 | Model theft and extraction | 0 | 0 | 0 | 0 |
 | Jailbreak | 0 | 0 | 0 | 0 |
-| Insecure output handling | 0 | 10 | 0 | 10 |
+| Insecure output handling | 1 | 10 | 0 | 11 |
 | Credential exposure | 2 | 5 | 0 | 7 |
 | Denial of service | 0 | 0 | 0 | 0 |
 | Other | 0 | 1 | 8 | 9 |
@@ -85,19 +85,17 @@ Cell colour encodes the evidence tier (darkest is Tier 1, confirmed in the wild)
 
 | Tier | Title | Date | Target |
 | --- | --- | --- | --- |
-| `T2 [==-]` | MCP Python client fetches server-chosen $ref URLs while validating tool results | 2026-09-28 | MCP Python SDK (pip package mcp) 1.29.1 and 2.1.1 and earlier, client-side output schema validation |
-| `T1 [===]` | LiteLLM command execution through MCP stdio test endpoints | 2026-05-08 | BerriAI LiteLLM 1.74.2 to before 1.83.7 (pip package litellm) |
+| `T2 [==-]` | MCP Python client fetches server-chosen $ref URLs while validating tool results | 2026-09-28 | MCP Python SDK (pip package mcp) 1.10.0 through 1.29.1 and 2.0.0 through 2.1.1, client-side output schema validation |
 | `T2 [==-]` | Roo Code remote code execution by writing an MCP configuration into the workspace | 2025-06-27 | Roo Code VS Code extension before 3.20.3 (npm package roo-cline) |
 
 ### Agent privilege abuse
 
 | Tier | Title | Date | Target |
 | --- | --- | --- | --- |
-| `T1 [===]` | MLflow unauthenticated webhook SSRF via unvalidated redirects and DNS rebinding | 2026-08-17 | MLflow 3.3.0 to before 3.15.0 (pip package mlflow) |
 | `T1 [===]` | Autonomous AI agent intrusion into Hugging Face production infrastructure | 2026-07-16 | Hugging Face production infrastructure, dataset processing pipeline and internal Kubernetes clusters |
 | `T2 [==-]` | Cline dashboard cross-origin WebSocket hijacking injecting a malicious MCP server | 2026-06-23 | Cline CLI and agent (npm package cline); advisory lists affected versions up to 3.0.24, fixed in 3.0.30 |
 | `T3 [=-]` | Authorization-Execution Gap proposed as the unifying failure mode of open-world LLM agents | 2026-05-10 | Tool-using LLM agents acting under a delegated mandate, with persistent state and multi-agent handoffs |
-| `T2 [==-]` | Qdrant /logger endpoint writes attacker-supplied log lines to a caller-chosen path | 2026-02-05 | Qdrant 1.9.3 to before 1.16.0 (cargo crate qdrant), the POST /logger endpoint |
+| `T2 [==-]` | Qdrant /logger endpoint writes attacker-supplied log lines to a caller-chosen path | 2026-02-05 | Qdrant 1.9.3 to before 1.15.6 (cargo crate qdrant), the POST /logger endpoint |
 | `T2 [==-]` | MCP Python and TypeScript SDKs shipped with DNS rebinding protection off by default for localhost servers | 2025-12-02 | MCP Python SDK before 1.23.0 and MCP TypeScript SDK before 1.24.0, HTTP servers on localhost |
 | `T1 [===]` | Ray dashboard remote code execution from a developer's browser via DNS rebinding | 2025-11-26 | Ray before 2.52.0 (pip package ray), dashboard used as a development tool |
 
@@ -106,6 +104,7 @@ Cell colour encodes the evidence tier (darkest is Tier 1, confirmed in the wild)
 | Tier | Title | Date | Target |
 | --- | --- | --- | --- |
 | `T2 [==-]` | MLflow CreateModelVersion authorization bypass reads another user's model artifacts | 2026-08-17 | MLflow before 3.15.0 (pip package mlflow) with the built-in basic-auth plugin |
+| `T1 [===]` | MLflow unauthenticated webhook SSRF via unvalidated redirects and DNS rebinding | 2026-08-17 | MLflow 3.3.0 to before 3.15.0 (pip package mlflow) |
 | `T2 [==-]` | MCP Python SDK serves HTTP session traffic without checking which principal owns the session | 2026-06-05 | MCP Python SDK (pip package mcp) 1.27.1 and earlier, HTTP transports with bearer-token auth |
 | `T2 [==-]` | MCP Python SDK experimental task handlers let any client read and cancel other clients' tasks | 2026-06-05 | MCP Python SDK 1.23.0 through 1.27.1, servers calling experimental.enable_tasks() |
 | `T2 [==-]` | Stored prompt injection in Kong Konnect MCP analytics data leads to configuration disclosure | 2026-05-15 | Kong Konnect Model Context Protocol server (mcp-konnect), versions below 1.0.0 |
@@ -144,6 +143,7 @@ Cell colour encodes the evidence tier (darkest is Tier 1, confirmed in the wild)
 | `T2 [==-]` | Prompt injection bypasses the read-only guard in the pgAdmin 4 AI Assistant SQL tool | 2026-06-19 | pgAdmin 4 AI Assistant execute_sql_query tool, versions 9.13 to before 9.16 |
 | `T2 [==-]` | agentic-flow MCP server tools interpolate tool arguments into shell commands | 2026-06-18 | agentic-flow npm package (and the ruflo / claude-flow CLI wrappers) 2.0.13 and earlier, MCP server tools |
 | `T2 [==-]` | LangChain runtime paths revive objects from deserialized run data with a broad allowlist | 2026-05-08 | langchain-core 1 to 1.3.2 and 0 to 0.3.84 (pip package langchain-core) |
+| `T1 [===]` | LiteLLM command execution through MCP stdio test endpoints | 2026-05-08 | BerriAI LiteLLM 1.74.2 to before 1.83.7 (pip package litellm) |
 | `T2 [==-]` | Claude Code folder trust dialog bypass through a crafted Git worktree commondir file | 2026-04-24 | Claude Code (npm package @anthropic-ai/claude-code) 2.1.63 through 2.1.83 (fixed in 2.1.84) |
 | `T2 [==-]` | Claude Code workspace trust bypass through a repository's own settings file | 2026-03-18 | Claude Code (npm package @anthropic-ai/claude-code) before 2.1.53 (fixed in 2.1.53) |
 | `T2 [==-]` | Cursor sandbox escape through agent writes to Git configuration and hooks | 2026-02-13 | Cursor editor versions prior to 2.5 (fixed in 2.5) |
@@ -157,8 +157,8 @@ Cell colour encodes the evidence tier (darkest is Tier 1, confirmed in the wild)
 | --- | --- | --- | --- |
 | `T2 [==-]` | MCP Python and TypeScript OAuth clients would send credentials to an authorization server the MCP server named | 2026-09-28 | MCP Python SDK before 1.30.0 / 2.2.0 and MCP TypeScript SDK before 1.31.0 / 2.2.0, OAuth client |
 | `T2 [==-]` | Azure DevOps token disclosure through GitHub Copilot Chat workspace settings in VS Code | 2026-09-08 | GitHub Copilot Chat extension for Visual Studio Code before 1.136.2 |
-| `T2 [==-]` | terraform-mcp-server stateless HTTP mode reuses one tenant's Terraform token for other tenants' tool calls | 2026-07-28 | HashiCorp terraform-mcp-server 0.2.1 through 1.0.0, stateless streamable-HTTP mode |
-| `T2 [==-]` | terraform-mcp-server executes a user's tool calls with another user's cached Terraform credentials | 2026-07-28 | HashiCorp terraform-mcp-server 0.2.1 through 1.0.0, stateful streamable-HTTP mode |
+| `T2 [==-]` | terraform-mcp-server stateless HTTP mode reuses one tenant's Terraform token for other tenants' tool calls | 2026-07-28 | HashiCorp terraform-mcp-server 0.3.0 through 1.0.0 per the CVE records, or 0.2.1 per vendor bulletin HCSEC-2026-23, stateless streamable-HTTP mode |
+| `T2 [==-]` | terraform-mcp-server executes a user's tool calls with another user's cached Terraform credentials | 2026-07-28 | HashiCorp terraform-mcp-server 0.3.0 through 1.0.0 per the CVE records, or 0.2.1 per vendor bulletin HCSEC-2026-23, stateful streamable-HTTP mode |
 | `T1 [===]` | LiteLLM MCP endpoint authentication bypass via OAuth2 passthrough fallback | 2026-07-08 | BerriAI LiteLLM, versions before 1.84.0 (pip package litellm) |
 | `T1 [===]` | LiteLLM unauthenticated SQL injection in proxy API key verification | 2026-05-08 | BerriAI LiteLLM 1.81.16 to before 1.83.7 (pip package litellm) |
 | `T2 [==-]` | Ollama GGUF loader reads past the file buffer and leaks server memory to the caller | 2026-05-04 | Ollama before 0.17.1, the GGUF model loader behind /api/create |
@@ -187,10 +187,10 @@ file and rebuild rather than editing a page.
 <!-- BEGIN:GENERATED:entry-index -->
 ### `T1 [===]` Tier 1 - Confirmed in the wild
 
-- [MLflow unauthenticated webhook SSRF via unvalidated redirects and DNS rebinding](docs/entries/mlflow-webhook-ssrf-redirect-dns-rebinding.md) - Agent privilege abuse - 2026-08-17
+- [MLflow unauthenticated webhook SSRF via unvalidated redirects and DNS rebinding](docs/entries/mlflow-webhook-ssrf-redirect-dns-rebinding.md) - Data exfiltration - 2026-08-17
 - [Autonomous AI agent intrusion into Hugging Face production infrastructure](docs/entries/huggingface-autonomous-agent-production-intrusion.md) - Agent privilege abuse - 2026-07-16
 - [LiteLLM MCP endpoint authentication bypass via OAuth2 passthrough fallback](docs/entries/litellm-mcp-auth-bypass-oauth2-passthrough.md) - Credential exposure - 2026-07-08
-- [LiteLLM command execution through MCP stdio test endpoints](docs/entries/litellm-mcp-stdio-test-endpoint-command-injection.md) - Tool poisoning - 2026-05-08
+- [LiteLLM command execution through MCP stdio test endpoints](docs/entries/litellm-mcp-stdio-test-endpoint-command-injection.md) - Insecure output handling - 2026-05-08
 - [LiteLLM unauthenticated SQL injection in proxy API key verification](docs/entries/litellm-proxy-api-key-sql-injection.md) - Credential exposure - 2026-05-08
 - [LiteLLM malicious PyPI releases published after a compromised CI dependency](docs/entries/litellm-pypi-supply-chain-trivy-compromise.md) - Supply chain (package) - 2026-03-24
 - [Ray dashboard remote code execution from a developer's browser via DNS rebinding](docs/entries/ray-dashboard-browser-rce-dns-rebinding.md) - Agent privilege abuse - 2025-11-26
