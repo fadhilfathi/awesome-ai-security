@@ -94,3 +94,4 @@ Known deferred work, recorded so it is not rediscovered later:
   an already-listed product can be surfaced automatically.
 - A machine-readable schema version field, so consumers can detect a breaking
   change to the entry format.
+
