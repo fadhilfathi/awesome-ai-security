@@ -103,6 +103,9 @@ jobs:
             --report-format json \
             --report-path gitleaks-report.json \
             --exit-code 1
+          # The config lives at the repository root and carries the rationale
+          # for the sixteen exempt paths. It exempts those files by path only;
+          # every rule stays armed, so a secret anywhere else is still found.
 
       # `always()` so the report is uploaded even when the scan found leaks and
       # failed the job. `warn` (not the default `error`) so that an empty report

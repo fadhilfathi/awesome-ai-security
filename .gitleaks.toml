@@ -1,0 +1,51 @@
+# gitleaks configuration
+#
+# The scan runs over full history, not just the current tree, because a secret
+# committed once and deleted later is still leaked. That history is why this
+# file needs an entry at all.
+#
+# What it does NOT do is disable a rule. Every rule stays on; only sixteen
+# specific paths are exempted.
+
+title = "awesome-ai-security gitleaks configuration"
+
+[extend]
+# Inherit the shipped rule set unchanged, so new detectors arrive with an
+# update rather than having to be re-declared here.
+useDefault = true
+
+[allowlist]
+description = """
+Scratch advisory pages fetched while reading sources were committed once in
+4f9d00e and removed in 04e97d4. They remain in history, so a full-history scan
+still reads them.
+
+Their matches are false positives: the files are downloaded copies of public
+advisory pages, and the strings that trip generic-api-key and jwt are the
+example tokens those pages use to illustrate the vulnerability being described.
+No live credential is present. They were build detritus rather than content,
+which is why they were removed from the tree and are now gitignored.
+
+The exemption is scoped by path. A real secret in any other file, including
+any .html added later or any file outside the repository's working tree, is
+still reported.
+"""
+
+paths = [
+  '''(^|/)aidex\.html$''',
+  '''(^|/)aidex2\.html$''',
+  '''(^|/)c\.html$''',
+  '''(^|/)echoleak\.html$''',
+  '''(^|/)eg\.html$''',
+  '''(^|/)kong\.html$''',
+  '''(^|/)mm\.html$''',
+  '''(^|/)mmb\.html$''',
+  '''(^|/)nano\.html$''',
+  '''(^|/)pg_ghsa\.html$''',
+  '''(^|/)str\.html$''',
+  '''(^|/)t\.html$''',
+  '''(^|/)theia\.html$''',
+  '''(^|/)theia_ghsa\.html$''',
+  '''(^|/)theia_pr\.html$''',
+  '''(^|/)theia_rel\.html$''',
+]
