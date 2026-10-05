@@ -13,7 +13,7 @@
 
 ## Summary
 
-A position paper argues that the design principles that have guided systems security for decades, defense in depth, least privilege, complete mediation and psychological acceptability, should be applied deliberately when agents are deployed at scale, since multi-agent interaction and context manipulation create vulnerability classes the principles were written for. It sketches AgentSandbox, a conceptual framework placing safeguards across an agent's lifecycle, and reports benign and adversarial utility measurements with state-of-the-art models. The contribution is the framework and the argument, not an attack.
+A position paper argues that the design principles that have guided systems security for decades, defense in depth, least privilege, complete mediation and psychological acceptability, should be applied deliberately when agents are deployed at scale, since multi-agent interaction and context manipulation create vulnerability classes the principles were written for. It sketches AgentSandbox, a framework placing safeguards across an agent's lifecycle, and reports AgentDojo measurements including a 49.31 percent attack success rate with no defence in place. It contributes a framework, not a new exploit against a deployed product.
 
 ## Impact
 
@@ -21,7 +21,7 @@ The claim is that agent deployments that skip these principles lose the containm
 
 ## Mitigation
 
-Adopt the principles the paper names as acceptance criteria rather than as aspirations: no agent reaches a capability a role does not need, every action a tool can take passes a mediation point that sees it, and layered controls do not share a single failure mode. Where an agent's UI would otherwise mislead a user about what is happening, fix the UI, since psychological acceptability is what makes a control get followed.
+Adopt the principles the paper names as acceptance criteria rather than as aspirations: no agent reaches a capability a role does not need, every action a tool can take passes a mediation point that sees it, and layered controls do not share a single failure mode. The paper argues that a control is only followed while it is psychologically acceptable to the person operating it, so usability is treated here as a security property rather than as polish.
 
 ## Sources
 
