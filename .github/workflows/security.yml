@@ -41,12 +41,13 @@ jobs:
         with:
           category: "/language:python"
 
-  dependency-review:
-    name: Dependency review
+  dependency-audit:
+    name: Dependency audit
     runs-on: ubuntu-latest
-    # Only meaningful on pull requests: it diffs the proposed dependency changes
-    # against the base branch and fails on known-vulnerable additions.
-    if: github.event_name == 'pull_request'
+    # Runs on pull requests, where a dependency change is actually proposed,
+    # and weekly, because a package already in the tree can be declared
+    # vulnerable later without anyone touching a file.
+    if: github.event_name == 'pull_request' || github.event_name == 'schedule'
     timeout-minutes: 15
     permissions:
       contents: read
@@ -54,8 +55,30 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-      - name: Dependency review
-        uses: github/codeql-action/dependency-review@1190a975f95ce23525efb6a3fc21ea29567c1b52 # v3.38.2
+      - name: Set up Python 3.11
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5.4.0
+        with:
+          python-version: "3.11"
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@0c5e2b8115b80b4c7c5ddf6ffdd634974642d182 # v5.4.1
+
+      - name: Audit the resolved dependency graph
+        # `uv audit` walks uv.lock, so it reports on what is actually pinned
+        # rather than on what pyproject.toml permits. `--locked` fails the job
+        # if the lockfile does not match the manifest, which is the same
+        # guarantee the install step gives.
+        #
+        # This replaces github/codeql-action/dependency-review, which no
+        # longer exists at any ref of that repository: the subdirectory action
+        # was withdrawn, so pinning it could only ever fail with "Can't find
+        # action.yml". Every action in this workflow is pinned to a SHA that
+        # still contains the action it names, which is what caught it.
+        run: |
+          uv sync --group dev --locked
+          uv audit
+          echo "--- checking the lockfile is committed and current ---"
+          uv lock --check
 
   gitleaks:
     name: secret scan (full history)
