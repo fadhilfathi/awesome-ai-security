@@ -5,7 +5,7 @@ how well the attack is established, so you can tell a documented incident from a
 researcher's proof of concept from speculation.
 
 <!-- BEGIN:GENERATED:count -->
-**62** entries; last verified **2026-10-04**.
+**62** entries; last verified **2026-10-05**.
 <!-- END:GENERATED:count -->
 
 ## Evidence tiers
@@ -40,10 +40,10 @@ Cell colour encodes the evidence tier (darkest is Tier 1, confirmed in the wild)
 | Attack class | T1 | T2 | T3 | Total |
 | --- | --- | --- | --- | --- |
 | Prompt injection (direct) | 0 | 3 | 0 | 3 |
-| Prompt injection (indirect) | 0 | 7 | 2 | 9 |
+| Prompt injection (indirect) | 0 | 6 | 2 | 8 |
 | Tool poisoning | 1 | 2 | 0 | 3 |
 | Agent privilege abuse | 3 | 3 | 1 | 7 |
-| Data exfiltration | 0 | 5 | 2 | 7 |
+| Data exfiltration | 0 | 6 | 2 | 8 |
 | Supply chain (package) | 1 | 0 | 0 | 1 |
 | Supply chain (model) | 0 | 5 | 0 | 5 |
 | Code assistant abuse | 0 | 0 | 0 | 0 |
@@ -77,7 +77,6 @@ Cell colour encodes the evidence tier (darkest is Tier 1, confirmed in the wild)
 | `T2 [==-]` | Claude Code reverse shell from a clean repository whose setup script fetches a command from DNS | 2026-06-25 | Claude Code, and agentic coding tools that run shell commands |
 | `T3 [=-]` | Impossibility of perfect prompt-injection prevention in shared-embedding sequence models | 2026-06-25 | LLM applications where trusted instructions and untrusted content share one token embedding and one attention pipeline |
 | `T2 [==-]` | Indirect prompt injection through workspace file and directory names in Eclipse Theia AI chat | 2026-06-18 | Eclipse Theia AI chat agent, versions prior to 1.71.0 |
-| `T2 [==-]` | Stored prompt injection in Kong Konnect MCP analytics data leads to credential disclosure | 2026-05-15 | Kong Konnect Model Context Protocol server (mcp-konnect), versions below 1.0.0 |
 | `T3 [=-]` | Position: what system-level defense can and cannot claim against indirect prompt injection | 2026-03-31 | Agent architectures that plan and execute with an explicit policy enforcer, as described in the paper |
 | `T2 [==-]` | Zero-click indirect prompt injection through the nanobot email channel | 2026-03-27 | nanobot personal AI assistant, pip package versions <= 0.1.4.post5, email channel |
 | `T2 [==-]` | EchoLeak zero-click indirect prompt injection in Microsoft 365 Copilot | 2025-06-11 | Microsoft 365 Copilot, hosted service used from Outlook and Teams |
@@ -109,6 +108,7 @@ Cell colour encodes the evidence tier (darkest is Tier 1, confirmed in the wild)
 | `T2 [==-]` | MLflow CreateModelVersion authorization bypass reads another user's model artifacts | 2026-08-17 | MLflow before 3.15.0 (pip package mlflow) with the built-in basic-auth plugin |
 | `T2 [==-]` | MCP Python SDK serves HTTP session traffic without checking which principal owns the session | 2026-06-05 | MCP Python SDK (pip package mcp) 1.27.1 and earlier, HTTP transports with bearer-token auth |
 | `T2 [==-]` | MCP Python SDK experimental task handlers let any client read and cancel other clients' tasks | 2026-06-05 | MCP Python SDK 1.23.0 through 1.27.1, servers calling experimental.enable_tasks() |
+| `T2 [==-]` | Stored prompt injection in Kong Konnect MCP analytics data leads to configuration disclosure | 2026-05-15 | Kong Konnect Model Context Protocol server (mcp-konnect), versions below 1.0.0 |
 | `T3 [=-]` | Keyless covert channel argued possible between two LLM agents holding no shared secret | 2026-04-06 | Any deployment where two LLM agents converse and a third party reads their transcript |
 | `T2 [==-]` | MCP Ruby SDK lets a second connection replace a live SSE stream and take its tool responses | 2026-03-27 | MCP Ruby SDK (RubyGems gem mcp) 0.9.1 and earlier, streamable HTTP transport |
 | `T2 [==-]` | Reusing one MCP TypeScript SDK transport or server across clients routes one client's tool results to another | 2026-02-04 | MCP TypeScript SDK (@modelcontextprotocol/sdk) 1.10.0 through 1.25.3, stateless multi-client servers |
@@ -141,7 +141,7 @@ Cell colour encodes the evidence tier (darkest is Tier 1, confirmed in the wild)
 | Tier | Title | Date | Target |
 | --- | --- | --- | --- |
 | `T2 [==-]` | Arbitrary command execution from project configuration files in Language Servers for AWS | 2026-06-23 | Language Servers for AWS before 1.65.0 and the Amazon Q Developer IDE plugins that bundle it |
-| `T2 [==-]` | Prompt injection bypasses the read-only guard in the pgAdmin 4 AI Assistant SQL tool | 2026-06-18 | pgAdmin 4 AI Assistant execute_sql_query tool, versions 9.13 to before 9.16 |
+| `T2 [==-]` | Prompt injection bypasses the read-only guard in the pgAdmin 4 AI Assistant SQL tool | 2026-06-19 | pgAdmin 4 AI Assistant execute_sql_query tool, versions 9.13 to before 9.16 |
 | `T2 [==-]` | agentic-flow MCP server tools interpolate tool arguments into shell commands | 2026-06-18 | agentic-flow npm package (and the ruflo / claude-flow CLI wrappers) 2.0.13 and earlier, MCP server tools |
 | `T2 [==-]` | LangChain runtime paths revive objects from deserialized run data with a broad allowlist | 2026-05-08 | langchain-core 1 to 1.3.2 and 0 to 0.3.84 (pip package langchain-core) |
 | `T2 [==-]` | Claude Code folder trust dialog bypass through a crafted Git worktree commondir file | 2026-04-24 | Claude Code (npm package @anthropic-ai/claude-code) 2.1.63 through 2.1.83 (fixed in 2.1.84) |
@@ -211,12 +211,12 @@ file and rebuild rather than editing a page.
 - [Claude Code reverse shell from a clean repository whose setup script fetches a command from DNS](docs/entries/coding-agent-claude-code-repo-dns-setup-payload.md) - Prompt injection (indirect) - 2026-06-25
 - [Arbitrary command execution from project configuration files in Language Servers for AWS](docs/entries/coding-agent-aws-language-server-workspace-rce.md) - Insecure output handling - 2026-06-23
 - [Cline dashboard cross-origin WebSocket hijacking injecting a malicious MCP server](docs/entries/coding-agent-cline-dashboard-csws-mcp-rce.md) - Agent privilege abuse - 2026-06-23
-- [Prompt injection bypasses the read-only guard in the pgAdmin 4 AI Assistant SQL tool](docs/entries/agent-app-pgadmin-ai-assistant-sql-readonly-bypass.md) - Insecure output handling - 2026-06-18
+- [Prompt injection bypasses the read-only guard in the pgAdmin 4 AI Assistant SQL tool](docs/entries/agent-app-pgadmin-ai-assistant-sql-readonly-bypass.md) - Insecure output handling - 2026-06-19
 - [Indirect prompt injection through workspace file and directory names in Eclipse Theia AI chat](docs/entries/agent-app-theia-workspace-names-prompt-injection.md) - Prompt injection (indirect) - 2026-06-18
 - [agentic-flow MCP server tools interpolate tool arguments into shell commands](docs/entries/mcp-agentic-flow-mcp-tool-command-injection.md) - Insecure output handling - 2026-06-18
 - [MCP Python SDK serves HTTP session traffic without checking which principal owns the session](docs/entries/mcp-python-sdk-session-hijack.md) - Data exfiltration - 2026-06-05
 - [MCP Python SDK experimental task handlers let any client read and cancel other clients' tasks](docs/entries/mcp-python-sdk-task-handlers-cross-session.md) - Data exfiltration - 2026-06-05
-- [Stored prompt injection in Kong Konnect MCP analytics data leads to credential disclosure](docs/entries/agent-app-kong-konnect-mcp-stored-injection.md) - Prompt injection (indirect) - 2026-05-15
+- [Stored prompt injection in Kong Konnect MCP analytics data leads to configuration disclosure](docs/entries/agent-app-kong-konnect-mcp-stored-injection.md) - Data exfiltration - 2026-05-15
 - [LangChain runtime paths revive objects from deserialized run data with a broad allowlist](docs/entries/ai-infra-langchain-run-data-deserialization.md) - Insecure output handling - 2026-05-08
 - [Ollama GGUF loader reads past the file buffer and leaks server memory to the caller](docs/entries/ai-infra-ollama-gguf-loader-memory-leak.md) - Credential exposure - 2026-05-04
 - [Claude Code folder trust dialog bypass through a crafted Git worktree commondir file](docs/entries/coding-agent-claude-code-worktree-trust-bypass.md) - Insecure output handling - 2026-04-24

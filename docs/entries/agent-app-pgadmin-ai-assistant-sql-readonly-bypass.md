@@ -8,8 +8,8 @@
 | Tier | `T2 [==-]` **Tier 2 - Demonstrated** |
 | Attack class | Insecure output handling |
 | Target | pgAdmin 4 AI Assistant execute_sql_query tool, versions 9.13 to before 9.16 |
-| Disclosure date | 2026-06-18 |
-| Last verified | 2026-10-04 |
+| Disclosure date | 2026-06-19 |
+| Last verified | 2026-10-05 |
 | CVE | CVE-2026-12045 |
 
 ## Summary
@@ -26,6 +26,7 @@ Upgrade to 9.16 or later, where the fix rejects any query that parses to more th
 
 ## Sources
 
+- **PRIMARY** - [GitHub Advisory Database entry for CVE-2026-12045, published 2026-06-19](https://github.com/advisories/GHSA-95q2-vx3p-f723)
 - **PRIMARY** - [CVE-2026-12045 pgAdmin 4 AI Assistant read-only transaction bypass record](https://cveawg.mitre.org/api/cve/CVE-2026-12045)
 - **PRIMARY** - [fix(llm): reject multi-statement and non-read-only AI assistant queries](https://github.com/pgadmin-org/pgadmin4/commit/bf4792444446f0e7ab721d23cbd6bfe6afaa7a8b)
 

@@ -79,13 +79,13 @@
     },
     {
       "id": "agent-app-kong-konnect-mcp-stored-injection",
-      "title": "Stored prompt injection in Kong Konnect MCP analytics data leads to credential disclosure",
+      "title": "Stored prompt injection in Kong Konnect MCP analytics data leads to configuration disclosure",
       "tier": 2,
-      "attack_class": "PROMPT_INJECTION_INDIRECT",
+      "attack_class": "DATA_EXFILTRATION",
       "target": "Kong Konnect Model Context Protocol server (mcp-konnect), versions below 1.0.0",
       "date": "2026-05-15",
       "summary": "Kong's security advisory for the Konnect MCP server describes an attacker who can send traffic to a gateway planting instructions in request metadata such as the User-Agent. That metadata is stored in Konnect analytics and later returned to an AI assistant by the server's analytics tools without neutralisation, so the assistant reads attacker text as instructions; the advisory is GHSA-7767-3m3w-2p44, CVE-2026-13341. Kong prepared the fixes in release 1.0.0.",
-      "impact": "Kong states that in client environments which fetch remote resources from model output, this could disclose sensitive information to an attacker-controlled URL, exposing secrets or configuration values other MCP tools return, including plugin configuration data, plus internal hostnames. A separate path manipulation flaw let the server request unintended Konnect API endpoints with the user's token. CREDENTIAL_EXPOSURE and DATA_EXFILTRATION were both considered, but the step that yielded capability here was the stored request data the agent read back, so the entry is filed as indirect injection.",
+      "impact": "Kong states that in client environments which fetch remote resources from model output, this could disclose sensitive information to an attacker-controlled URL, exposing secrets or configuration values other MCP tools return, including plugin configuration data, plus internal hostnames. A separate path manipulation flaw let the server request unintended Konnect API endpoints with the user's token. The taxonomy keys on the item set the source names: the advisory names configuration values and hostnames, not a credential, token or key, so this is DATA_EXFILTRATION.",
       "mitigation": "Upgrade to 1.0.0 or later, where Kong neutralises untrusted analytics fields before returning them, validates identifiers as UUIDs and encodes path segments. Leave raw plugin configuration output disabled unless it is strictly required. Sand-box the agent so tool output cannot trigger automatic remote fetches, block automatic rendering of remote content and model-generated links, and apply egress controls to keep agent runtimes off untrusted external hosts.",
       "sources": [
         {
@@ -102,7 +102,7 @@
       "cve": [
         "CVE-2026-13341"
       ],
-      "last_verified": "2026-10-04",
+      "last_verified": "2026-10-05",
       "_permalink": "docs/entries/agent-app-kong-konnect-mcp-stored-injection.md"
     },
     {
@@ -200,11 +200,16 @@
       "tier": 2,
       "attack_class": "INSECURE_OUTPUT_HANDLING",
       "target": "pgAdmin 4 AI Assistant execute_sql_query tool, versions 9.13 to before 9.16",
-      "date": "2026-06-18",
+      "date": "2026-06-19",
       "summary": "The PostgreSQL CNA's record for pgAdmin 4 states that the AI Assistant's execute_sql_query tool wrapped model-generated SQL in a read-only transaction but forwarded the statement to the driver unrestricted, so a payload led by COMMIT, END, ROLLBACK or ABORT closed that wrapper and ran the rest in autocommit mode. The record names prompt injection through database content the assistant reads as the delivery route and assigns CVE-2026-12045; the fix shipped in pgAdmin 4 9.16.",
       "impact": "Anyone who can write into an object the AI Assistant inspects can obtain unauthorised data modification with the pgAdmin user's privileges, and when that role is a superuser or holds pg_execute_server_program the chain extends to code execution on the database host via COPY TO PROGRAM. PROMPT_INJECTION_INDIRECT was considered and rejected: the delivery is retrieved content, but the taxonomy classifies by the step that yielded capability, and here the tool behaved as designed while the application consumed its output without validation.",
       "mitigation": "Upgrade to 9.16 or later, where the fix rejects any query that parses to more than one statement and requires the leading real token to be one of SELECT, WITH, EXPLAIN, SHOW, VALUES or TABLE, with the read-only transaction left as the runtime backstop. Do not connect the assistant with a superuser role or pg_execute_server_program, and do not grant the assistant's role more than the reads it needs.",
       "sources": [
+        {
+          "url": "https://github.com/advisories/GHSA-95q2-vx3p-f723",
+          "kind": "primary",
+          "title": "GitHub Advisory Database entry for CVE-2026-12045, published 2026-06-19"
+        },
         {
           "url": "https://cveawg.mitre.org/api/cve/CVE-2026-12045",
           "kind": "primary",
@@ -219,7 +224,7 @@
       "cve": [
         "CVE-2026-12045"
       ],
-      "last_verified": "2026-10-04",
+      "last_verified": "2026-10-05",
       "_permalink": "docs/entries/agent-app-pgadmin-ai-assistant-sql-readonly-bypass.md"
     },
     {
@@ -257,9 +262,9 @@
       "attack_class": "PROMPT_INJECTION_INDIRECT",
       "target": "Eclipse Theia AI chat agent, versions prior to 1.71.0",
       "date": "2026-06-18",
-      "summary": "The Eclipse Foundation's CVE record states that before 1.71.0 the Theia AI chat agent folded workspace file and directory names into its prompt context without distinguishing them from system instructions. A repository whose names are chosen by an attacker therefore instructs the agent as soon as the agent analyses that workspace, and the record assigns CVE-2026-44688 to it. The Foundation states that the workspace trust enforcement added in 1.71.0 disables the AI features in untrusted workspaces and closes the chain.",
-      "impact": "The Foundation states the injected names enable attack chains leading to data exfiltration through Markdown image rendering or arbitrary command execution through task definitions, so the attacker obtains session data or code execution from a repository the developer merely opened. INSECURE_OUTPUT_HANDLING and TOOL_POISONING were both considered and rejected: the payload arrived neither in output handling nor in a tool definition. The step that yielded capability was the attacker-chosen workspace names entering the prompt. CISA recorded Exploitation: none.",
-      "mitigation": "Upgrade to 1.71.0 or later, which disables AI chat, inline suggestions and code actions, and stops loading workspace prompt templates and resolving workspace file variables, while a workspace is in Restricted Mode. Until then, do not run AI features over an untrusted clone; grant workspace trust deliberately, and treat a repository name as untrusted input the same way any other retrieved content is treated.",
+      "summary": "The CVE record for Eclipse Theia states that before 1.71.0 the AI chat agent processed workspace file and directory names as part of its prompt context without distinguishing them from system instructions. A repository whose names are chosen by an attacker therefore instructs the agent as soon as the agent analyses that workspace. The record assigns CVE-2026-44688 to the flaw and cites an Eclipse Foundation work item.",
+      "impact": "The CVE record states the injected names enable attack chains leading to data exfiltration through Markdown image rendering, or to arbitrary command execution through task definitions, so the attacker gains session data or code execution from a repository the developer merely opened. The record names no credential as the item reaching the attacker, so this is not CREDENTIAL_EXPOSURE, and TOOL_POISONING and INSECURE_OUTPUT_HANDLING were both rejected because the payload arrived in neither a tool definition nor an output handler. CISA recorded no exploitation for this CVE.",
+      "mitigation": "Upgrade to 1.71.0 or later. Until then, do not run AI features over an untrusted clone, and grant workspace trust deliberately. Treat a repository name as untrusted input in the same way as any other retrieved content, because the agent cannot tell the difference once the name is in its context.",
       "sources": [
         {
           "url": "https://cveawg.mitre.org/api/cve/CVE-2026-44688",
@@ -267,15 +272,15 @@
           "title": "CVE-2026-44688 Eclipse Theia AI chat record"
         },
         {
-          "url": "https://github.com/eclipse-theia/theia/issues/16892",
+          "url": "https://gitlab.eclipse.org/security/cve-assignment/-/work_items/113",
           "kind": "primary",
-          "title": "Hook workspace trust into AI features (issue 16892)"
+          "title": "Eclipse Foundation CVE assignment work item 113"
         }
       ],
       "cve": [
         "CVE-2026-44688"
       ],
-      "last_verified": "2026-10-04",
+      "last_verified": "2026-10-05",
       "_permalink": "docs/entries/agent-app-theia-workspace-names-prompt-injection.md"
     },
     {

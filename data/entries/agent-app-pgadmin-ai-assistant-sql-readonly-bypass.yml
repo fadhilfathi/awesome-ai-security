@@ -3,7 +3,7 @@ title: "Prompt injection bypasses the read-only guard in the pgAdmin 4 AI Assist
 tier: 2
 attack_class: INSECURE_OUTPUT_HANDLING
 target: "pgAdmin 4 AI Assistant execute_sql_query tool, versions 9.13 to before 9.16"
-date: "2026-06-18"
+date: "2026-06-19"
 summary: >-
   The PostgreSQL CNA's record for pgAdmin 4 states that the AI Assistant's
   execute_sql_query tool wrapped model-generated SQL in a read-only
@@ -29,6 +29,9 @@ mitigation: >-
   with a superuser role or pg_execute_server_program, and do not grant the
   assistant's role more than the reads it needs.
 sources:
+  - url: https://github.com/advisories/GHSA-95q2-vx3p-f723
+    kind: primary
+    title: "GitHub Advisory Database entry for CVE-2026-12045, published 2026-06-19"
   - url: https://cveawg.mitre.org/api/cve/CVE-2026-12045
     kind: primary
     title: "CVE-2026-12045 pgAdmin 4 AI Assistant read-only transaction bypass record"
@@ -37,4 +40,4 @@ sources:
     title: "fix(llm): reject multi-statement and non-read-only AI assistant queries"
 cve:
   - CVE-2026-12045
-last_verified: "2026-10-04"
+last_verified: "2026-10-05"

@@ -1,4 +1,4 @@
-# Stored prompt injection in Kong Konnect MCP analytics data leads to credential disclosure
+# Stored prompt injection in Kong Konnect MCP analytics data leads to configuration disclosure
 
 `T2 [==-]` **Tier 2 - Demonstrated**
 
@@ -6,10 +6,10 @@
 | --- | --- |
 | Id | `agent-app-kong-konnect-mcp-stored-injection` |
 | Tier | `T2 [==-]` **Tier 2 - Demonstrated** |
-| Attack class | Prompt injection (indirect) |
+| Attack class | Data exfiltration |
 | Target | Kong Konnect Model Context Protocol server (mcp-konnect), versions below 1.0.0 |
 | Disclosure date | 2026-05-15 |
-| Last verified | 2026-10-04 |
+| Last verified | 2026-10-05 |
 | CVE | CVE-2026-13341 |
 
 ## Summary
@@ -18,7 +18,7 @@ Kong's security advisory for the Konnect MCP server describes an attacker who ca
 
 ## Impact
 
-Kong states that in client environments which fetch remote resources from model output, this could disclose sensitive information to an attacker-controlled URL, exposing secrets or configuration values other MCP tools return, including plugin configuration data, plus internal hostnames. A separate path manipulation flaw let the server request unintended Konnect API endpoints with the user's token. CREDENTIAL_EXPOSURE and DATA_EXFILTRATION were both considered, but the step that yielded capability here was the stored request data the agent read back, so the entry is filed as indirect injection.
+Kong states that in client environments which fetch remote resources from model output, this could disclose sensitive information to an attacker-controlled URL, exposing secrets or configuration values other MCP tools return, including plugin configuration data, plus internal hostnames. A separate path manipulation flaw let the server request unintended Konnect API endpoints with the user's token. The taxonomy keys on the item set the source names: the advisory names configuration values and hostnames, not a credential, token or key, so this is DATA_EXFILTRATION.
 
 ## Mitigation
 
